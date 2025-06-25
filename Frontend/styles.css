@@ -1,3 +1,4 @@
+
 .hero1{
     display: flex;
     justify-content: center;
@@ -11,11 +12,11 @@
 header {
             background:transparent;
             padding: 20px 0;
-            border-bottom: 1px solid #e5e5e5;
+            border: 1px solid #e5e5e5;
             position: sticky;
             top: 0;
             z-index: 100;
-            animation: headeranimation;
+            
 }
  nav {
             display: flex;
@@ -23,5 +24,16 @@ header {
             align-items: center;
             backdrop-filter: blur(45px);
         }
+.nav-links a {
+            text-decoration: none;
+            margin: 0 0 7px 7px;
+            color: #666;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+.nav-links a:hover {
+        color: #17014b;
+        }       
 
 
