@@ -1,0 +1,27 @@
+.hero1{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background:linear-gradient(to right,#5309ff ,#17014b);
+    background-clip: text;
+    color: transparent;
+    font-size: 75px;
+    font-weight: 300px;
+}
+header {
+            background:transparent;
+            padding: 20px 0;
+            border-bottom: 1px solid #e5e5e5;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            animation: headeranimation;
+}
+ nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            backdrop-filter: blur(45px);
+        }
+
+
