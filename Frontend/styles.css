@@ -20,13 +20,13 @@ header {
 }
  nav {
             display: flex;
-            justify-content: space-between;
+            justify-content: center;
             align-items: center;
             backdrop-filter: blur(45px);
         }
 .nav-links a {
             text-decoration: none;
-            margin: 0 0 7px 7px;
+            margin: 0 0 100px 100px;
             color: #666;
             font-weight: 500;
             transition: color 0.3s ease;
@@ -35,5 +35,9 @@ header {
 .nav-links a:hover {
         color: #17014b;
         }       
-
+.logo{
+    display: flex;
+    justify-content: left;
+    align-items: center;
+}
 
