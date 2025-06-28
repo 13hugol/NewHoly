@@ -7,30 +7,82 @@
     <link rel="stylesheet" href="styles.css" media="screen">
     <script src="script.js"></script>
 </head>
-<body>
-    
+<body onload="popup()">
+    <script src="script.js"></script>
     <h1 class="hero1">
         <section class="logo1">
               
-                <a href="#"><img src="https://scontent.fktm19-1.fna.fbcdn.net/v/t39.30808-6/475660672_1104845061652996_8137074626694681726_n.jpg?_nc_cat=103&ccb=1-7&_nc_sid=6ee11a&_nc_ohc=mu-g20QkwucQ7kNvwHo8hGF&_nc_oc=AdkgZcdFv5TSWGTtpWX29Ly71SsTKZ1o3SzQNn22pHOxmIANCHvjRjHcOLorRKal_Ag9gDnFBqCiHh-J9ofCTCIb&_nc_zt=23&_nc_ht=scontent.fktm19-1.fna&_nc_gid=Xi90CX4eGs7jUkhZ-_KSiA&oh=00_AfPP_5FyGEqEz2ZW8tZ5wkERggLunbpiq54otZGLaklwCQ&oe=6861D3B2" height="82px" width="120px"></a>
+            <img src="https://scontent.fktm19-1.fna.fbcdn.net/v/t39.30808-6/475660672_1104845061652996_8137074626694681726_n.jpg?_nc_cat=103&ccb=1-7&_nc_sid=6ee11a&_nc_ohc=mu-g20QkwucQ7kNvwHo8hGF&_nc_oc=AdkgZcdFv5TSWGTtpWX29Ly71SsTKZ1o3SzQNn22pHOxmIANCHvjRjHcOLorRKal_Ag9gDnFBqCiHh-J9ofCTCIb&_nc_zt=23&_nc_ht=scontent.fktm19-1.fna&_nc_gid=Xi90CX4eGs7jUkhZ-_KSiA&oh=00_AfPP_5FyGEqEz2ZW8tZ5wkERggLunbpiq54otZGLaklwCQ&oe=6861D3B2"  width="120px"></a>
                
         </section>
         New Holy Cross
     </h1>
     <header>
-        <nav class="container">
-            
-            <div class="nav-links">
-                 <a href="#about">About</a>
-                 <a href="#Gallery">Gallery</a>
-                 <a href="#achievement">Achievements</a>
-                 <a href="#contact">Contact</a>
-            </div>
-        </nav>
+        <nav>
+       <div class="nav-container">
+      <div class="logo">New Holy Cross School</div>
+
+      <div class="hamburger" onclick="toggleMenu()">
+        <div></div><div></div><div></div>
+      </div>
+
+      <div class="menu" id="menu">
+        <a href="#">Home</a>
+
+        <div class="dropdown">
+          <a href="#">About Us ▾</a>
+          <div class="dropdown-content">
+            <a class="dptext" href="#">Our History</a>
+            <a class="dptext" href="#">Mission & Vision</a>
+            <a class="dptext" href="#">Principal's Message</a>
+          </div>
+        </div>
+
+        <div class="dropdown">
+          <a href="#">Academics ▾</a>
+          <div class="dropdown-content">
+            <a class="dptext" href="#">Curriculum</a>
+            <a class="dptext" href="#">Subjects</a>
+            <a class="dptext" href="#">Timetable</a>
+          </div>
+        </div>
+
+        <a href="#">Admissions</a>
+        
+        <div class="dropdown">
+          <a href="#">Student Life ▾</a>
+          <div class="dropdown-content">
+            <a class="dptext" href="#">Activities</a>
+            <a class="dptext" href="#">Leadership</a>
+            <a class="dptext" href="#">Field Trips</a>
+          </div>
+        </div>
+
+        <a href="#">Gallery</a>
+        <a href="#">Notices</a>
+        <a href="#">Contact</a>
+      </div>
+    </div>
+  </nav>
     </header>
+    <section class="model" hidden="true">
+        <button id="closead">X</button>
+        <div class="model.inner">
+            HELLO AD HERE
+        </div>
+    </section>
     <section class="dashboard">
         
         
     </section>
+    <div id="adPopup" class="overlay">
+    <div class="popup">
+      <span class="close-btn" onclick="closeAd()">&#10006;</span>
+      <h2>📢 Important Notice</h2>
+      <p>Admissions Open for 2082! Limited seats available. Hurry up!</p>
+      <p><strong>Contact:</strong> 01-4990131 | WhatsApp: 9816078496</p>
+      <button onclick="window.location.href='#admissions'" style="padding: 10px 20px; background-color: #1a237e; color: white; border: none; border-radius: 6px;">Apply Now</button>
+    </div>
+  </div>
 </body>
 </html>

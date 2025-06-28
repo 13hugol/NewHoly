@@ -10,27 +10,106 @@
     font-weight: 300px;
 }
 header {
-            background:transparent;
+        
             padding: 20px 0;
-            border: 1px solid #e5e5e5;
             position: sticky;
             top: 0;
             z-index: 100;
             
 }
- nav {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            backdrop-filter: blur(45px);
-        }
-.nav-links a {
-            text-decoration: none;
-            margin: 0 0 100px 100px;
-            color: #666;
-            font-weight: 500;
-            transition: color 0.3s ease;
-        }
+  * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Segoe UI', sans-serif;
+    }
+    nav {
+      background-color: #1a237e;
+      padding: 1rem;
+      color: white;
+    }
+    .nav-container {
+      max-width: 1200px;
+      margin: auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .logo {
+      font-size: 1.5rem;
+      font-weight: bold;
+    }
+    .menu {
+      display: flex;
+      gap: 1.5rem;
+    }
+    .menu a {
+      color: white;
+      text-decoration: none;
+      position: relative;
+      padding: 0.5rem;
+    }
+    .dropdown {
+      position: relative;
+    }
+    .dropdown-content {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      background-color: #e6e8f1;
+      display: none;
+      flex-direction: column;
+      min-width: 200px;
+    }
+    .dropdown-content a {
+      padding: 0.75rem;
+      color: rgb(19, 1, 1);
+      text-decoration: none;
+      border-bottom: 1px solid rgba(255,255,255,0.2);
+    }
+    .dropdown:hover .dropdown-content {
+      display: flex;
+    }
+    .dptext:hover{
+        background-color: rgb(56, 56, 56);
+        color: aliceblue;
+
+    }
+  
+
+    /* Responsive */
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      cursor: pointer;
+    }
+    .hamburger div {
+      background: white;
+      height: 3px;
+      margin: 4px 0;
+      width: 25px;
+    }
+
+    @media (max-width: 768px) {
+      .menu {
+        display: none;
+        flex-direction: column;
+        width: 100%;
+        margin-top: 1rem;
+      }
+      .menu a {
+        padding: 1rem 0;
+      }
+      .menu.active {
+        display: flex;
+      }
+      .hamburger {
+        display: flex;
+      }
+    }
 
 .nav-links a:hover {
         color: #17014b;
@@ -40,4 +119,71 @@ header {
     justify-content: left;
     align-items: center;
 }
+.model{
+    background-color: black;
+    opacity: 0;
+    position: fixed;
+    top: 0%;
+    bottom: 0%;
+    left: 0%;
+    right: 0%;
+    transition: all 0.3s ease-in-out;
+    z-index: -1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
 
+}
+.model.open{
+    opacity: 1;
+    z-index: 999;
+}
+   .overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 100%;
+      width: 100%;
+      background: rgba(0, 0, 0, 0.6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 999;
+    }
+
+    /* Ad popup box */
+    .popup {
+      background: #fff;
+      width: 60%;
+      height: 50%;
+      padding: 20px;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.25);
+      border-radius: 12px;
+      position: relative;
+      animation: fadeIn 0.4s ease-in-out;
+    }
+
+    /* Close button */
+    .close-btn {
+      position: absolute;
+      top: 10px;
+      right: 15px;
+      font-size: 24px;
+      cursor: pointer;
+      color: #333;
+    }
+
+    /* Animation */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.9); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    /* Optional: Responsive */
+    @media (max-width: 768px) {
+      .popup {
+        width: 90%;
+        height: 60%;
+      }
+    }
