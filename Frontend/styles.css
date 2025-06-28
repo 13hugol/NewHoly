@@ -73,6 +73,7 @@ header {
     .dropdown:hover .dropdown-content {
       display: flex;
     }
+    /* yesle drop down ko text ma hover garda kaam garxa*/
     .dptext:hover{
         background-color: rgb(56, 56, 56);
         color: aliceblue;
@@ -80,7 +81,7 @@ header {
     }
   
 
-    /* Responsive */
+    /* Asthetics ko lagi*/
     .hamburger {
       display: none;
       flex-direction: column;
@@ -174,13 +175,13 @@ header {
       color: #333;
     }
 
-    /* Animation */
+    /* tyo first ma pop up bhako animation*/
     @keyframes fadeIn {
       from { opacity: 0; transform: scale(0.9); }
       to { opacity: 1; transform: scale(1); }
     }
 
-    /* Optional: Responsive */
+    /* Optional ho tara mobile device haru ma responsive hunxa */
     @media (max-width: 768px) {
       .popup {
         width: 90%;
