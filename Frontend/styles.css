@@ -60,6 +60,7 @@ header {
       text-decoration: none;
       position: relative;
       padding: 0.5rem;
+      
     }
     .dropdown-content {
       position: absolute;
@@ -78,11 +79,13 @@ header {
     }
     .dropdown:hover .dropdown-content {
       display: flex;
+      
     }
     /* yesle drop down ko text ma hover garda kaam garxa*/
     .dptext:hover{
         background-color: rgb(56, 56, 56);
         color: aliceblue;
+        z-index: 200px;
 
     }
     .button {
@@ -162,6 +165,7 @@ header {
       display: none;
       flex-direction: column;
       cursor: pointer;
+      z-index: 200px;
     }
     .hamburger div {
       background: white;
