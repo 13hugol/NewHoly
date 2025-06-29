@@ -264,3 +264,98 @@ header {
         height: 60%;
       }
     }
+    .card {
+  
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 600px;
+  height: 360px;
+  padding: 32px;
+  border-radius: 24px;
+  overflow: hidden;
+  line-height: 1.6;
+  border: 1px solid #cccccc;
+  transition: all 0.48s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  justify-content: space-between;
+  gap: 8px;
+  color: #000000;
+  transition: all 0.48s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.content .quotes {
+  width: 48px;
+  height: 48px;
+}
+
+.content .Pfooter {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.content .para {
+  z-index: 1;
+  opacity: 0.8;
+  font-size: 16px;
+  transition: all 0.48s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.card:hover {
+  box-shadow: 8px 8px #0a3cff;
+  border-color: #0a3cff;
+  transform: translate(-8px, -8px);
+}
+
+.viewbtn {
+  position: relative;
+  font-family: inherit;
+  border: none;
+  background-color: transparent;
+  font-size: 16px;
+  padding: 4px 0px;
+  font-weight: 700;
+  line-height: 1.6;
+  color: #000000;
+  cursor: pointer;
+  overflow: hidden;
+  transition: all 0.48s cubic-bezier(0.23, 1, 0.32, 1);
+  z-index: 1;
+}
+
+.viewbtn span {
+  transition: all 0.48s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.viewbtn::before {
+  position: absolute;
+  content: "";
+  width: 112%;
+  height: 1px;
+  left: 0%;
+  bottom: 0%;
+  background: #0a3cff;
+  pointer-events: none;
+  margin: auto;
+  transition: transform 0.64s cubic-bezier(0.23, 1, 0.32, 1);
+  z-index: -1;
+  transform: scaleX(0);
+  transform-origin: right;
+}
+
+.viewbtn:hover::before {
+  transform: scaleX(1);
+  transform-origin: left;
+}
+
+.viewbtn:active {
+  scale: 0.95;
+}
+
