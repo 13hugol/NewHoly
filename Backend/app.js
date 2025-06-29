@@ -1,31 +1,41 @@
+require('dotenv').config();
 const express = require('express');
-const app = express();
+const path = require('path');
 const { dbconnect } = require('./dbconnect');
 
-app.use(express.json());
-app.use(express.urlencoded({ extended: true })); // for form submissions
+const app = express();
+const PORT = process.env.PORT || 3000;
 
-// Connect to the database
+// Middleware
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+
+app.use(express.static(path.join(__dirname, '../Frontend')));
+
+// Connect to MongoDB
 let db;
 let collection;
 
 (async () => {
-  db = await dbconnect();
-  collection = db.collection('students');
+  try {
+    db = await dbconnect(process.env.MONGO_URI);
+    collection = db.collection('students');
+    console.log('Connected to MongoDB');
+  } catch (err) {
+    console.error('Failed to connect to DB:', err);
+  }
 })();
 
+// POST route to handle form submission
 app.post('/submit-admission', async (req, res) => {
-  try {
     const formData = req.body;
-    const result = await collection.insertOne(formData);
-    res.status(200).send('Admission form submitted successfully!');
-  } catch (error) {
-    console.error('Error saving form:', error);
-    res.status(500).send('Something went wrong.');
-  }
+    await collection.insertOne(formData);
+    res.redirect('/index.html')
+
 });
 
-const PORT = 3000;
+
 app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
+  console.log(`🚀 Server running at http://localhost:${PORT}`);
 });
