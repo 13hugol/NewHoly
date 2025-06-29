@@ -80,12 +80,15 @@ header {
     .dropdown:hover .dropdown-content {
       display: flex;
       z-index: 1;
+
     }
     /* yesle drop down ko text ma hover garda kaam garxa*/
     .dptext:hover{
         background-color: rgb(56, 56, 56);
         color: aliceblue;
         z-index: 1;
+        padding: 20px;
+       
 
     }
     .button {
