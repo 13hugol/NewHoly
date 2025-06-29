@@ -60,6 +60,7 @@ header {
       text-decoration: none;
       position: relative;
       padding: 0.5rem;
+      
     }
     .dropdown-content {
       position: absolute;
@@ -91,6 +92,7 @@ header {
     .dptext:hover{
         background-color: rgb(56, 56, 56);
         color: aliceblue;
+        z-index: 200px;
         z-index: 1;
         padding-left: 10px;
     }
@@ -171,6 +173,7 @@ header {
       display: none;
       flex-direction: column;
       cursor: pointer;
+      z-index: 200px;
     }
     .hamburger div {
       background: white;
