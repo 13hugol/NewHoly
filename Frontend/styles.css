@@ -1,7 +1,7 @@
 /* Slider styles */
 .scroll {
   width: 100vw;
-  height: 100vh; /* Fill the entire viewport height */
+  height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -11,10 +11,10 @@
 }
 
 #slider {
-  width: 100vw;      /* Fill the entire viewport width */
-  height: 100vh;     /* Fill the entire viewport height */
-  max-width: 100vw;  /* Remove max-width limit */
-  max-height: 100vh; /* Remove max-height limit */
+  width: 100vw;
+  height: 100vh;
+  max-width: 100vw;
+  max-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -22,12 +22,12 @@
 }
 
 #slider img {
-  width: 100vw;      /* Fill the entire viewport width */
-  height: 100vh;     /* Fill the entire viewport height */
-  object-fit: cover; /* Cover the area without distortion */
+  width: 100vw;
+  height: 100vh;
+  object-fit: cover;
   display: none;
-  border-radius: 0;  /* Remove border radius for full screen */
-  box-shadow: none;  /* Remove shadow for full screen */
+  border-radius: 0;
+  box-shadow: none;
   transition: opacity 0.5s;
 }
 #slider img:first-child {
@@ -105,31 +105,9 @@ nav {
   gap: 1.5rem;
 }
 
-.menu a {
-  color: white;
-  text-decoration: none;
-  position: relative;
-  padding: 0.5rem;
-  transition: color 0.3s;
-}
 
-.menu a::after {
-  content: "";
-  display: block;
-  position: absolute;
-  left: 0;
-  bottom: 0.2em;
-  width: 100%;
-  height: 2px;
-  background: #0a3cff;
-  transform: scaleX(0);
-  transform-origin: left;
-  transition: transform 0.3s cubic-bezier(0.23, 1, 0.32, 1);
-}
 
-.menu a:hover::after {
-  transform: scaleX(1);
-}
+
 
 .dropdown {
   color: white;
@@ -533,32 +511,21 @@ html, body {
   box-sizing: border-box;
 }
 
-.menu a,
-.dropdown > a {
-  position: relative;
+/* Only main nav links get transition */
+.menu > .dropdown > a {
   color: white;
   text-decoration: none;
+  position: relative;
   padding: 0.5rem;
   transition: color 0.3s;
 }
 
-.menu a::after,
-.dropdown > a::after {
-  content: "";
+/* Remove transition from dropdown text links */
+.dptext {
+  color: #222;
+  text-decoration: none;
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
   display: block;
-  position: absolute;
-  left: 0;
-  bottom: 0.2em;
-  width: 100%;
-  height: 2px;
-  background: #0a3cff;
-  transform: scaleX(0);
-  transform-origin: left;
-  transition: transform 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+  transition: none !important;
 }
-
-.menu a:hover::after,
-.dropdown > a:hover::after {
-  transform: scaleX(1);
-}
-
