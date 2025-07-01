@@ -1,3 +1,38 @@
+/* Slider styles */
+.scroll {
+  width: 100vw;
+  height: 100vh; /* Fill the entire viewport height */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #f5f6fa;
+  min-height: 250px;
+  overflow: hidden;
+}
+
+#slider {
+  width: 100vw;      /* Fill the entire viewport width */
+  height: 100vh;     /* Fill the entire viewport height */
+  max-width: 100vw;  /* Remove max-width limit */
+  max-height: 100vh; /* Remove max-height limit */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+#slider img {
+  width: 100vw;      /* Fill the entire viewport width */
+  height: 100vh;     /* Fill the entire viewport height */
+  object-fit: cover; /* Cover the area without distortion */
+  display: none;
+  border-radius: 0;  /* Remove border radius for full screen */
+  box-shadow: none;  /* Remove shadow for full screen */
+  transition: opacity 0.5s;
+}
+#slider img:first-child {
+  display: block;
+}
 .hero1 {
   display: flex;
   justify-content: center;
@@ -51,6 +86,7 @@ nav {
 }
 
 .nav-container {
+  width: 100%;
   max-width: 1200px;
   margin: auto;
   display: flex;
@@ -74,7 +110,25 @@ nav {
   text-decoration: none;
   position: relative;
   padding: 0.5rem;
+  transition: color 0.3s;
+}
 
+.menu a::after {
+  content: "";
+  display: block;
+  position: absolute;
+  left: 0;
+  bottom: 0.2em;
+  width: 100%;
+  height: 2px;
+  background: #0a3cff;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.menu a:hover::after {
+  transform: scaleX(1);
 }
 
 .dropdown {
@@ -210,19 +264,39 @@ nav {
 }
 
 @media (max-width: 768px) {
+  .nav-container {
+    flex-direction: row;
+    justify-content: flex-end;
+    align-items: center;
+    width: 100%;
+    padding-right: 1rem;
+  }
+
+  .hamburger {
+    display: flex;
+    margin-left: auto;
+    /* Pushes hamburger to the right */
+  }
+
   .menu {
     display: none;
     flex-direction: column;
     width: 100%;
     margin-top: 1rem;
-  }
-
-  .menu a {
-    padding: 1rem 0;
+    background: #1a237e;
+    position: absolute;
+    top: 100%;
+    right: 0;
+    left: 0;
+    z-index: 100;
   }
 
   .menu.active {
     display: flex;
+  }
+
+  .menu a {
+    padding: 1rem 0;
   }
 
   .hamburger {
@@ -415,5 +489,76 @@ nav {
 
 .viewbtn:active {
   scale: 0.95;
+}
+
+.hero {
+  width: 100vw;
+  height: 22vh;
+  min-height: 120px;
+  background: linear-gradient(120deg, #e3eafc 0%, #b6ccfa 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 24px rgba(26,35,126,0.10);
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.hero-logo {
+  max-width: 70px;
+  filter: drop-shadow(0 2px 8px rgba(26,35,126,0.10));
+}
+
+.hero-title {
+  color: #1a237e;
+  font-size: 2rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-shadow: 0 2px 8px rgba(26,35,126,0.08);
+  margin: 0;
+}
+
+html, body {
+  width: 100vw;
+  overflow-x: hidden;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.menu a,
+.dropdown > a {
+  position: relative;
+  color: white;
+  text-decoration: none;
+  padding: 0.5rem;
+  transition: color 0.3s;
+}
+
+.menu a::after,
+.dropdown > a::after {
+  content: "";
+  display: block;
+  position: absolute;
+  left: 0;
+  bottom: 0.2em;
+  width: 100%;
+  height: 2px;
+  background: #0a3cff;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.menu a:hover::after,
+.dropdown > a:hover::after {
+  transform: scaleX(1);
 }
 
