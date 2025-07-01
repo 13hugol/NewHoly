@@ -1,106 +1,115 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <link rel="icon" href="https://scontent.fktm3-1.fna.fbcdn.net/v/t39.30808-6/475660672_1104845061652996_8137074626694681726_n.jpg?_nc_cat=103&ccb=1-7&_nc_sid=6ee11a&_nc_ohc=mu-g20QkwucQ7kNvwG-5-yw&_nc_oc=Admng5Pur2hg_DCwB_xqOUJ7fOII9mAU5JeT6OO6UFShpUxCeSmlzprsReHpwZmNDzl-yYbRAucGkmB7Pm3bHNG9&_nc_zt=23&_nc_ht=scontent.fktm3-1.fna&_nc_gid=-LThKrh1AIaP72INrrd0PA&oh=00_AfPeMULU0j-gYGrkn7X8xst1jMKMqgMFpAmM3P6lfe-OXQ&oe=68612AF2" type="image/x-icon">
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-image: linear-gradient(rgba(0,0,69,0.7), rgba(69,0,0,0.7)), url('https://scontent.fktm3-1.fna.fbcdn.net/v/t1.6435-9/139050969_110890807602297_866295350973378620_n.jpg?_nc_cat=104&ccb=1-7&_nc_sid=cc71e4&_nc_ohc=_RYIjOrMNk8Q7kNvwFBBtqf&_nc_oc=AdmO9txjQTcSAPU5ZlHD-X4qlmvzAyIqu0WKrlc1LFkeVyzRb9-8S5KpoU8ZNfFV7Y4VBQKgOk3hims2KEL1nMP4&_nc_zt=23&_nc_ht=scontent.fktm3-1.fna&_nc_gid=rm5-20Ib8fdbSrQqRIWcRQ&oh=00_AfOXwdpMUVekUvhzof-YpGFiZQU21YeQ-QAzT7ehutoG3Q&oe=6882C271');
-        }
-        header {
-            color: white;
-            padding: 10px 20px;
-            display: flex;
-            align-items: center; 
-        }
-        h1 {
-            margin: 0;
-            font-size: 24px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-        header img {
-            border-radius: 50%;
-        }
-        header h1 {
-            margin-left: 50px;
-        }
-        nav {
-            margin-left: auto;
-        }
-        nav ul {
-            list-style-type: none;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            font: 1000 20px Arial, sans-serif;
-           
-        }
-        nav ul li {
-            margin-right: 20px;
-            position: relative;
-            margin-left: 50px;
-           margin-right: 50px;
-        }
-        nav ul li a {
-            color: white;
-            text-decoration: none;
-            
-        }
-        nav ul li a:hover {
-            font: 1000 16px Arial, sans-serif;
-        }
-        main {
-            padding: 20px;
-            text-align: left;
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-            height: 100vh;
-            overflow: hidden;
-        }
-        main h2 {
-            font-size: 24px;
-            color: #333;
-            padding: 10% 5px ;
-            font-weight: normal;
-            font: 1000 20px Arial, sans-serif;
-            font-size: 40px;
-            color: white;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);    
-        }
-        .gallery{
-            display: block;
-            background-color: #333;
-            padding: 10px;
-            margin-top: 5px;
-        }
-        .g:hover .gallery{
-            display: block;
-        }
-        </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>New Holy Cross</title>
+  <link rel="stylesheet" href="styles.css" media="screen">
 </head>
+
 <body>
-    <header>
-        <a href="#">
-            <img src="https://scontent.fktm3-1.fna.fbcdn.net/v/t39.30808-6/475660672_1104845061652996_8137074626694681726_n.jpg?_nc_cat=103&ccb=1-7&_nc_sid=6ee11a&_nc_ohc=mu-g20QkwucQ7kNvwG-5-yw&_nc_oc=Admng5Pur2hg_DCwB_xqOUJ7fOII9mAU5JeT6OO6UFShpUxCeSmlzprsReHpwZmNDzl-yYbRAucGkmB7Pm3bHNG9&_nc_zt=23&_nc_ht=scontent.fktm3-1.fna&_nc_gid=-LThKrh1AIaP72INrrd0PA&oh=00_AfPeMULU0j-gYGrkn7X8xst1jMKMqgMFpAmM3P6lfe-OXQ&oe=68612AF2" alt="Logo" width="50" height="50">
-        </a>
-        <h1>New Holy Cross E.B.S SCHOOL</h1>
-        <nav>
-            <ul>
-                <li><a href="#about">About</a></li>
-                <li><a href="#gallery" class="g">Gallery<div class="gallery">Hhahaha</div></a></li>
-                <li><a href="#contact">Contact us</a></li>
-            </ul>
-        </nav>
-    </header>
-    <main>
-        <h2><span>Namaste!</span> Welcome to New Holy Cross E.B.S SCHOOL</h2>
-    </main>
+  <div class="hero">
+    <div class="hero-content">
+      <img src="Images/Logo.svg" alt="New Holy Cross Logo" class="hero-logo">
+      <h1 class="hero-title">New Holy Cross</h1>
+    </div>
+  </div>
+  <header>
+    <nav>
+      <div class="nav-container">
+
+        <div class="hamburger" onclick="toggleMenu()">
+          <div></div>
+          <div></div>
+          <div></div>
+        </div>
+
+        <div class="menu" id="menu">
+          <div class="dropdown"><a href="#">Home</a></div>
+          <div class="dropdown">
+            <a href="#" class="lnk" >About Us ▾</a>
+            <div class="dropdown-content">
+              <a class="dptext" href="#" style="padding-left: 10px;">Our History</a>
+              <a class="dptext" href="#">Mission & Vision</a>
+              <a class="dptext" href="#">Principal's Message</a>
+            </div>
+          </div>
+          
+          <div class="dropdown">
+            <a href="#" class="lnk">Academics ▾</a>
+            <div class="dropdown-content">
+              <a class="dptext" href="#">Curriculum</a>
+              <a class="dptext" href="#">Subjects</a>
+              <a class="dptext" href="#">Timetable</a>
+            </div>
+          </div>
+          
+          <div class="dropdown" >
+            <a href="admission.html">Admissions</a>
+          </div>
+          <div class="dropdown">
+            <a href="#" class="sym">Student Life ▾</a>
+            <div class="dropdown-content">
+              <a class="dptext" href="#">Activities</a>
+              <a class="dptext" href="#">Leadership</a>
+              <a class="dptext" href="#">Field Trips</a>
+            </div>
+          </div>
+
+          <div class="dropdown" class="lnk"><a href="#">Gallery</a></div>
+          <div class="dropdown"class="lnk"><a href="#">Notices</a></div>
+          <div class="dropdown"class="lnk"><a href="#">Contact</a></div>
+        </div>
+      </div>
+    </nav>
+  </header>
+  <div class="scroll">
+    <div id="slider" class="pics">
+      <img src="Images/holly1.png" alt="Slide 1"> 
+      <img src="Images/holly2.jpg" alt="Slide 2"> 
+      <img src="Images/holly3.jpg" alt="Slide 3"> 
+      <img src="Images/holly4.jpg" alt="Slide 4"> 
+    </div>
+  </div>
+  <section class="dashboard">
+    <div class="card">
+      <div class="content">
+        <div class="header">
+          <strong>Rishav Bhattarai</strong>
+          <p class="para">Principal</p>
+        </div>
+        <div class="Pfooter">
+          <svg viewBox="0 0 24 24" class="quotes">
+          </svg>
+          <p class="para">
+            We try to provide you the best eduation that is possible
+            
+          </p>
+          <button class="viewbtn">
+            <span> View more </span>
+          </button>
+        </div>
+      </div>
+
+  </section>
+  <!-- <div id="adPopup" class="overlay">
+    <div class="popup">
+      <span class="close-btn" onclick="closeAd()">&#10006;</span>
+      <h2>📢 Important Notice</h2>
+      <p>Admissions Open for 2082! Limited seats available. Hurry up!</p>
+      <p><strong>Contact:</strong> 01-4990131 | WhatsApp: 9816078496</p>
+      <button class="button" onclick="window.location.href='admission.html'">
+        Apply Now
+        <svg class="icon" viewBox="0 0 24 24" fill="currentColor">
+          <path fill-rule="evenodd"
+            d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zm4.28 10.28a.75.75 0 000-1.06l-3-3a.75.75 0 10-1.06 1.06l1.72 1.72H8.25a.75.75 0 000 1.5h5.69l-1.72 1.72a.75.75 0 101.06 1.06l3-3z"
+            clip-rule="evenodd"></path>
+        </svg>
+      </button>
+    </div>
+  </div> -->
+</div>
+<script src="script.js" defer></script>
 </body>
 </html>
