@@ -33,6 +33,41 @@
 #slider img:first-child {
   display: block;
 }
+/* Slider styles */
+.scroll {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #f5f6fa;
+  min-height: 250px;
+  overflow: hidden;
+}
+
+#slider {
+  width: 100vw;
+  height: 100vh;
+  max-width: 100vw;
+  max-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+#slider img {
+  width: 100vw;
+  height: 100vh;
+  object-fit: cover;
+  display: none;
+  border-radius: 0;
+  box-shadow: none;
+  transition: opacity 0.5s;
+}
+#slider img:first-child {
+  display: block;
+}
 .hero1 {
   display: flex;
   justify-content: center;
@@ -87,6 +122,7 @@ nav {
 
 .nav-container {
   width: 100%;
+  width: 100%;
   max-width: 1200px;
   margin: auto;
   display: flex;
@@ -104,6 +140,9 @@ nav {
   display: flex;
   gap: 1.5rem;
 }
+
+
+
 
 
 
@@ -256,6 +295,20 @@ nav {
     /* Pushes hamburger to the right */
   }
 
+  .nav-container {
+    flex-direction: row;
+    justify-content: flex-end;
+    align-items: center;
+    width: 100%;
+    padding-right: 1rem;
+  }
+
+  .hamburger {
+    display: flex;
+    margin-left: auto;
+    /* Pushes hamburger to the right */
+  }
+
   .menu {
     display: none;
     flex-direction: column;
@@ -267,10 +320,20 @@ nav {
     right: 0;
     left: 0;
     z-index: 100;
+    background: #1a237e;
+    position: absolute;
+    top: 100%;
+    right: 0;
+    left: 0;
+    z-index: 100;
   }
 
   .menu.active {
     display: flex;
+  }
+
+  .menu a {
+    padding: 1rem 0;
   }
 
   .menu a {
@@ -469,3 +532,63 @@ nav {
   scale: 0.95;
 }
 
+.hero {
+  width: 100vw;
+  height: 22vh;
+  min-height: 120px;
+  background: linear-gradient(120deg, #e3eafc 0%, #b6ccfa 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 24px rgba(26,35,126,0.10);
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.hero-logo {
+  max-width: 70px;
+  filter: drop-shadow(0 2px 8px rgba(26,35,126,0.10));
+}
+
+.hero-title {
+  color: #1a237e;
+  font-size: 2rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-shadow: 0 2px 8px rgba(26,35,126,0.08);
+  margin: 0;
+}
+
+html, body {
+  width: 100vw;
+  overflow-x: hidden;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Only main nav links get transition */
+.menu > .dropdown > a {
+  color: white;
+  text-decoration: none;
+  position: relative;
+  padding: 0.5rem;
+  transition: color 0.3s;
+}
+
+/* Remove transition from dropdown text links */
+.dptext {
+  color: #222;
+  text-decoration: none;
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  display: block;
+  transition: none !important;
+}
