@@ -7,7 +7,7 @@
   align-items: center;
   background: #f5f6fa;
   min-height: 250px;
-  overflow: hidden;
+  overflow: visible;
 }
 
 #slider {
@@ -42,12 +42,14 @@
   background: linear-gradient(to right, #5309ff, #17014b);
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
   /* background shadow */
-  color: transparent;
+  color: #fff; /* Fallback color for browsers that don't support background-clip:text */
   background-clip: text;
   -webkit-background-clip: text;
+  color: transparent;
   font-size: 75px;
-  font-weight:500px;
+  font-weight: 500;
   text-shadow: 2px 2px 30px rgba(0, 0, 0, 0.5);
+  overflow: visible;
 }
 
 .hero2 {
@@ -59,13 +61,12 @@
   margin-top: 22px;
 }
 
+
 header {
-
-  padding: 0 0;
-  position: sticky;
-  top: 0;
-  z-index: 100;
-
+  padding: 0;
+  position: static; /* Not sticky! */
+  top: auto;
+  z-index: auto;
 }
 
 * {
@@ -81,8 +82,11 @@ body {
 
 nav {
   background-color: #1a237e;
-  padding: 1rem;
   color: white;
+  padding: 1rem 0;
+  position: sticky;
+  top: 0;
+  z-index: 101;
 }
 
 .nav-container {
@@ -90,19 +94,16 @@ nav {
   max-width: 1200px;
   margin: auto;
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
   align-items: center;
-  flex-wrap: wrap;
-}
-
-.logo {
-  font-size: 1.5rem;
-  font-weight: bold;
 }
 
 .menu {
   display: flex;
   gap: 1.5rem;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
 }
 
 
@@ -151,8 +152,7 @@ nav {
 .dptext:hover {
   background-color: rgb(56, 56, 56);
   color: aliceblue;
-  z-index: 200px;
-  z-index: 1;
+  z-index: 200;
   padding-left: 10px;
 }
 
@@ -167,7 +167,7 @@ nav {
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #ffff;
+  color: #fff;
   gap: 10px;
   font-weight: bold;
   border: 3px solid #ffffff4d;
@@ -231,7 +231,7 @@ nav {
   display: none;
   flex-direction: column;
   cursor: pointer;
-  z-index: 200px;
+  z-index: 200;
 }
 
 .hamburger div {
@@ -328,15 +328,24 @@ nav {
 }
 
 /* Ad popup box */
+/* Popup centered and 40% of screen */
 .popup {
   background: #fff;
-  width: 60%;
-  height: 50%;
-  padding: 20px;
+  width: 50vw;
+  height: auto;
+  min-width: 320px;
+  min-height: 320px;    /* Increased min-height */
+  max-width: 98vw;
+  max-height: 90vh;
+  padding: 32px;
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.25);
-  border-radius: 12px;
+  border-radius: 16px;
   position: relative;
   animation: fadeIn 0.4s ease-in-out;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
 .popup button {
@@ -369,8 +378,40 @@ nav {
 /* Optional ho tara mobile device haru ma responsive hunxa */
 @media (max-width: 768px) {
   .popup {
-    width: 90%;
-    height: 60%;
+    width: 98vw;
+    height: 70vh;      /* Also increase height on mobile */
+    padding: 12px;
+    min-width: unset;
+    min-height: unset;
+  }
+  .popupImg {
+    width: 100%;
+    height: 100%;
+    max-width: 100%;
+    max-height: 100%;
+  }
+}
+
+/* Make popupImg fill the popup, keeping aspect ratio */
+.popupImg {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border-radius: 12px;
+  margin-bottom: 18px;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 100%;
+  max-height: 100%;
+}
+
+/* Responsive for mobile */
+@media (max-width: 768px) {
+  .popupImg {
+    max-width: 100%;
+    max-height: 160px;
+    height: auto;
   }
 }
 
@@ -378,11 +419,12 @@ nav {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 600px;
   height: 360px;
   padding: 32px;
-  margin: auto;
-  border-radius: 24px;
+  margin: 32px;
+  background: #ffffff;
+  box-shadow: 0 4px 24px rgba(26, 35, 126, 0.10);
+  
   overflow: hidden;
   line-height: 1.6;
   border: 1px solid #cccccc;
@@ -502,14 +544,14 @@ nav {
   text-shadow: 0 2px 8px rgba(26,35,126,0.08);
   margin: 0;
 }
-
 html, body {
-  width: 100vw;
+  width: 100%;
   overflow-x: hidden;
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
+
 
 /* Only main nav links get transition */
 .menu > .dropdown > a {
@@ -528,4 +570,67 @@ html, body {
   font-size: 1rem;
   display: block;
   transition: none !important;
+}
+
+/* Footer Styles */
+footer {
+  background: #1a237e;
+  color: #fff;
+  padding: 32px 0 16px 0;
+  text-align: center;
+  box-shadow: 0 -2px 16px rgba(26,35,126,0.08);
+  width: 100%;
+}
+
+.footer-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+}
+
+.footer-content p {
+  margin: 0;
+  font-size: 1rem;
+  opacity: 0.85;
+  letter-spacing: 0.5px;
+}
+
+.social-icons {
+  display: flex;
+  gap: 18px;
+  justify-content: center;
+  align-items: center;
+}
+
+.social-icons a {
+  display: inline-block;
+  transition: transform 0.2s;
+}
+
+.social-icons img {
+  width: 28px;
+  height: 28px;
+  filter: brightness(0) invert(1) grayscale(1);
+  transition: filter 0.2s, transform 0.2s;
+}
+
+.social-icons a:hover img {
+  filter: brightness(1) invert(0) grayscale(0);
+  transform: scale(1.15) rotate(-8deg);
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .footer-content {
+    padding: 0 8px;
+    gap: 10px;
+  }
+  .social-icons img {
+    width: 22px;
+    height: 22px;
+  }
 }

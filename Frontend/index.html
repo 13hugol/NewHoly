@@ -15,18 +15,17 @@
       <h1 class="hero-title">New Holy Cross</h1>
     </div>
   </div>
+  
   <header>
-    <nav>
-      <div class="nav-container">
-
-        <div class="hamburger" onclick="toggleMenu()">
-          <div></div>
-          <div></div>
-          <div></div>
-        </div>
-
-        <div class="menu" id="menu">
-          <div class="dropdown"><a href="#">Home</a></div>
+  <nav>
+    <div class="nav-container">
+      <div class="hamburger" onclick="toggleMenu()">
+        <div></div>
+        <div></div>
+        <div></div>
+      </div>
+      <div class="menu" id="menu">
+        <div class="dropdown"><a href="#">Home</a></div>
           <div class="dropdown">
             <a href="#" class="lnk" >About Us ▾</a>
             <div class="dropdown-content">
@@ -60,10 +59,11 @@
           <div class="dropdown" class="lnk"><a href="#">Gallery</a></div>
           <div class="dropdown"class="lnk"><a href="#">Notices</a></div>
           <div class="dropdown"class="lnk"><a href="#">Contact</a></div>
-        </div>
       </div>
-    </nav>
-  </header>
+    </div>
+  </nav>
+</header>
+
   <div class="scroll">
     <div id="slider" class="pics">
       <img src="Images/holly1.png" alt="Slide 1"> 
@@ -91,25 +91,38 @@
           </button>
         </div>
       </div>
-
+      <div class="content1">
+        <div class="header1">
+          <strong>New Holy Cross</strong>
+          <p class="para">A place of learning</p>
+        </div>
+        <div class="Pfooter1">
+          <svg viewBox="0 0 24 24" class="quotes1">
+          </svg>
+        </div>
+      </div>
+    </div>
   </section>
-  <!-- <div id="adPopup" class="overlay">
+  <div id="adPopup" class="overlay">
     <div class="popup">
       <span class="close-btn" onclick="closeAd()">&#10006;</span>
-      <h2>📢 Important Notice</h2>
-      <p>Admissions Open for 2082! Limited seats available. Hurry up!</p>
-      <p><strong>Contact:</strong> 01-4990131 | WhatsApp: 9816078496</p>
-      <button class="button" onclick="window.location.href='admission.html'">
-        Apply Now
-        <svg class="icon" viewBox="0 0 24 24" fill="currentColor">
-          <path fill-rule="evenodd"
-            d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zm4.28 10.28a.75.75 0 000-1.06l-3-3a.75.75 0 10-1.06 1.06l1.72 1.72H8.25a.75.75 0 000 1.5h5.69l-1.72 1.72a.75.75 0 101.06 1.06l3-3z"
-            clip-rule="evenodd"></path>
-        </svg>
-      </button>
+      <a href="admission.html">
+        
+      <img src="Images/popupimg.jpg"  alt="New Holy Cross Logo" class="popupImg">
+      </a>
     </div>
-  </div> -->
+  </div> 
 </div>
 <script src="script.js" defer></script>
+ <footer>
+    <div class="footer-content">
+      <p>&copy; 2023 New Holy Cross. All rights reserved.</p>
+      <div class="social-icons">
+        <a href="#"><img src="Images/facebook.svg" alt="Facebook"></a>
+        <a href="#"><img src="Images/twitter.svg" alt="Twitter"></a>
+        <a href="#"><img src="Images/instagram.svg" alt="Instagram"></a>
+      </div>
+    </div>
+  </footer>
 </body>
 </html>
