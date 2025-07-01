@@ -5,10 +5,22 @@
     align-items: center;
     background:linear-gradient(to right,#5309ff ,#17014b);
     background-clip: text;
-    color: transparent;
-    font-size: 75px;
-    font-weight: 300px;
+    color: transparent; 
 }
+.hero1 span
+{
+  font-size: 75px;
+  font-weight: 300px;
+}
+@media(max-width:768px)
+{
+  .hero1 span
+  {
+    font-size: calc(12px + 10vw); /* Adjust as needed */
+    width: 90%; /* Add this to make the span narrower */
+  }
+}
+
 header {
         
             padding: 20px 0;
@@ -172,6 +184,8 @@ header {
     .hamburger {
       display: none;
       flex-direction: column;
+      position: relative;
+      left: 90%;
       cursor: pointer;
       z-index: 200px;
     }
@@ -180,6 +194,7 @@ header {
       height: 3px;
       margin: 4px 0;
       width: 25px;
+      
     }
 
     @media (max-width: 768px) {
@@ -197,6 +212,11 @@ header {
       }
       .hamburger {
         display: flex;
+         justify-content: right;
+         align-items: center;
+      }
+      .hero1{
+        white-space: nowrap;
       }
     }
 
@@ -370,4 +390,38 @@ header {
 .viewbtn:active {
   scale: 0.95;
 }
+     .dashboard {
+      width: 100%;
+      overflow: hidden;
+      position: relative;
+    }
 
+    #slider {
+      width: 100%;
+      overflow: hidden;
+    }
+
+    #slider figure {
+      display: flex;
+      width:30; 
+      margin: 0;
+      padding: 0;
+      animation: slidy 10s infinite;
+    }
+
+    #slider figure img {
+      width: 100%;
+      height: auto;
+      object-fit: cover;
+    }
+@keyframes slidy {
+0% { left: 0%; }
+20% { left: 0%; }
+25% { left: -100%; }
+45% { left: -100%; }
+50% { left: -200%; }
+70% { left: -200%; }
+75% { left: -300%; }
+95% { left: -300%; }
+100% { left: -400%; }
+}
