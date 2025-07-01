@@ -12,6 +12,7 @@ function toggleMenu() {
     window.onload = function() {
       document.getElementById("adPopup").style.display = "flex";
     };
+    
 var slideIndex = 0;
 
 function carousel() {
