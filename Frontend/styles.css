@@ -38,6 +38,7 @@ body {
 .hero-title {
     font-size: 3.5rem; /* Responsive font size */
     font-weight: bold;
+
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
 }
 
@@ -447,6 +448,9 @@ nav {
     font-weight: 600; /* font-semibold */
     display: flex; /* flex */
     align-items: center; /* items-center */
+    border: none;
+    border-radius: 24px;
+    padding: 20px;
     transition: color 0.3s ease; /* transition-colors */
 }
 
