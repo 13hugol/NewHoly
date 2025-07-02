@@ -6,6 +6,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>New Holy Cross</title>
   <link rel="stylesheet" href="styles.css" media="screen">
+  <style>
+
+  </style>
 </head>
 
 <body>
@@ -15,113 +18,147 @@
       <h1 class="hero-title">New Holy Cross</h1>
     </div>
   </div>
-  
+
   <header>
-  <nav>
-    <div class="nav-container">
-      <div class="hamburger" onclick="toggleMenu()">
-        <div></div>
-        <div></div>
-        <div></div>
-      </div>
-      <div class="menu" id="menu">
-        <div class="dropdown"><a href="#">Home</a></div>
+    <nav>
+      <div class="nav-container">
+        <div class="hamburger" onclick="toggleMenu()">
+          <div></div>
+          <div></div>
+          <div></div>
+        </div>
+        <div class="menu" id="menu">
+          <div class="dropdown"><a href="#">Home</a></div>
           <div class="dropdown">
-            <a href="#" class="lnk" >About Us ▾</a>
+            <a href="#" class="dropdown-trigger">About Us ▾</a>
             <div class="dropdown-content">
-              <a class="dptext" href="#" style="padding-left: 10px;">Our History</a>
+              <a class="dptext" href="#">Our History</a>
               <a class="dptext" href="#">Mission & Vision</a>
               <a class="dptext" href="#">Principal's Message</a>
             </div>
           </div>
-          
           <div class="dropdown">
-            <a href="#" class="lnk">Academics ▾</a>
+            <a href="#" class="dropdown-trigger">Academics ▾</a>
             <div class="dropdown-content">
               <a class="dptext" href="#">Curriculum</a>
               <a class="dptext" href="#">Subjects</a>
               <a class="dptext" href="#">Timetable</a>
             </div>
           </div>
-          
-          <div class="dropdown" >
+          <div class="dropdown">
             <a href="admission.html">Admissions</a>
           </div>
           <div class="dropdown">
-            <a href="#" class="sym">Student Life ▾</a>
+            <a href="#" class="dropdown-trigger">Student Life ▾</a>
             <div class="dropdown-content">
               <a class="dptext" href="#">Activities</a>
               <a class="dptext" href="#">Leadership</a>
               <a class="dptext" href="#">Field Trips</a>
             </div>
           </div>
-
-          <div class="dropdown" class="lnk"><a href="#">Gallery</a></div>
-          <div class="dropdown"class="lnk"><a href="#">Notices</a></div>
-          <div class="dropdown"class="lnk"><a href="#">Contact</a></div>
+          <div class="dropdown"><a href="#">Gallery</a></div>
+          <div class="dropdown"><a href="#">Notices</a></div>
+          <div class="dropdown"><a href="#">Contact</a></div>
+          <button class="login-btn">
+          <a href="admin.html" class="nav-login-icon" title="Admin Login">
+              <svg  viewBox="0 0 24 24" ><path d="M12 13c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2m6-5h-1V6c0-2.76-2.24-5-5-5-2.28 0-4.27 1.54-4.84 3.75-.14.54.18 1.08.72 1.22.53.14 1.08-.18 1.22-.72C9.44 3.93 10.63 3 12 3c1.65 0 3 1.35 3 3v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2m0 11c0 .55-.45 1-1 1H7c-.55 0-1-.45-1-1v-8c0-.55.45-1 1-1h10c.55 0 1 .45 1 1z"></path></svg>
+              <circle cx="12" cy="8" r="4" stroke-width="2"/>
+              <path stroke-width="2" d="M4 20c0-3.314 3.134-6 7-6s7 2.686 7 6"/>
+              <path stroke-width="2" d="M17 11l2 2-2 2"/>
+              <path stroke-width="2" d="M19 13h-6"/>
+              
+            </svg>
+            Login
+          </a>
+          </button>
+          
+        </div>
       </div>
-    </div>
-  </nav>
-</header>
+    </nav>
+  </header>
 
   <div class="scroll">
     <div id="slider" class="pics">
-      <img src="Images/holly1.png" alt="Slide 1"> 
-      <img src="Images/holly2.jpg" alt="Slide 2"> 
-      <img src="Images/holly3.jpg" alt="Slide 3"> 
-      <img src="Images/holly4.jpg" alt="Slide 4"> 
+      <img src="Images/holly1.png" alt="Slide 1">
+      <img src="Images/holly2.jpg" alt="Slide 2">
+      <img src="Images/holly3.jpg" alt="Slide 3">
+      <img src="Images/holly4.jpg" alt="Slide 4">
     </div>
   </div>
+
   <section class="dashboard">
-    <div class="card">
-      <div class="content">
-        <div class="header">
-          <strong>Rishav Bhattarai</strong>
-          <p class="para">Principal</p>
-        </div>
-        <div class="Pfooter">
-          <svg viewBox="0 0 24 24" class="quotes">
-          </svg>
-          <p class="para">
-            We try to provide you the best eduation that is possible
-            
-          </p>
-          <button class="viewbtn">
-            <span> View more </span>
-          </button>
+    <div class="card-wrapper">
+      <div class="card principal">
+        <div class="content">
+          <div class="header">
+            <strong>Dinesh Kumar Karki</strong>
+            <p class="para">Principal</p>
+            <img src="Images/principal.jpg" alt="Principal Image" class="principal-image">
+          </div>
+          <div class="Pfooter">
+            <p class="para">
+              We try to provide you the best education that is possible
+            </p>
+            <button class="viewbtn" onclick="expandCard(this)">
+              <span>View more</span>
+            </button>
+            <div class="more-info">
+              <p>This is the expanded detailed section with more information about the Principal's message and vision for the school.</p>
+            </div>
+          </div>
         </div>
       </div>
-      <div class="content1">
-        <div class="header1">
-          <strong>New Holy Cross</strong>
-          <p class="para">A place of learning</p>
-        </div>
-        <div class="Pfooter1">
-          <svg viewBox="0 0 24 24" class="quotes1">
-          </svg>
+      <div class="card vice">
+        <div class="content">
+          <div class="header">
+            <strong>Rishav Bhattarai</strong>
+            <p class="para">Vice-Principal</p>
+          </div>
+          <div class="Pfooter">
+            <svg viewBox="0 0 24 24" class="quotes">
+              <path d="M10 13.5c0 .828-.672 1.5-1.5 1.5S7 14.328 7 13.5 7.672 12 8.5 12s1.5.672 1.5 1.5zM17 13.5c0 .828-.672 1.5-1.5 1.5S14 14.328 14 13.5 14.672 12 15.5 12s1.5.672 1.5 1.5zM12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zM12 20c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8zM8.5 11c-1.381 0-2.5 1.119-2.5 2.5s1.119 2.5 2.5 2.5 2.5-1.119 2.5-2.5S9.881 11 8.5 11zM15.5 11c-1.381 0-2.5 1.119-2.5 2.5s1.119 2.5 2.5 2.5 2.5-1.119 2.5-2.5S16.881 11 15.5 11z"/>
+            </svg>
+            <p class="para">
+              We try to provide you the best education that is possible
+            </p>
+            <button class="viewbtn" onclick="expandCard(this)">
+              <span>View more</span>
+            </button>
+            <div class="more-info">
+              <p>This is the expanded detailed section with more information about the Vice-Principal's message and their role in school development.</p>
+            </div>
+          </div>
         </div>
       </div>
     </div>
   </section>
-  <div id="adPopup" class="overlay">
-    <div class="popup">
-      <span class="close-btn" onclick="closeAd()">&#10006;</span>
-      <a href="admission.html">
-        
-      <img src="Images/popupimg.jpg"  alt="New Holy Cross Logo" class="popupImg">
-      </a>
-    </div>
-  </div> 
-</div>
-<script src="script.js" defer></script>
- <footer>
-    <div class="footer-content">
-      <p>&copy; 2023 New Holy Cross. All rights reserved.</p>
-      <div class="social-icons">
-        <a href="#"><img src="Images/facebook.svg" alt="Facebook"></a>
-        <a href="#"><img src="Images/twitter.svg" alt="Twitter"></a>
-        <a href="#"><img src="Images/instagram.svg" alt="Instagram"></a>
+
+  <!-- Academic Programs Section -->
+  <section id="programs" class="programs-section">
+    <div class="programs-container">
+      <div class="programs-header">
+        <h2>Academic Programs</h2>
+        <p>
+          Our comprehensive curriculum is designed to challenge and inspire students across all disciplines,
+          preparing them for success in higher education and beyond.
+        </p>
       </div>
+      <div id="programs-grid" class="programs-grid">
+        <!-- Program cards will be injected here by JavaScript -->
+      </div>
+    </div>
+  </section>
+  <script src="script.js" defer></script>
+  <footer>
+    <div class="footer-content">
+      <p>Follow us on:
+        <a href="#" class="social-link">Facebook</a>,
+        <a href="#" class="social-link">Twitter</a>,
+        <a href="#" class="social-link">Instagram</a>
+      </p>
+    </div>
+    <div class="copyright">
+      <p>&copy; 2023 New Holy Cross. All rights reserved.</p>
     </div>
   </footer>
 </body>

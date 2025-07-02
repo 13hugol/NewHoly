@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+ 
+    
+    <link rel="stylesheet" href="styles.css">
+    <script src="script.js" defer></script>
+</head>
+<body>
+<section class="admin-login-dashboard">
+  <div class="admin-login-card">
+    <img src="Images/Logo.svg" alt="Admin Logo" class="admin-logo">
+    <div class="admin-login-content">
+      <h2>Admin Login</h2>
+      <form class="form-group" autocomplete="off">
+        <label for="admin-username">Username</label>
+        <input type="text" id="admin-username" name="admin-username" placeholder="Enter username" required>
+
+        <label for="admin-password">Password</label>
+        <input type="password" id="admin-password" name="admin-password" placeholder="Enter password" required>
+
+        <button type="submit">Login</button>
+      </form>
+     
+      <div class="login-error" id="loginError">
+        Incorrect username or password. Please try again.
+      </div>
+    </div>
+  </div>
+</section>
+</body>
+</html>
