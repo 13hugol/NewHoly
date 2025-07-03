@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
+
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>New Holy Cross</title>
@@ -9,14 +9,25 @@
   <style>
 
   </style>
-</head>
 
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New Holy Cross</title>
+    <!-- Google Font: Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- Link to external CSS file -->
+    <link rel="stylesheet" href="styles.css">
+
+</head>
 <body>
-  <div class="hero">
-    <div class="hero-content">
-      <img src="Images/Logo.svg" alt="New Holy Cross Logo" class="hero-logo">
-      <h1 class="hero-title">New Holy Cross</h1>
+    <div class="hero">
+        <div class="hero-content">
+            <!-- Using the actual Logo.svg -->
+            <img src="Images/Logo.svg" alt="New Holy Cross Logo" class="hero-logo">
+            <h1 class="hero-title">New Holy Cross</h1>
+        </div>
     </div>
+
   </div>
 
   <header>
@@ -163,3 +174,133 @@
   </footer>
 </body>
 </html>
+=======
+    <header>
+        <nav>
+            <div class="nav-container">
+                <div class="hamburger" onclick="toggleMenu()">
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                </div>
+
+                <div class="menu" id="menu">
+                    <div class="dropdown"><a href="#">Home</a></div>
+                    <div class="dropdown">
+                        <a href="#" class="lnk">About Us ▾</a>
+                        <div class="dropdown-content">
+                            <a class="dptext" href="#" style="padding-left: 10px;">Our History</a>
+                            <a class="dptext" href="#">Mission & Vision</a>
+                            <a class="dptext" href="#">Principal's Message</a>
+                        </div>
+                    </div>
+
+                    <div class="dropdown">
+                        <a href="#" class="lnk">Academics ▾</a>
+                        <div class="dropdown-content">
+                            <a class="dptext" href="#">Curriculum</a>
+                            <a class="dptext" href="#">Subjects</a>
+                            <a class="dptext" href="#">Timetable</a>
+                        </div>
+                    </div>
+
+                    <div class="dropdown">
+                        <a href="admission.html">Admissions</a>
+                    </div>
+                    <div class="dropdown">
+                        <a href="#" class="sym">Student Life ▾</a>
+                        <div class="dropdown-content">
+                            <a class="dptext" href="#">Activities</a>
+                            <a class="dptext" href="#">Leadership</a>
+                            <a class="dptext" href="#">Field Trips</a>
+                        </div>
+                    </div>
+
+                    <div class="dropdown"><a href="#">Gallery</a></div>
+                    <div class="dropdown"><a href="#">Notices</a></div>
+                    <div class="dropdown"><a href="#">Contact</a></div>
+                </div>
+            </div>
+        </nav>
+    </header>
+    <div class="scroll">
+        <div id="slider" class="pics">
+            <!-- Using the actual image paths for the slider -->
+            <img src="Images/holly1.png" alt="Slide 1">
+            <img src="Images/holly2.jpg" alt="Slide 2">
+            <img src="Images/holly3.jpg" alt="Slide 3">
+        </div>
+    </div>
+    <section class="dashboard">
+        <div class="card-wrapper">
+            <div class="card principal">
+                <div class="content">
+                    <div class="header">
+                        <strong>Bhugol Gautam</strong>
+                        <p class="para">Principal</p>
+                    </div>
+                    <div class="Pfooter">
+                        <!-- SVG for quotes icon -->
+                        <svg viewBox="0 0 24 24" class="quotes">
+                            <path d="M10 13.5c0 .828-.672 1.5-1.5 1.5S7 14.328 7 13.5 7.672 12 8.5 12s1.5.672 1.5 1.5zM17 13.5c0 .828-.672 1.5-1.5 1.5S14 14.328 14 13.5 14.672 12 15.5 12s1.5.672 1.5 1.5zM12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zM12 20c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8zM8.5 11c-1.381 0-2.5 1.119-2.5 2.5s1.119 2.5 2.5 2.5 2.5-1.119 2.5-2.5S9.881 11 8.5 11zM15.5 11c-1.381 0-2.5 1.119-2.5 2.5s1.119 2.5 2.5 2.5 2.5-1.119 2.5-2.5S16.881 11 15.5 11z"/>
+                        </svg>
+                        <p class="para">
+                            We try to provide you the best education that is possible
+                        </p>
+                        <button class="viewbtn" onclick="expandCard(this)">
+                            <span> View more </span>
+                        </button>
+                        <div class="more-info">
+                            <p>DEVELOPER BACKEND & FRONTEND</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card vice">
+                <div class="content">
+                    <div class="header">
+                        <strong>Rishav Bhattarai</strong>
+                        <p class="para">Vice-Principal</p>
+                    </div>
+                    <div class="Pfooter">
+                        <!-- SVG for quotes icon -->
+                        <svg viewBox="0 0 24 24" class="quotes">
+                            <path d="M10 13.5c0 .828-.672 1.5-1.5 1.5S7 14.328 7 13.5 7.672 12 8.5 12s1.5.672 1.5 1.5zM17 13.5c0 .828-.672 1.5-1.5 1.5S14 14.328 14 13.5 14.672 12 15.5 12s1.5.672 1.5 1.5zM12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zM12 20c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8zM8.5 11c-1.381 0-2.5 1.119-2.5 2.5s1.119 2.5 2.5 2.5 2.5-1.119 2.5-2.5S9.881 11 8.5 11zM15.5 11c-1.381 0-2.5 1.119-2.5 2.5s1.119 2.5 2.5 2.5 2.5-1.119 2.5-2.5S16.881 11 15.5 11z"/>
+                        </svg>
+                        <p class="para">
+                            We try to provide you the best education that is possible
+                        </p>
+                        <button class="viewbtn" onclick="expandCard(this)">
+                            <span> View more </span>
+                        </button>
+                        <div class="more-info">
+                            <p>DEVELOPER FRONTEND & BACKEND</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Academic Programs Section -->
+    <section id="programs" class="programs-section">
+        <div class="programs-container">
+            <div class="programs-header">
+                <h2>Academic Programs</h2>
+                <p>
+                    Our comprehensive curriculum is designed to challenge and inspire students across all disciplines,
+                    preparing them for success in higher education and beyond.
+                </p>
+            </div>
+
+            <div id="programs-grid" class="programs-grid">
+                <!-- Program cards will be injected here by JavaScript -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Link to external JavaScript file -->
+    <script src="script.js" defer></script>
+</body>
+</html
+
