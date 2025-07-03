@@ -239,10 +239,13 @@ nav {
     border-radius: 1rem;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
     padding: 2rem;
-    flex: 1; /* Allow cards to grow and shrink */
-    min-width: 300px; /* Minimum width for cards */
-    max-width: 45%; /* Max width to allow two cards per row */
+    flex: 1; 
+    min-width: 300px; 
+    max-width: 45%; 
     display: flex;
+    position: relative;
+    align-items: center;
+    text-align: center;
     flex-direction: column;
     justify-content: space-between;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
@@ -255,6 +258,10 @@ nav {
 
 .card .header {
     margin-bottom: 1rem;
+    display: flex; /* Use flexbox for header content */
+    flex-direction: column; /* Stack header elements vertically */
+    align-items: center; /* Center elements in header */
+    width: 100%; /* Ensure header takes full width */
 }
 
 .card strong {
@@ -464,7 +471,27 @@ nav {
 .program-learn-more-btn:hover svg {
     transform: translateX(0.25rem); /* group-hover:translate-x-1 */
 }
+.Photo {
+    /* Existing styles, adjusted for better positioning within the card */
+    width: 150px; /* Adjust as needed, make it a bit smaller */
+    height: 150px; /* Keep it square */
+    border-radius: 50%; /* Make it circular */
+    object-fit: cover; /* Ensure the image covers the circular area */
+    display: block; /* Ensures it behaves like a block element for margin auto */
+    margin: 0 auto 1rem auto; /* Center the image horizontally, add margin below */
+    border: 4px solid #f0f0f0; /* Optional: A subtle border around the photo */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Soft shadow */
+    transition: background-color 0.5s ease, border-color 0.5s ease; /* Smooth transition for background and border */
 
+    /* Add a default background color for the 'box' effect */
+    background-color: #e0e0e0; /* Light grey default background */
+}
+
+.Photo:hover {
+    background-color: #cceeff; /* Light blue on hover */
+    border-color: #2563eb; /* Blue border on hover */
+    /* You could also add transform: scale(1.05); for a slight zoom effect */
+}
 /* Specific background colors for program icons */
 .bg-emerald-500 { background-color: #10b981; }
 .bg-blue-500 { background-color: #3b82f6; }
