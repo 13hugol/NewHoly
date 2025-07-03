@@ -29,7 +29,7 @@ body {
 .hero-logo {
     width: 120px; /* Responsive logo size */
     height: auto;
-    margin-bottom: 1rem;
+    margin-bottom: 2rem;
     border-radius: 50%;
     background-color: white;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
