@@ -118,8 +118,7 @@ const newsEventsData = [
         iconSvg: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-graduation-cap"><path d="M21.43 11.75c-.23-.39-.58-.74-1.01-1.07-1.12-.87-2.31-1.63-3.6-2.29a3.39 3.39 0 0 0-2.15-.42 3.39 3.39 0 0 0-2.15.42c-1.29.66-2.48 1.42-3.6 2.29-.43.33-.78.68-1.01 1.07-.36.6-.57 1.29-.63 2H21c-.06-.71-.27-1.4-.63-2Z"/><path d="M12 2v3"/><path d="M12 14v6"/><path d="M16 14v6"/><path d="M8 14v6"/></svg>',
         title: 'New Student Orientation',
         date: 'August 1, 2025',
-        description: 'Welcome new students! Join us for an orientation session to get familiar with our campus and faculty.',
-        link: '#'
+        description: 'Welcome new students! Join us for an orientation session to get familiar with our campus and faculty.'
     }
 ];
 
@@ -368,4 +367,19 @@ document.addEventListener('DOMContentLoaded', () => {
             contactForm.reset();
         });
     }
+
+    // Fade-in on scroll
+    const fadeEls = document.querySelectorAll('.fade-in');
+    const observer = new IntersectionObserver(
+        entries => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    observer.unobserve(entry.target);
+                }
+            });
+        },
+        { threshold: 0.15 }
+    );
+    fadeEls.forEach(el => observer.observe(el));
 });

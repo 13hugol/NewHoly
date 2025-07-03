@@ -107,10 +107,11 @@ nav {
     justify-content: space-between;
     align-items: center;
     width: 100%;
+    position: relative;
 }
 
 .hamburger {
-    display: none; /* Hidden by default on larger screens */
+    display: none;
     cursor: pointer;
     flex-direction: column;
     gap: 5px;
@@ -126,6 +127,8 @@ nav {
 .menu {
     display: flex;
     gap: 2rem;
+    align-items: center;
+    flex: 1;
 }
 
 .dropdown {
@@ -175,6 +178,37 @@ nav {
     display: block;
 }
 
+/* Style the login button/icon */
+.login-btn {
+    display: flex;
+    align-items: center;
+    margin-left: auto;
+}
+
+.login-btn a {
+    display: flex;
+    align-items: center;
+    border-radius: 50%;
+    background: none;
+    transition: background 0.2s;
+}
+
+.login-btn a:hover {
+    background: #f0f4f8;
+}
+
+.login-btn svg {
+    width: 50px;
+    height: 50px;
+   padding: 0%;
+   margin: 0;
+    transition: 0.2s;
+}
+
+.login-btn a:hover svg {
+    background-color: #1a237e;
+}
+
 /* Responsive Navigation */
 @media (max-width: 768px) {
     .hamburger {
@@ -217,6 +251,21 @@ nav {
     }
     .dropdown-content a {
         padding-left: 2rem; /* Indent sub-menu items */
+    }
+
+    .nav-container {
+        flex-direction: row;
+    }
+    .menu {
+        flex: 1 1 auto;
+    }
+    .login-btn {
+        position: absolute;
+        right: 1.5rem;
+        top: 50%;
+        transform: translateY(-50%);
+        margin-left: 0;
+        z-index: 110;
     }
 }
 
@@ -1209,4 +1258,29 @@ nav {
 .quick-link-card p {
     font-size: 0.9rem;
     color: #4a5568;
+}
+
+/* Fade-in animation */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-in {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 0.8s cubic-bezier(0.23, 1, 0.32, 1), transform 0.8s cubic-bezier(0.23, 1, 0.32, 1);
+  will-change: opacity, transform;
+}
+
+.fade-in.visible {
+  opacity: 1;
+  transform: translateY(0);
+  animation: fadeInUp 0.8s cubic-bezier(0.23, 1, 0.32, 1);
 }
