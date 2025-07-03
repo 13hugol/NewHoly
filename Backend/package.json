@@ -15,5 +15,8 @@
     "dotenv": "^17.0.0",
     "express": "^5.1.0",
     "mongodb": "^6.17.0"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.10"
   }
 }

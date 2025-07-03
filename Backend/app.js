@@ -3,7 +3,7 @@ const express = require('express');
 const path = require('path');
 // Assuming dbconnect is in a separate file, as per your provided code snippet.
 const { dbconnect } = require('./dbconnect');
-
+const { check }= require('./middleware');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -32,7 +32,7 @@ let collection;
 })();
 
 // POST route to handle form submission
-app.post('/submit-admission', async (req, res) => {
+app.post('/submit-admission',check, async (req, res) => {
     const formData = req.body;
     try {
         await collection.insertOne(formData);
@@ -45,7 +45,6 @@ app.post('/submit-admission', async (req, res) => {
         res.redirect('/index.html?status=error');
     }
 });
-
 
 app.listen(PORT, () => {
     console.log(`🚀 Server running at http://localhost:${PORT}`);
