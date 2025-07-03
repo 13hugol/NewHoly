@@ -113,6 +113,32 @@ function renderPrograms() {
 
 // Initialize all functions when the DOM is fully loaded
 document.addEventListener('DOMContentLoaded', () => {
+    // Existing initializations from your original code
     showSlides(); // Start the slider
     renderPrograms(); // Render academic programs
+
+    // Contact and Footer JS logic (merged from previous response)
+    const currentYearSpan = document.getElementById('currentYear');
+    if (currentYearSpan) {
+        currentYearSpan.textContent = new Date().getFullYear();
+    }
+
+    const contactForm = document.getElementById('contactForm');
+    if (contactForm) {
+        contactForm.addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const name = document.getElementById('contactName').value;
+            const email = document.getElementById('contactEmail').value;
+            const message = document.getElementById('contactMessage').value;
+
+            console.log('Form Submitted!');
+            console.log('Name:', name);
+            console.log('Email:', email);
+            console.log('Message:', message);
+
+            console.log('Thank you for your message! We will get back to you soon.');
+            contactForm.reset();
+        });
+    }
 });
