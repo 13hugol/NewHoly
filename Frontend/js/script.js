@@ -38,7 +38,7 @@ function showSlides() {
 let programsData = [];
 let newsEventsData = [];
 let testimonialsData = [];
-let facultyData = [];
+let facultyData = []; // This will hold all faculty data
 let galleryData = [];
 let quickLinksData = [];
 
@@ -46,28 +46,18 @@ let quickLinksData = [];
  * Loads all data from localStorage for the frontend.
  */
 function loadFrontendData() {
-    console.log("Attempting to load data from localStorage...");
     try {
         programsData = JSON.parse(localStorage.getItem('programsData')) || [];
         newsEventsData = JSON.parse(localStorage.getItem('newsEventsData')) || [];
         testimonialsData = JSON.parse(localStorage.getItem('testimonialsData')) || [];
-        facultyData = JSON.parse(localStorage.getItem('facultyData')) || [];
+        facultyData = JSON.parse(localStorage.getItem('facultyData')) || []; // Load all faculty data
         galleryData = JSON.parse(localStorage.getItem('galleryData')) || [];
         quickLinksData = JSON.parse(localStorage.getItem('quickLinksData')) || [];
 
-        console.log("Data loaded from localStorage:");
-        console.log("Programs:", programsData);
-        console.log("News Events:", newsEventsData);
-        console.log("Testimonials:", testimonialsData);
-        console.log("Faculty:", facultyData);
-        console.log("Gallery:", galleryData);
-        console.log("Quick Links:", quickLinksData);
-
-        // If localStorage is empty (first load), populate with initial data
-        // This block will only run if localStorage is completely empty for a given key.
-        // If you've added data via admin panel, these checks will likely be false.
+        // If localStorage is empty (first load), populate with initial default data
+        // This ensures the site has content even before the admin panel is used.
+        // The admin panel will overwrite these defaults when data is saved.
         if (programsData.length === 0) {
-            console.log("Programs data empty in localStorage, populating with defaults.");
             programsData = [
                 {
                     iconSvg: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-book-open"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>',
@@ -104,7 +94,6 @@ function loadFrontendData() {
         }
 
         if (newsEventsData.length === 0) {
-            console.log("News Events data empty in localStorage, populating with defaults.");
             newsEventsData = [
                 {
                     iconSvg: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-newspaper"><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2Zm0 0a2 2 0 0 0 2-2V4a2 2 0 0 1 2-2h7.5L22 7.5V20a2 2 0 0 1-2 2Z"/><path d="M10 12.5h8"/><path d="M10 16.5h8"/><path d="M10 8.5h8"/></svg>',
@@ -132,7 +121,6 @@ function loadFrontendData() {
         }
 
         if (testimonialsData.length === 0) {
-            console.log("Testimonials data empty in localStorage, populating with defaults.");
             testimonialsData = [
                 {
                     iconSvg: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-quote"><path d="M10 11H6a1 1 0 0 0-1 1v3a1 1 0 0 0 1 1h3.5c.34 0 .68-.1.97-.29l2.53-2.53V3H10v8Zm11 0h-4a1 1 0 0 0-1 1v3a1 1 0 0 0 1 1h3.5c.34 0 .68-.1.97-.29l2.53-2.53V3H21v8Z"/></svg>',
@@ -157,7 +145,6 @@ function loadFrontendData() {
         }
 
         if (facultyData.length === 0) {
-            console.log("Faculty data empty in localStorage, populating with defaults.");
             facultyData = [
                 {
                     imageUrl: 'https://placehold.co/100x100/007bff/ffffff?text=Teacher+1',
@@ -176,13 +163,24 @@ function loadFrontendData() {
                     name: 'Dr. Carol Davis',
                     role: 'Science Coordinator',
                     description: 'Leads innovative science programs, fostering curiosity and scientific inquiry.'
+                },
+                {
+                    imageUrl: 'https://placehold.co/100x100/007bff/ffffff?text=Teacher+4',
+                    name: 'Mr. David Green',
+                    role: 'History Teacher',
+                    description: 'Expert in world history, making past events come alive for students.'
+                },
+                {
+                    imageUrl: 'https://placehold.co/100x100/007bff/ffffff?text=Teacher+5',
+                    name: 'Ms. Sarah Brown',
+                    role: 'Art Teacher',
+                    description: 'Inspires creativity and artistic expression in students of all ages.'
                 }
             ];
             localStorage.setItem('facultyData', JSON.stringify(facultyData));
         }
 
         if (galleryData.length === 0) {
-            console.log("Gallery data empty in localStorage, populating with defaults.");
             galleryData = [
                 {
                     imageUrl: 'https://placehold.co/400x300/28a745/ffffff?text=Sports+Day',
@@ -213,7 +211,6 @@ function loadFrontendData() {
         }
 
         if (quickLinksData.length === 0) {
-            console.log("Quick Links data empty in localStorage, populating with defaults.");
             quickLinksData = [
                 {
                     iconSvg: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-calendar"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg>',
@@ -258,12 +255,8 @@ function loadFrontendData() {
 
 // Function to render the academic programs (using loaded data)
 function renderPrograms() {
-    console.log("Rendering Academic Programs with data:", programsData);
     const programsGrid = document.getElementById('programs-grid');
-    if (!programsGrid) {
-        console.warn("Element #programs-grid not found.");
-        return;
-    }
+    if (!programsGrid) return;
 
     programsGrid.innerHTML = '';
 
@@ -299,12 +292,8 @@ function renderPrograms() {
 
 // Function to render News & Events (using loaded data)
 function renderNewsEvents() {
-    console.log("Rendering News & Events with data:", newsEventsData);
     const newsEventsGrid = document.getElementById('news-events-grid');
-    if (!newsEventsGrid) {
-        console.warn("Element #news-events-grid not found.");
-        return;
-    }
+    if (!newsEventsGrid) return;
 
     newsEventsGrid.innerHTML = '';
 
@@ -334,12 +323,8 @@ function renderNewsEvents() {
 
 // Function to render Testimonials (using loaded data)
 function renderTestimonials() {
-    console.log("Rendering Testimonials with data:", testimonialsData);
     const testimonialsContainer = document.getElementById('testimonials-container');
-    if (!testimonialsContainer) {
-        console.warn("Element #testimonials-container not found.");
-        return;
-    }
+    if (!testimonialsContainer) return;
 
     testimonialsContainer.innerHTML = '';
 
@@ -366,21 +351,25 @@ function renderTestimonials() {
 
 // Function to render Faculty (using loaded data)
 function renderFaculty() {
-    console.log("Rendering Faculty with data:", facultyData);
     const facultyGrid = document.getElementById('faculty-grid');
-    if (!facultyGrid) {
-        console.warn("Element #faculty-grid not found.");
-        return;
-    }
+    const facultyDisplayContainer = document.getElementById('faculty-display-container');
+    const showMoreBtn = document.getElementById('showMoreFacultyBtn');
+
+    if (!facultyGrid || !facultyDisplayContainer || !showMoreBtn) return;
 
     facultyGrid.innerHTML = '';
 
     if (facultyData.length === 0) {
         facultyGrid.innerHTML = '<p class="no-data-message">No faculty members listed. Please add some via the admin panel.</p>';
+        facultyDisplayContainer.classList.add('expanded'); // No need for blur/button if no faculty
+        showMoreBtn.style.display = 'none';
         return;
     }
 
-    facultyData.forEach(faculty => {
+    const initialDisplayCount = 3; // Show only the first 3 faculty members initially
+    const facultyToShow = facultyData.slice(0, initialDisplayCount);
+
+    facultyToShow.forEach(faculty => {
         const facultyCard = document.createElement('div');
         facultyCard.className = 'faculty-card';
 
@@ -392,16 +381,57 @@ function renderFaculty() {
         `;
         facultyGrid.appendChild(facultyCard);
     });
+
+    // If there are more than 3 faculty members, show the "Show More" button and apply blur
+    if (facultyData.length > initialDisplayCount) {
+        facultyDisplayContainer.classList.remove('expanded'); // Ensure not expanded initially
+        showMoreBtn.style.display = 'block'; // Show the button
+        showMoreBtn.textContent = 'Show More Faculty'; // Reset button text
+    } else {
+        facultyDisplayContainer.classList.add('expanded'); // No need for blur/button if <= 3
+        showMoreBtn.style.display = 'none';
+    }
 }
+
+// Function to toggle visibility of all faculty members
+function toggleFacultyVisibility() {
+    const facultyGrid = document.getElementById('faculty-grid');
+    const facultyDisplayContainer = document.getElementById('faculty-display-container');
+    const showMoreBtn = document.getElementById('showMoreFacultyBtn');
+
+    if (!facultyGrid || !facultyDisplayContainer || !showMoreBtn) return;
+
+    // Toggle the 'expanded' class on the container
+    const isExpanded = facultyDisplayContainer.classList.toggle('expanded');
+
+    // Re-render all faculty if expanded, or just the first 3 if collapsed
+    facultyGrid.innerHTML = ''; // Clear current grid
+
+    const facultyToRender = isExpanded ? facultyData : facultyData.slice(0, 3);
+
+    facultyToRender.forEach(faculty => {
+        const facultyCard = document.createElement('div');
+        facultyCard.className = 'faculty-card';
+
+        facultyCard.innerHTML = `
+            <img src="${faculty.imageUrl}" alt="${faculty.name}" class="faculty-photo">
+            <h3>${faculty.name}</h3>
+            <p class="faculty-role">${faculty.role}</p>
+            <p class="faculty-description">${faculty.description}</p>
+        `;
+        facultyGrid.appendChild(facultyCard);
+    });
+
+    // Update button text
+    showMoreBtn.textContent = isExpanded ? 'Show Less Faculty' : 'Show More Faculty';
+    showMoreBtn.style.display = isExpanded && facultyData.length <= 3 ? 'none' : 'block'; // Hide if all shown and expanded
+}
+
 
 // Function to render Gallery (using loaded data)
 function renderGallery() {
-    console.log("Rendering Gallery with data:", galleryData);
     const galleryGrid = document.getElementById('gallery-grid');
-    if (!galleryGrid) {
-        console.warn("Element #gallery-grid not found.");
-        return;
-    }
+    if (!galleryGrid) return;
 
     galleryGrid.innerHTML = '';
 
@@ -424,12 +454,8 @@ function renderGallery() {
 
 // Function to render Quick Links (using loaded data)
 function renderQuickLinks() {
-    console.log("Rendering Quick Links with data:", quickLinksData);
     const quickLinksGrid = document.getElementById('quick-links-grid');
-    if (!quickLinksGrid) {
-        console.warn("Element #quick-links-grid not found.");
-        return;
-    }
+    if (!quickLinksGrid) return;
 
     quickLinksGrid.innerHTML = '';
 
@@ -455,9 +481,33 @@ function renderQuickLinks() {
 }
 
 
+// --- Smooth Scrolling for Navigation Links ---
+function setupSmoothScrolling() {
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault(); // Prevent default jump behavior
+
+            const targetId = this.getAttribute('href');
+            const targetElement = document.querySelector(targetId);
+
+            if (targetElement) {
+                targetElement.scrollIntoView({
+                    behavior: 'smooth' // Smooth scroll animation
+                });
+
+                // Optional: Close mobile menu after clicking a link
+                const menu = document.getElementById('menu');
+                if (menu && menu.classList.contains('active')) {
+                    menu.classList.remove('active');
+                }
+            }
+        });
+    });
+}
+
+
 // Initialize all functions when the DOM is fully loaded
 document.addEventListener('DOMContentLoaded', () => {
-    console.log("DOM Content Loaded for index.html");
     loadFrontendData(); // Load data from localStorage first
 
     showSlides(); // Start the slider
@@ -467,6 +517,13 @@ document.addEventListener('DOMContentLoaded', () => {
     renderFaculty(); // Render faculty
     renderGallery(); // Render gallery
     renderQuickLinks(); // Render quick links
+    setupSmoothScrolling(); // Setup smooth scrolling for nav links
+
+    // Add event listener for the "Show More Faculty" button
+    const showMoreFacultyBtn = document.getElementById('showMoreFacultyBtn');
+    if (showMoreFacultyBtn) {
+        showMoreFacultyBtn.addEventListener('click', toggleFacultyVisibility);
+    }
 
     // Contact and Footer JS logic
     const currentYearSpan = document.getElementById('currentYear');

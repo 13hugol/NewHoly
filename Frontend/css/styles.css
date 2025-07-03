@@ -36,6 +36,7 @@ body {
 /* Hero Section Styles */
 .hero {
     background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('../Images/holly4.jpg') no-repeat center center/cover;
+    background-attachment: fixed; /* KEY FOR PARALLAX EFFECT */
     height: 60vh; /* Responsive height */
     display: flex;
     align-items: center;
@@ -70,6 +71,9 @@ body {
 @media (max-width: 768px) {
     .hero {
         height: 40vh;
+        /* For mobile, fixed background-attachment can sometimes cause issues or be less performant.
+           Consider removing it or using a media query if you notice problems.
+           background-attachment: scroll; */
     }
     .hero-logo {
         width: 80px;
@@ -943,11 +947,25 @@ nav {
     background-color: #e2e8f0; /* Light blue-gray background */
 }
 
+.faculty-display-container {
+    position: relative; /* Needed for absolute positioning of overlay */
+    overflow: hidden; /* Hide overflow when blurred */
+    max-height: 500px; /* Adjust as needed to show 3 rows initially */
+    transition: max-height 0.7s ease-out; /* Smooth transition for expansion */
+}
+
+.faculty-display-container.expanded {
+    max-height: 2000px; /* Large enough to show all content */
+    transition: max-height 0.7s ease-in;
+}
+
 .faculty-grid {
     display: grid;
     grid-template-columns: 1fr;
     gap: 2rem;
+    transition: filter 0.7s ease-in-out; /* Smooth blur transition */
 }
+
 
 @media (min-width: 640px) {
     .faculty-grid {
@@ -1003,6 +1021,49 @@ nav {
     color: #4a5568;
     line-height: 1.5;
 }
+
+.faculty-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 200px; /* Increased height to cover more of the bottom */
+    /* Adjusted gradient for a more subtle blur effect at the bottom */
+    background: linear-gradient(to top, rgba(226, 232, 240, 0.9) 0%, rgba(226, 232, 240, 0.5) 50%, rgba(226, 232, 240, 0) 100%);
+    pointer-events: none; /* Allows clicks to pass through to the button */
+    transition: opacity 0.7s ease-in-out;
+}
+
+.faculty-display-container.expanded .faculty-overlay {
+    opacity: 0; /* Hide overlay when expanded */
+}
+
+.show-more-button {
+    display: block;
+    margin: 1.5rem auto 0; /* Center button below content */
+    background-color: #2563eb;
+    color: white;
+    padding: 0.8rem 2rem;
+    border: none;
+    border-radius: 9999px; /* Fully rounded */
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    position: relative; /* Position relative to its normal flow */
+    z-index: 10; /* Ensure it's above the overlay */
+}
+
+.show-more-button:hover {
+    background-color: #1d4ed8;
+    transform: translateY(-2px);
+}
+
+.faculty-display-container.expanded .show-more-button {
+    display: none; /* Hide button when expanded */
+}
+
 
 /* Why Choose Us Section Styles */
 .why-choose-us-section {
