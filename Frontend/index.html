@@ -27,22 +27,22 @@
                 </div>
 
                 <div class="menu" id="menu">
-                    <div class="dropdown"><a href="#">Home</a></div>
+                    <div class="dropdown"><a href="#hero-section">Home</a></div>
                     <div class="dropdown">
-                        <a href="#" class="lnk">About Us ▾</a>
+                        <a href="#about-us-section" class="lnk">About Us ▾</a>
                         <div class="dropdown-content">
-                            <a class="dptext" href="#" style="padding-left: 10px;">Our History</a>
-                            <a class="dptext" href="#">Mission & Vision</a>
-                            <a class="dptext" href="#">Principal's Message</a>
+                            <a class="dptext" href="#about-us-section" style="padding-left: 10px;">Our History</a>
+                            <a class="dptext" href="#about-us-section">Mission & Vision</a>
+                            <a class="dptext" href="#dashboard-section">Principal's Message</a>
                         </div>
                     </div>
 
                     <div class="dropdown">
-                        <a href="#" class="lnk">Academics ▾</a>
+                        <a href="#programs" class="lnk">Academics ▾</a>
                         <div class="dropdown-content">
-                            <a class="dptext" href="#">Curriculum</a>
-                            <a class="dptext" href="#">Subjects</a>
-                            <a class="dptext" href="#">Timetable</a>
+                            <a class="dptext" href="#programs">Curriculum</a>
+                            <a class="dptext" href="#programs">Subjects</a>
+                            <a class="dptext" href="#programs">Timetable</a>
                         </div>
                     </div>
 
@@ -50,17 +50,17 @@
                         <a href="admission.html">Admissions</a>
                     </div>
                     <div class="dropdown">
-                        <a href="#" class="sym">Student Life ▾</a>
+                        <a href="#student-life-section" class="sym">Student Life ▾</a>
                         <div class="dropdown-content">
-                            <a class="dptext" href="#">Activities</a>
-                            <a class="dptext" href="#">Leadership</a>
-                            <a class="dptext" href="#">Field Trips</a>
-                        K</div>
+                            <a class="dptext" href="#student-life-section">Activities</a>
+                            <a class="dptext" href="#student-life-section">Leadership</a>
+                            <a class="dptext" href="#student-life-section">Field Trips</a>
+                        </div>
                     </div>
 
-                    <div class="dropdown"><a href="#">Gallery</a></div>
-                    <div class="dropdown"><a href="#">Notices</a></div>
-                    <div class="dropdown"><a href="#">Contact</a></div>
+                    <div class="dropdown"><a href="#gallery-section">Gallery</a></div>
+                    <div class="dropdown"><a href="#news-events">Notices</a></div>
+                    <div class="dropdown"><a href="#school-contact-section">Contact</a></div>
                 </div>
             </div>
         </nav>
@@ -74,7 +74,9 @@
             <img src="Images/holly4.jpg" alt="Slide 4">
         </div>
     </div>
-    <section class="dashboard">
+
+    <!-- Dashboard Section (Principal/Vice-Principal Cards) -->
+    <section id="dashboard-section" class="dashboard">
         <div class="card-wrapper">
             <div class="card principal">
                 <div class="content">
@@ -119,6 +121,26 @@
         </div>
     </section>
 
+    <!-- About Us Section -->
+    <section id="about-us-section" class="about-us-section">
+        <div class="school-container">
+            <h2 class="section-title">About New Holy Cross</h2>
+            <div class="about-us-content">
+                <div class="about-us-image">
+                    <img src="https://placehold.co/600x400/1e3a8a/ffffff?text=Our+School+Building" alt="School Building">
+                </div>
+                <div class="about-us-text">
+                    <h3>Our History & Philosophy</h3>
+                    <p>Founded in 19XX, New Holy Cross has been a beacon of learning, dedicated to fostering intellectual curiosity, personal growth, and a strong sense of community. Our philosophy centers on providing a holistic education that balances academic rigor with character development.</p>
+                    <p>We believe in nurturing every student's unique potential, encouraging them to explore their interests, challenge themselves, and become responsible global citizens. Our commitment to excellence is reflected in our innovative curriculum, dedicated faculty, and vibrant campus life.</p>
+                    <h3>Mission & Vision</h3>
+                    <p><strong>Mission:</strong> To empower students with knowledge, skills, and values to thrive in a dynamic world.</p>
+                    <p><strong>Vision:</strong> To be a leading educational institution recognized for academic excellence, innovative teaching, and a nurturing environment that inspires lifelong learning.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- Academic Programs Section -->
     <section id="programs" class="programs-section">
         <div class="programs-container">
@@ -132,6 +154,113 @@
 
             <div id="programs-grid" class="programs-grid">
                 <!-- Program cards will be injected here by JavaScript -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Why Choose Us Section -->
+    <section id="why-choose-us" class="why-choose-us-section">
+        <div class="school-container">
+            <h2 class="section-title">Why Choose New Holy Cross?</h2>
+            <div class="why-choose-us-grid">
+                <div class="why-choose-us-item">
+                    <div class="why-choose-us-icon-wrapper">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-award"><circle cx="12" cy="8" r="7"/><path d="M8.21 13.89 7 22l5-3 5 3-1.21-8.11"/></svg>
+                    </div>
+                    <h3>Excellence in Education</h3>
+                    <p>We are committed to providing a high-quality education that fosters intellectual curiosity and critical thinking.</p>
+                </div>
+                <div class="why-choose-us-item">
+                    <div class="why-choose-us-icon-wrapper">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-users"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                    </div>
+                    <h3>Supportive Community</h3>
+                    <p>Our school is a warm and inclusive environment where every student feels valued and supported.</p>
+                </div>
+                <div class="why-choose-us-item">
+                    <div class="why-choose-us-icon-wrapper">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-lightbulb"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 6c0 1.3.5 2.6 1.5 3.5.8.8 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/><path d="M12 18v4"/></svg>
+                    </div>
+                    <h3>Innovative Learning</h3>
+                    <p>We embrace modern teaching methodologies and technology to provide engaging and effective learning experiences.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Student Life Section -->
+    <section id="student-life-section" class="student-life-section">
+        <div class="school-container">
+            <h2 class="section-title">Student Life</h2>
+            <div class="student-life-content">
+                <p>At New Holy Cross, student life extends far beyond the classroom. We offer a diverse range of extracurricular activities, clubs, and events designed to enrich our students' experiences, foster their talents, and build strong character.</p>
+                <p>From competitive sports teams and vibrant arts programs to academic clubs and community service initiatives, there's something for everyone. We encourage students to explore new interests, develop leadership skills, and forge lasting friendships in a supportive and engaging environment.</p>
+                <h3>Clubs & Activities</h3>
+                <ul class="student-life-list">
+                    <li><span class="list-icon">&#10003;</span> Debate Club</li>
+                    <li><span class="list-icon">&#10003;</span> Robotics Team</li>
+                    <li><span class="list-icon">&#10003;</span> Environmental Club</li>
+                    <li><span class="list-icon">&#10003;</span> Drama & Theater Arts</li>
+                    <li><span class="list-icon">&#10003;</span> Music Ensemble</li>
+                    <li><span class="list-icon">&#10003;</span> Sports (Basketball, Football, Volleyball)</li>
+                </ul>
+                <h3>Events & Traditions</h3>
+                <ul class="student-life-list">
+                    <li><span class="list-icon">&#10003;</span> Annual Sports Day</li>
+                    <li><span class="list-icon">&#10003;</span> Science Fair</li>
+                    <li><span class="list-icon">&#10003;</span> Cultural Week</li>
+                    <li><span class="list-icon">&#10003;</span> Graduation Ceremony</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- Gallery Section -->
+    <section id="gallery-section" class="gallery-section">
+        <div class="school-container">
+            <h2 class="section-title">Our Gallery</h2>
+            <div id="gallery-grid" class="gallery-grid">
+                <!-- Gallery items will be injected here by JavaScript -->
+            </div>
+        </div>
+    </section>
+
+    <!-- News & Events Section -->
+    <section id="news-events" class="news-events-section">
+        <div class="school-container">
+            <h2 class="section-title">News & Events</h2>
+            <div id="news-events-grid" class="news-events-grid">
+                <!-- News & Event cards will be injected here by JavaScript -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section id="testimonials" class="testimonial-section">
+        <div class="school-container">
+            <h2 class="section-title">What Our Community Says</h2>
+            <div id="testimonials-container" class="testimonials-grid">
+                <!-- Testimonial cards will be injected here by JavaScript -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Faculty Section -->
+    <section id="faculty" class="faculty-section">
+        <div class="school-container">
+            <h2 class="section-title">Meet Our Faculty</h2>
+            <div id="faculty-grid" class="faculty-grid">
+                <!-- Faculty cards will be injected here by JavaScript -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Quick Links & Resources Section -->
+    <section id="quick-links-resources" class="quick-links-resources-section">
+        <div class="school-container">
+            <h2 class="section-title">Quick Links & Resources</h2>
+            <div id="quick-links-grid" class="quick-links-grid">
+                <!-- Quick links will be injected here by JavaScript -->
             </div>
         </div>
     </section>
@@ -205,6 +334,20 @@
     <footer class="school-footer">
         <div class="school-container">
             <p class="footer-copyright">&copy; <span id="currentYear"></span> Acme School. All rights reserved.</p>
+            <div class="footer-social-links">
+                <a href="#" class="social-icon-link" aria-label="Facebook">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-facebook"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+                </a>
+                <a href="#" class="social-icon-link" aria-label="Twitter">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-twitter"><path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.3-.5 2.6-1 3.9-1.4z"/></svg>
+                </a>
+                <a href="#" class="social-icon-link" aria-label="Instagram">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-instagram"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg>
+                </a>
+                <a href="#" class="social-icon-link" aria-label="YouTube">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-youtube"><path d="M2.8 21h18.4a.8.8 0 0 0 .8-.8V3.8a.8.8 0 0 0-.8-.8H2.8a.8.8 0 0 0-.8.8v16.4a.8.8 0 0 0 .8.8z"/><path d="m10 15 5-3-5-3v6z"/></svg>
+                </a>
+            </div>
             <div class="footer-links">
                 <a href="#" class="footer-link">Privacy Policy</a>
                 <a href="#" class="footer-link">Terms of Service</a>
