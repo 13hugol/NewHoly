@@ -9,6 +9,43 @@ body {
     color: #333; /* Default text color */
 }
 
+/* Page Loader Styles */
+.page-loader {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #1e3a8a; /* Dark blue background for loader */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999; /* Ensure it's on top of everything */
+    opacity: 1;
+    visibility: visible;
+    transition: opacity 0.5s ease-out, visibility 0.5s ease-out;
+}
+
+.page-loader.hidden {
+    opacity: 0;
+    visibility: hidden;
+}
+
+.loader-spinner {
+    border: 8px solid #facc15; /* Yellow border for the spinner */
+    border-top: 8px solid #ffffff; /* White top border for spinning effect */
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    animation: spin 1.2s cubic-bezier(0.68, -0.55, 0.27, 1.55) infinite; /* Professional bouncy spin */
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+
 /* Reusable Container */
 .school-container {
     max-width: 1280px; /* Max width for content */
@@ -167,8 +204,8 @@ nav {
     text-decoration: none;
     display: block;
     text-align: left;
-    transition: background-color 0.3s ease;
     font-weight: 400;
+    transition: background-color 0.3s ease;
 }
 
 .dropdown-content a:hover {
@@ -235,7 +272,7 @@ nav {
 
 .pics {
     display: flex;
-    transition: transform 0.5s ease-in-out;
+    transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94); /* Smooth ease-in-out */
 }
 
 .pics img {
@@ -963,9 +1000,14 @@ nav {
     display: grid;
     grid-template-columns: 1fr;
     gap: 2rem;
+    /* Removed filter: blur(5px); from here */
     transition: filter 0.7s ease-in-out; /* Smooth blur transition */
 }
 
+/* Removed this rule as it's no longer needed for full blur */
+/* .faculty-display-container:not(.expanded) .faculty-grid {
+    filter: blur(5px);
+} */
 
 @media (min-width: 640px) {
     .faculty-grid {
@@ -1027,9 +1069,9 @@ nav {
     bottom: 0;
     left: 0;
     width: 100%;
-    height: 200px; /* Increased height to cover more of the bottom */
-    /* Adjusted gradient for a more subtle blur effect at the bottom */
-    background: linear-gradient(to top, rgba(226, 232, 240, 0.9) 0%, rgba(226, 232, 240, 0.5) 50%, rgba(226, 232, 240, 0) 100%);
+    height: 250px; /* Increased height for a larger blur area */
+    /* Adjusted gradient for a more pronounced blur effect at the bottom */
+    background: linear-gradient(to top, rgba(226, 232, 240, 0.98) 0%, rgba(226, 232, 240, 0.8) 50%, rgba(226, 232, 240, 0) 100%);
     pointer-events: none; /* Allows clicks to pass through to the button */
     transition: opacity 0.7s ease-in-out;
 }
@@ -1062,6 +1104,98 @@ nav {
 
 .faculty-display-container.expanded .show-more-button {
     display: none; /* Hide button when expanded */
+}
+
+/* New Counter Section Styles */
+.counter-section {
+    padding: 5rem 0;
+    background-color: #ffffff; /* Dark blue background */
+    color: #ffffff;
+    text-align: center;
+}
+
+.counter-grid-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 2rem;
+    justify-content: center;
+    align-items: flex-start; /* Align items to the start of the cross axis */
+}
+
+.counter-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 1.5rem;
+    border-radius: 1.5rem; /* More rounded corners */
+    background-color: #1e3a8a; /* Slightly transparent white */
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3); /* Stronger shadow */
+    transition: transform 0.4s ease-out, background-color 0.3s ease, opacity 0.6s ease-out; /* Added opacity to transition */
+    opacity: 0; /* Initially hidden for animation */
+    transform: translateY(50px); /* Start slightly below for fade-in-up */
+}
+
+.counter-item.animated {
+    opacity: 1;
+    transform: translateY(0);
+    /* No need for animation property here if using transition and adding 'animated' class */
+}
+
+/* Staggered animation delay using CSS variables and nth-child */
+.counter-item:nth-child(1) { transition-delay: 0.1s; }
+.counter-item:nth-child(2) { transition-delay: 0.2s; }
+.counter-item:nth-child(3) { transition-delay: 0.3s; }
+.counter-item:nth-child(4) { transition-delay: 0.4s; }
+
+
+.counter-item:hover {
+    transform: translateY(-10px) scale(1.05); /* More pronounced pop-up on hover */
+    background-color: rgb(36, 26, 94);
+}
+
+.icon-holder {
+    font-size: 3.5rem; /* Larger icon size */
+    margin-bottom: 0.75rem;
+    color: #facc15; /* Yellow icon color */
+}
+
+.icon-holder i {
+    /* Ensure Font Awesome icons are styled correctly */
+    line-height: 1; /* Adjust line-height to prevent extra space */
+}
+
+.counter-value {
+    font-size: 4rem; /* Larger number size */
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    color: #ffffff;
+    display: flex;
+    align-items: baseline; /* Align number and suffix */
+}
+
+.counter-value .suffix {
+    font-size: 1.8rem; /* Smaller size for '%' */
+    font-weight: 600;
+    margin-left: 0.25rem;
+    color: #facc15; /* Yellow for suffix */
+}
+
+.counter-text {
+    font-size: 1.35rem; /* Larger text */
+    font-weight: 600;
+    color: #cbd5e1; /* Light gray text */
+}
+
+/* Keyframes for fade-in-up animation (still useful for initial appearance) */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 

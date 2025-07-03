@@ -6,6 +6,8 @@
     <title>New Holy Cross</title>
     <!-- Google Font: Inter -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <!-- Link to external CSS file -->
     <link rel="stylesheet" href="css/styles.css">
 </head>
@@ -72,7 +74,6 @@
             <img src="Images/holly1.png" alt="Slide 1">
             <img src="Images/holly2.jpg" alt="Slide 2">
             <img src="Images/holly3.jpg" alt="Slide 3">
-            <!-- <img src="Images/holly4.jpg" alt="Slide 4"> -->
         </div>
     </div>
 
@@ -90,17 +91,20 @@
                         <p class="para">
                             We try to provide you the best education that is possible
                         </p>
-                        <div class="more-info">
-                            <p>This is the expanded detailed section with more information about the Principal's message and vision for the school.</p>
-                        </div>
                         <button class="viewbtn" onclick="expandCard(this)">
                             <span> View more </span>
                         </button>
+                        <div class="more-info">
+                            <p>This is the expanded detailed section with more information about the Principal's message and vision for the school.</p>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </section>
+
+    <!-- New Counter Section -->
+    
 
     <!-- About Us Section -->
     <section id="about-us-section" class="about-us-section">
@@ -249,7 +253,30 @@
             </div>
         </div>
     </section>
-
+      <section id="counter-section" class="counter-section">
+        <div class="school-container counter-grid-container">
+            <div class="counter-item fade-in-up" data-target="100" data-suffix="%">
+                <div class="icon-holder"><i class="fa fa-male"></i></div>
+                <div class="counter-value"><span class="count-up">0</span><span class="suffix">%</span></div>
+                <div class="counter-text"><span>Leadership</span></div>
+            </div>
+            <div class="counter-item fade-in-up" data-target="100" data-suffix="%">
+                <div class="icon-holder"><i class="fa fa-handshake-o"></i></div>
+                <div class="counter-value"><span class="count-up">0</span><span class="suffix">%</span></div>
+                <div class="counter-text"><span>Excellence</span></div>
+            </div>
+            <div class="counter-item fade-in-up" data-target="100" data-suffix="%">
+                <div class="icon-holder"><i class="fa fa-cogs"></i></div>
+                <div class="counter-value"><span class="count-up">0</span><span class="suffix">%</span></div>
+                <div class="counter-text"><span>Service</span></div>
+            </div>
+            <div class="counter-item fade-in-up" data-target="100" data-suffix="%">
+                <div class="icon-holder"><i class="fa fa-smile-o"></i></div>
+                <div class="counter-value"><span class="count-up">0</span><span class="suffix">%</span></div>
+                <div class="counter-text"><span>Smiles</span></div>
+            </div>
+        </div>
+    </section>                      
     <!-- Contact Section -->
     <section id="school-contact-section" class="school-contact-section">
         <div class="school-container">
