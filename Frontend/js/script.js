@@ -6,32 +6,13 @@ function toggleMenu() {
     }
 }
 
-// --- Card Expansion Logic (Now handles horizontal expansion for Principal's message) ---
-function expandCard(button) {
-    const card = button.closest('.card');
-    if (!card) return;
-
-    // Toggle the 'expanded' class on the card. CSS will handle the animation.
-    card.classList.toggle('expanded');
-
-    const moreInfoSpan = button.querySelector('span');
-    if (moreInfoSpan) {
-        // Update button text based on the expanded state.
-        moreInfoSpan.textContent = card.classList.contains('expanded') ? 'View less' : 'View more';
-    }
-}
-
 // --- Image Slider Logic (Smoother with requestAnimationFrame) ---
 let slideIndex = 0;
 let lastFrameTime = 0;
-const slideInterval = 3000; // Change image every 3 seconds
+const slideInterval = 3000;
 
 function animateSlider(currentTime) {
-    // If lastFrameTime is 0, it's the first frame, so just set it
-    if (!lastFrameTime) {
-        lastFrameTime = currentTime;
-    }
-
+    if (!lastFrameTime) lastFrameTime = currentTime;
     const elapsed = currentTime - lastFrameTime;
 
     if (elapsed > slideInterval) {
@@ -43,14 +24,28 @@ function animateSlider(currentTime) {
                 slides.style.transform = `translateX(${-slideIndex * 100}%)`;
             }
         }
-        lastFrameTime = currentTime; // Reset lastFrameTime for the next interval
+        lastFrameTime = currentTime;
     }
-    requestAnimationFrame(animateSlider); // Continue the animation loop
+    requestAnimationFrame(animateSlider);
 }
 
-// --- Data Loading from localStorage (Refactored for cleaner access) ---
-// These arrays will hold the data for different sections of the website.
-// They are populated from localStorage or with default data if localStorage is empty.
+// --- Data Loading from Backend API ---
+
+// Helper function to fetch data from API
+async function fetchData(endpoint) {
+    try {
+        const response = await fetch(endpoint);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        return data.data || []; // Assuming API returns { data: [...] }
+    } catch (error) {
+        console.error(`Error fetching data from ${endpoint}:`, error);
+        return []; // Return empty array on error
+    }
+}
+
 let programsData = [];
 let newsEventsData = [];
 let testimonialsData = [];
@@ -58,292 +53,217 @@ let facultyData = [];
 let galleryData = [];
 let quickLinksData = [];
 
-/**
- * Helper function to get data from localStorage or set a default.
- * This prevents errors if localStorage is empty or corrupted and provides initial content.
- * @param {string} key - The localStorage key to retrieve data from.
- * @param {Array} defaultArray - The default array to use if no data is found or an error occurs.
- * @returns {Array} The parsed data from localStorage or the default array.
- */
-function getOrSetDefaultData(key, defaultArray) {
-    try {
-        const storedData = localStorage.getItem(key);
-        if (storedData) {
-            return JSON.parse(storedData);
-        } else {
-            // If no data is found, set the default data in localStorage for future use.
-            localStorage.setItem(key, JSON.stringify(defaultArray));
-            return defaultArray;
-        }
-    } catch (e) {
-        // Log any errors encountered while accessing localStorage (e.g., security errors).
-        console.error(`Error accessing localStorage for key "${key}":`, e);
-        return defaultArray; // Return default on error to ensure app still functions.
-    }
+// Function to load all frontend data from the backend
+async function loadFrontendData() {
+    programsData = await fetchData('/api/programs');
+    newsEventsData = await fetchData('/api/newsEvents');
+    testimonialsData = await fetchData('/api/testimonials');
+    facultyData = await fetchData('/api/faculty');
+    galleryData = await fetchData('/api/gallery');
+    quickLinksData = await fetchData('/api/quickLinks');
 }
 
-/**
- * Loads all necessary frontend data from localStorage.
- * This function is called once when the DOM is fully loaded to prepare content.
- */
-function loadFrontendData() {
-    // Populate programs data with default SVG icons for a consistent look.
-    programsData = getOrSetDefaultData('programsData', [
-        { iconSvg: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-book-open"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>', title: 'Literature & Language Arts', description: 'Our program emphasizes classical and contemporary literature, critical analysis, and creative writing, fostering strong communication skills.' },
-        { iconSvg: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-calculator"><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M17 22H7a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v13a2 2 0 0 1-2 2z"/></svg>', title: 'Mathematics & Sciences', description: 'We offer a rigorous STEM curriculum, including AP Calculus and Physics, with state-of-the-art labs for hands-on experimentation and research.' },
-        { iconSvg: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-palette"><circle cx="13.5" cy="6.5" r=".5"/><circle cx="17.5" cy="10.5" r=".5"/><circle cx="8.5" cy="7.5" r=".5"/><circle cx="6.5" cy="12.5" r=".5"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.648 0-.485-.37-.864-.848-1.124-.461-.252-.914-.573-1.313-.957-.39-.379-.71-.795-.947-1.247-.237-.443-.356-.906-.356-1.373 0-.87-.73-1.57-1.6-1.57-.87 0-1.57.7-1.57 1.57 0 .385.118.748.333 1.047.42.567.985 1.13 1.613 1.656.63.526 1.323 1.038 2.07 1.49.747.453 1.56.83 2.436 1.115.876.286 1.8.428 2.73.428C17.5 20 22 15.5 22 10 22 6.5 17.5 2 12 2z"/></svg>', title: 'Visual & Performing Arts', description: 'Our vibrant arts programs include studio art, drama, choir, and instrumental music, culminating in annual showcases and performances.' },
-        { iconSvg: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-globe"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20A14.5 14.5 0 0 0 12 2"/><path d="M2 12h20"/></svg>', title: 'Social Studies & History', description: 'Our curriculum explores global history, civics, economics, and geography, encouraging students to understand diverse cultures and historical contexts.' },
-        { iconSvg: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-microscope"><path d="M6 18h8"/><path d="M3 22h18"/><path d="M14 22v-4a2 4 0 0 0-2-2h-2a2 2 0 0 0-2 2v4"/><path d="M12 10L12 2"/><path d="M10 9.5 6.5 3 2 4.5"/><path d="M15.5 3 19 4.5 22 3"/><path d="M11 2h2"/><path d="M12 10a4 4 0 0 0 4 4H8a4 4 0 0 0 4-4Z"/></svg>', title: 'Research & Innovation', description: 'We offer dedicated research projects, innovation challenges, and access to advanced technology to foster creativity and problem-solving skills.' },
-        { iconSvg: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-music"><path d="M9 18V5l12-2v13"/><circle cx="9" cy="18" r="4"/><path d="M22 16.35V5.5"/><path d="M22 8.5L12 11"/></svg>', title: 'Music & Performance', description: 'Our music program includes band, choir, and orchestra, with regular concerts, competitions, and opportunities for individual instruction.' }
-    ]);
-    // Populate news and events data.
-    newsEventsData = getOrSetDefaultData('newsEventsData', [
-        { iconSvg: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-newspaper"><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2Zm0 0a2 2 0 0 0 2-2V4a2 2 0 0 1 2-2h7.5L22 7.5V20a2 2 0 0 1-2 2Z"/><path d="M10 12.5h8"/><path d="M10 16.5h8"/><path d="M10 8.5h8"/></svg>', title: 'Annual Sports Day Success', date: 'June 15, 2025', description: 'Our annual sports day was a resounding success, with students showcasing their athletic prowess and sportsmanship.', link: '#' },
-        { iconSvg: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-calendar-check"><path d="M8 2v4"/><path d="M16 2v4"/><path d="M21 14V6a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h8"/><path d="M3 10h18"/><path d="m16 20 2 2 4-4"/></svg>', title: 'Parent-Teacher Conference', date: 'July 20, 2025', description: 'Mark your calendars for our upcoming parent-teacher conferences. An opportunity to discuss student progress.', link: '#' },
-        { iconSvg: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-graduation-cap"><path d="M21.43 11.75c-.23-.39-.58-.74-1.01-1.07-1.12-.87-2.31-1.63-3.6-2.29a3.39 3.39 0 0 0-2.15-.42 3.39 3.39 0 0 0-2.15.42c-1.29.66-2.48 1.42-3.6 2.29-.43.33-.78.68-1.01 1.07-.36.6-.57 1.29-.63 2H21c-.06-.71-.27-1.4-.63-2Z"/><path d="M12 2v3"/><path d="M12 14v6"/><path d="M16 14v6"/><path d="M8 14v6"/></svg>', title: 'New Student Orientation', date: 'August 1, 2025', description: 'Welcome new students! Join us for an orientation session to get familiar with our campus and faculty.', link: '#' }
-    ]);
-    // Populate testimonials data.
-    testimonialsData = getOrSetDefaultData('testimonialsData', [
-        { iconSvg: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-quote"><path d="M10 11H6a1 1 0 0 0-1 1v3a1 1 0 0 0 1 1h3.5c.34 0 .68-.1.97-.29l2.53-2.53V3H10v8Zm11 0h-4a1 1 0 0 0-1 1v3a1 1 0 0 0 1 1h3.5c.34 0 .68-.1.97-.29l2.53-2.53V3H21v8Z"/></svg>', quote: "Acme School has transformed my child's learning journey. The dedication of the teachers is truly remarkable!", author: "Jane Doe", role: "Parent of Class 5 Student" },
-        { iconSvg: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-message-square"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>', quote: "I've gained so much confidence and knowledge here. The supportive environment makes learning enjoyable.", author: "John Smith", role: "Student, Class 10" },
-        { iconSvg: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-star"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>', quote: "The extracurricular activities at Acme School are fantastic! They truly help in holistic development.", author: "Emily White", role: "Parent of Class 7 Student" }
-    ]);
-    // Populate faculty data with placeholder images.
-    facultyData = getOrSetDefaultData('facultyData', [
-        { imageUrl: 'https://placehold.co/100x100/007bff/ffffff?text=Teacher+1', name: 'Ms. Alice Johnson', role: 'Head of English Department', description: 'Dedicated educator with over 15 years of experience in literature and language arts.' },
-        { imageUrl: 'https://placehold.co/100x100/007bff/ffffff?text=Teacher+2', name: 'Mr. Bob Williams', role: 'Senior Math Teacher', description: 'Passionate about making mathematics engaging and accessible for all students.' },
-        { imageUrl: 'https://placehold.co/100x100/007bff/ffffff?text=Teacher+3', name: 'Dr. Carol Davis', role: 'Science Coordinator', description: 'Leads innovative science programs, fostering curiosity and scientific inquiry.' },
-        { imageUrl: 'https://placehold.co/100x100/007bff/ffffff?text=Teacher+4', name: 'Mr. David Green', role: 'History Teacher', description: 'Expert in world history, making past events come alive for students.' },
-        { imageUrl: 'https://placehold.co/100x100/007bff/ffffff?text=Teacher+5', name: 'Ms. Sarah Brown', role: 'Art Teacher', description: 'Inspires creativity and artistic expression in students of all ages.' }
-    ]);
-    // Populate gallery data with placeholder images.
-    galleryData = getOrSetDefaultData('galleryData', [
-        { imageUrl: 'https://placehold.co/400x300/28a745/ffffff?text=Sports+Day', caption: 'Exciting moments from our Annual Sports Day.' },
-        { imageUrl: 'https://placehold.co/400x300/007bff/ffffff?text=Science+Fair', caption: 'Students showcasing their innovative science projects.' },
-        { imageUrl: 'https://placehold.co/400x300/ffc107/1e3a8a?text=Cultural+Event', caption: 'Vibrant performances during Cultural Week.' },
-        { imageUrl: 'https://placehold.co/400x300/6f42c1/ffffff?text=Classroom', caption: 'Engaged learning in a modern classroom setting.' },
-        { imageUrl: 'https://placehold.co/400x300/dc3545/ffffff?text=Library', caption: 'Our well-stocked library, a hub for knowledge.' },
-        { imageUrl: 'https://placehold.co/400x300/20c997/1a202c?text=Graduation', caption: 'Celebrating our graduates\' achievements.' }
-    ]);
-    // Populate quick links data with default SVG icons.
-    quickLinksData = getOrSetDefaultData('quickLinksData', [
-        { iconSvg: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-calendar"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg>', title: 'Academic Calendar', description: 'View important dates and holidays for the academic year.', link: '#' },
-        { iconSvg: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-file-text"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/></svg>', title: 'Student Handbook', description: 'Access rules, policies, and guidelines for students and parents.', link: '#' },
-        { iconSvg: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-clipboard-list"><rect width="8" height="4" x="8" y="2" rx="1" ry="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="M12 11h4"/><path d="M12 15h4"/><path d="M8 11h.01"/><path d="M8 15h.01"/></svg>', title: 'Admissions Form', description: 'Download the application form for new enrollments and admission requirements.', link: '#' },
-        { iconSvg: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-mail"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>', title: 'Contact Directory', description: 'Find contact information for various school departments and staff.', link: '#school-contact-section' }
-    ]);
-}
-
-// Function to render the academic programs (using loaded data)
+// Render functions
 function renderPrograms() {
-    const programsGrid = document.getElementById('programs-grid');
-    if (!programsGrid) return; // Exit if the element doesn't exist
-
-    programsGrid.innerHTML = ''; // Clear existing content to prevent duplicates on re-render
+    const container = document.getElementById('programs-grid'); // Updated ID
+    if (!container) return;
+    container.innerHTML = ''; // Clear existing content
 
     if (programsData.length === 0) {
-        programsGrid.innerHTML = '<p class="no-data-message">No academic programs available.</p>';
+        container.innerHTML = '<p class="no-data-message">No academic programs available yet.</p>';
         return;
     }
 
     programsData.forEach(program => {
         const programCard = document.createElement('div');
-        programCard.className = 'program-card';
+        programCard.classList.add('program-card');
         programCard.innerHTML = `
-            <div class="program-card-content">
-                <div class="program-icon-wrapper">
-                    ${program.iconSvg}
-                </div>
-                <h3>${program.title}</h3>
-                <p>${program.description}</p>
+            <div class="program-icon">
+                ${program.iconSvg || '<i class="fas fa-book"></i>'}
             </div>
-            <div class="program-card-footer">
-                <button class="program-learn-more-btn">
-                    Learn More
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-right">
-                        <path d="M5 12h14"/><path d="m12 5 7 7-7 7"/>
-                    </svg>
-                </button>
-            </div>
+            <h3>${program.title}</h3>
+            <p>${program.description}</p>
         `;
-        programsGrid.appendChild(programCard);
+        container.appendChild(programCard);
     });
 }
 
-// Function to render News & Events (using loaded data)
 function renderNewsEvents() {
-    const newsEventsGrid = document.getElementById('news-events-grid');
-    if (!newsEventsGrid) return;
-
-    newsEventsGrid.innerHTML = ''; // Clear existing content
+    const container = document.getElementById('news-events-grid'); // Updated ID
+    if (!container) return;
+    container.innerHTML = ''; // Clear existing content
 
     if (newsEventsData.length === 0) {
-        newsEventsGrid.innerHTML = '<p class="no-data-message">No news or events available.</p>';
+        container.innerHTML = '<p class="no-data-message">No news or events available yet.</p>';
         return;
     }
 
     newsEventsData.forEach(item => {
-        const newsCard = document.createElement('div');
-        newsCard.className = 'news-event-card';
-        newsCard.innerHTML = `
-            <div class="news-icon-wrapper">
-                ${item.iconSvg}
-            </div>
-            <div class="news-content">
+        const newsEventCard = document.createElement('div');
+        newsEventCard.classList.add('news-event-card');
+        newsEventCard.innerHTML = `
+            ${item.imageUrl ? `<img src="${item.imageUrl}" alt="${item.title}" class="news-image" onerror="this.onerror=null;this.src='https://placehold.co/400x250/cccccc/000000?text=No+Image';" />` : ''}
+            <div class="news-event-content">
+                <div class="news-event-icon">
+                    ${item.iconSvg || '<i class="fas fa-calendar-alt"></i>'}
+                </div>
                 <h3>${item.title}</h3>
-                <p class="news-date">${item.date}</p>
+                <p class="date">${item.date}</p>
                 <p>${item.description}</p>
-                <a href="${item.link}" class="news-read-more-btn">Read More &rarr;</a>
+                ${item.link ? `<a href="${item.link}" class="read-more">Read More <i class="fas fa-arrow-right"></i></a>` : ''}
             </div>
         `;
-        newsEventsGrid.appendChild(newsCard);
+        container.appendChild(newsEventCard);
     });
 }
 
-// Function to render Testimonials (using loaded data)
 function renderTestimonials() {
-    const testimonialsContainer = document.getElementById('testimonials-container');
-    if (!testimonialsContainer) return;
-
-    testimonialsContainer.innerHTML = ''; // Clear existing content
+    const container = document.getElementById('testimonials-container'); // ID remains the same
+    if (!container) return;
+    container.innerHTML = ''; // Clear existing content
 
     if (testimonialsData.length === 0) {
-        testimonialsContainer.innerHTML = '<p class="no-data-message">No testimonials available.</p>';
+        container.innerHTML = '<p class="no-data-message">No testimonials available yet.</p>';
         return;
     }
 
     testimonialsData.forEach(testimonial => {
         const testimonialCard = document.createElement('div');
-        testimonialCard.className = 'testimonial-card';
+        testimonialCard.classList.add('testimonial-card');
         testimonialCard.innerHTML = `
-            <div class="testimonial-icon-wrapper">
-                ${testimonial.iconSvg}
+            <div class="quote-icon">
+                ${testimonial.iconSvg || '<i class="fas fa-quote-left"></i>'}
             </div>
-            <p class="testimonial-quote">"${testimonial.quote}"</p>
-            <p class="testimonial-author">- ${testimonial.author}</p>
-            <p class="testimonial-role">${testimonial.role}</p>
+            <p class="quote">"${testimonial.quote}"</p>
+            <p class="author">- ${testimonial.author}, ${testimonial.role}</p>
         `;
-        testimonialsContainer.appendChild(testimonialCard);
+        container.appendChild(testimonialCard);
     });
 }
 
-// Function to render Faculty (using loaded data)
+const FACULTY_DISPLAY_LIMIT = 6; // Number of faculty members to show initially
+let facultyVisibleCount = FACULTY_DISPLAY_LIMIT;
+
 function renderFaculty() {
-    const facultyGrid = document.getElementById('faculty-grid');
-    const facultyDisplayContainer = document.getElementById('faculty-display-container');
+    const container = document.getElementById('faculty-grid'); // Updated ID
     const showMoreBtn = document.getElementById('showMoreFacultyBtn');
+    if (!container || !showMoreBtn) return;
 
-    if (!facultyGrid || !facultyDisplayContainer || !showMoreBtn) return;
-
-    facultyGrid.innerHTML = ''; // Clear existing content
+    container.innerHTML = ''; // Clear existing content
 
     if (facultyData.length === 0) {
-        facultyGrid.innerHTML = '<p class="no-data-message">No faculty members listed.</p>';
-        facultyDisplayContainer.classList.add('expanded'); // No need for blur/button if no faculty
+        container.innerHTML = '<p class="no-data-message">No faculty members available yet.</p>';
         showMoreBtn.style.display = 'none'; // Hide button if no faculty
         return;
     }
 
-    const initialDisplayCount = 3; // Show only the first 3 faculty members initially
-    const isExpanded = facultyDisplayContainer.classList.contains('expanded');
-    const facultyToRender = isExpanded ? facultyData : facultyData.slice(0, initialDisplayCount);
+    // Sort facultyData alphabetically by name
+    facultyData.sort((a, b) => a.name.localeCompare(b.name));
 
-    facultyToRender.forEach(faculty => {
+    const facultyToDisplay = facultyData.slice(0, facultyVisibleCount);
+
+    facultyToDisplay.forEach(member => {
         const facultyCard = document.createElement('div');
-        facultyCard.className = 'faculty-card';
+        facultyCard.classList.add('faculty-card');
         facultyCard.innerHTML = `
-            <img src="${faculty.imageUrl}" alt="${faculty.name}" class="faculty-photo" onerror="this.onerror=null;this.src='https://placehold.co/100x100/cccccc/333333?text=No+Image';">
-            <h3>${faculty.name}</h3>
-            <p class="faculty-role">${faculty.role}</p>
-            <p class="faculty-description">${faculty.description}</p>
+            <img src="${member.imageUrl || 'https://placehold.co/150x150/cccccc/000000?text=Faculty'}" alt="${member.name}" onerror="this.onerror=null;this.src='https://placehold.co/150x150/cccccc/000000?text=Faculty';" />
+            <h3>${member.name}</h3>
+            <p class="role">${member.role}</p>
+            <p class="description">${member.description}</p>
         `;
-        facultyGrid.appendChild(facultyCard);
+        container.appendChild(facultyCard);
     });
 
-    // Show/hide button and set text based on data length and expanded state
-    if (facultyData.length > initialDisplayCount) {
-        showMoreBtn.style.display = 'block'; // Ensure button is visible if there's more data
-        showMoreBtn.textContent = isExpanded ? 'Show Less Faculty' : 'Show More Faculty';
+    if (facultyData.length > FACULTY_DISPLAY_LIMIT) {
+        showMoreBtn.style.display = 'block';
+        showMoreBtn.textContent = facultyVisibleCount >= facultyData.length ? 'Show Less Faculty' : 'Show More Faculty';
     } else {
-        showMoreBtn.style.display = 'none'; // Hide button if all faculty are already displayed
-        facultyDisplayContainer.classList.add('expanded'); // Always expanded if few faculty
+        showMoreBtn.style.display = 'none';
     }
 }
 
-// Function to toggle visibility of all faculty members
 function toggleFacultyVisibility() {
-    const facultyDisplayContainer = document.getElementById('faculty-display-container');
-    if (facultyDisplayContainer) {
-        facultyDisplayContainer.classList.toggle('expanded');
-        renderFaculty(); // Re-render to update displayed cards and button text
+    if (facultyVisibleCount >= facultyData.length) {
+        facultyVisibleCount = FACULTY_DISPLAY_LIMIT; // Reset to initial limit
+    } else {
+        facultyVisibleCount = facultyData.length; // Show all
     }
+    renderFaculty(); // Re-render faculty cards
 }
 
-// Function to render Gallery (using loaded data)
-function renderGallery() {
-    const galleryGrid = document.getElementById('gallery-grid');
-    if (!galleryGrid) return;
 
-    galleryGrid.innerHTML = ''; // Clear existing content
+function renderGallery() {
+    const container = document.getElementById('gallery-grid'); // Updated ID
+    if (!container) return;
+    container.innerHTML = ''; // Clear existing content
 
     if (galleryData.length === 0) {
-        galleryGrid.innerHTML = '<p class="no-data-message">No gallery items available.</p>';
+        container.innerHTML = '<p class="no-data-message">No gallery items available yet.</p>';
         return;
     }
 
     galleryData.forEach(item => {
         const galleryItem = document.createElement('div');
-        galleryItem.className = 'gallery-item';
+        galleryItem.classList.add('gallery-item');
         galleryItem.innerHTML = `
-            <img src="${item.imageUrl}" alt="${item.caption}" onerror="this.onerror=null;this.src='https://placehold.co/400x300/cccccc/333333?text=Image+Error';">
-            <div class="gallery-item-caption">${item.caption}</div>
+            <img src="${item.imageUrl}" alt="${item.caption}" onerror="this.onerror=null;this.src='https://placehold.co/400x300/cccccc/000000?text=No+Image';" />
+            <p>${item.caption}</p>
         `;
-        galleryGrid.appendChild(galleryItem);
+        container.appendChild(galleryItem);
     });
 }
 
-// Function to render Quick Links (using loaded data)
 function renderQuickLinks() {
-    const quickLinksGrid = document.getElementById('quick-links-grid');
-    if (!quickLinksGrid) return;
+    const container = document.getElementById('quick-links-grid'); // Updated ID
+    // const footerContainer = document.getElementById('footer-quick-links'); // This ID is not in new index.html
 
-    quickLinksGrid.innerHTML = ''; // Clear existing content
+    if (!container) return; // Only check the main container now
 
+    container.innerHTML = ''; // Clear existing content
     if (quickLinksData.length === 0) {
-        quickLinksGrid.innerHTML = '<p class="no-data-message">No quick links available.</p>';
-        return;
+        container.innerHTML = '<p class="no-data-message">No quick links available yet.</p>';
+    } else {
+        quickLinksData.forEach(link => {
+            const quickLinkCard = document.createElement('a');
+            quickLinkCard.href = link.url;
+            quickLinkCard.classList.add('quick-link-card');
+            quickLinkCard.innerHTML = `
+                <div class="quick-link-icon">
+                    ${link.iconSvg || '<i class="fas fa-link"></i>'}
+                </div>
+                <h3>${link.title}</h3>
+                <p>${link.description}</p>
+            `;
+            container.appendChild(quickLinkCard);
+        });
     }
 
-    quickLinksData.forEach(item => {
-        const quickLinkCard = document.createElement('a'); // Use <a> tag for links
-        quickLinkCard.href = item.link;
-        quickLinkCard.className = 'quick-link-card';
-        quickLinkCard.innerHTML = `
-            <div class="quick-link-icon-wrapper">
-                ${item.iconSvg}
-            </div>
-            <h3>${item.title}</h3>
-            <p>${item.description}</p>
-        `;
-        quickLinksGrid.appendChild(quickLinkCard);
-    });
+    // The footer quick links are no longer dynamic in the provided index.html,
+    // so this part is commented out or removed if not needed.
+    // if (footerContainer) {
+    //     footerContainer.innerHTML = '';
+    //     if (quickLinksData.length === 0) {
+    //         footerContainer.innerHTML = '<li><a href="#">Student Portal</a></li><li><a href="#">Parent Resources</a></li>';
+    //     } else {
+    //         quickLinksData.forEach(link => {
+    //             const listItem = document.createElement('li');
+    //             listItem.innerHTML = `<a href="${link.url}">${link.title}</a>`;
+    //             footerContainer.appendChild(listItem);
+    //         });
+    //     }
+    // }
 }
+
 
 // --- Smooth Scrolling for Navigation Links ---
 function setupSmoothScrolling() {
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         anchor.addEventListener('click', function (e) {
-            e.preventDefault(); // Prevent default jump behavior
-
+            e.preventDefault();
             const targetId = this.getAttribute('href');
             const targetElement = document.querySelector(targetId);
-
             if (targetElement) {
-                targetElement.scrollIntoView({
-                    behavior: 'smooth' // Smooth scroll animation
-                });
-
-                // Optional: Close mobile menu after clicking a link
+                targetElement.scrollIntoView({ behavior: 'smooth' });
                 const menu = document.getElementById('menu');
                 if (menu && menu.classList.contains('active')) {
                     menu.classList.remove('active');
@@ -353,141 +273,185 @@ function setupSmoothScrolling() {
     });
 }
 
-// --- Counter Animation Logic ---
+// --- Counter Animation ---
 function animateCounter(entry) {
     if (entry.isIntersecting) {
         const counterItems = entry.target.querySelectorAll('.counter-item');
         counterItems.forEach(item => {
-            // Apply 'animated' class which triggers CSS transitions for opacity and transform
             item.classList.add('animated');
-
             const countUpSpan = item.querySelector('.count-up');
             const target = parseInt(item.dataset.target);
-            const suffix = item.dataset.suffix || '';
+            // Removed suffix from data-target, it's now in a separate span
+            // const suffix = item.dataset.suffix || ''; // This is no longer needed here
             let current = 0;
-            const duration = 2000; // 2 seconds for counting animation
-            const startTimestamp = performance.now(); // Get the current time
-
+            const duration = 2000;
+            const startTimestamp = performance.now();
             const updateCount = (currentTime) => {
                 const elapsed = currentTime - startTimestamp;
-                const progress = Math.min(elapsed / duration, 1); // Ensure progress doesn't exceed 1
-
+                const progress = Math.min(elapsed / duration, 1);
                 current = progress * target;
-                countUpSpan.textContent = Math.floor(current); // Use Math.floor for integer counts
-
+                countUpSpan.textContent = Math.floor(current);
                 if (progress < 1) {
                     requestAnimationFrame(updateCount);
                 } else {
-                    countUpSpan.textContent = target; // Ensure it ends exactly on target
-                    // The suffix is already part of the HTML structure, no need to add it here again
-                    // countUpSpan.nextElementSibling.textContent = suffix;
+                    countUpSpan.textContent = target; // Ensure final value is exact
+                    // Removed the suffix appending here because it's already in the HTML
+                    // if (suffix) {
+                    //     countUpSpan.textContent += suffix;
+                    // }
                 }
             };
             requestAnimationFrame(updateCount);
         });
-        // Unobserve after animation to prevent re-triggering on subsequent scrolls
         counterObserver.unobserve(entry.target);
     }
 }
 
-// Intersection Observer for the counter section
 const counterObserver = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
         animateCounter(entry);
     });
 }, {
-    threshold: 0.5 // Trigger when 50% of the section is visible
+    threshold: 0.5
 });
 
+// --- DOM Content Loaded ---
+document.addEventListener('DOMContentLoaded', async () => {
+    // Show page loader
+    const pageLoader = document.getElementById('page-loader'); // Assuming index.html has a page-loader
+    if (pageLoader) {
+        pageLoader.style.display = 'flex'; // Show loader
+    }
 
-// Initialize all functions when the DOM is fully loaded
-document.addEventListener('DOMContentLoaded', () => {
-    loadFrontendData(); // Load data from localStorage first
+    await loadFrontendData(); // Load data from backend first
+    requestAnimationFrame(animateSlider); // Start slider animation
 
-    requestAnimationFrame(animateSlider); // Start the slider animation loop
-    renderPrograms(); // Render academic programs
-    renderNewsEvents(); // Render news and events
-    renderTestimonials(); // Render testimonials
-    renderFaculty(); // Render faculty
-    renderGallery(); // Render gallery
-    renderQuickLinks(); // Render quick links
-    setupSmoothScrolling(); // Setup smooth scrolling for nav links
+    // Render all sections after data is loaded
+    renderPrograms();
+    renderNewsEvents();
+    renderTestimonials();
+    renderFaculty();
+    renderGallery();
+    renderQuickLinks();
+    setupSmoothScrolling();
 
-    // Add event listener for the "Show More Faculty" button
+    // Show more/less faculty button logic
     const showMoreFacultyBtn = document.getElementById('showMoreFacultyBtn');
     if (showMoreFacultyBtn) {
         showMoreFacultyBtn.addEventListener('click', toggleFacultyVisibility);
     }
 
-    // Observe the counter section to trigger its animation
+    // Counter section observer
     const counterSection = document.getElementById('counter-section');
     if (counterSection) {
         counterObserver.observe(counterSection);
     }
 
-    // Contact and Footer JS logic
+    // Year in footer
     const currentYearSpan = document.getElementById('currentYear');
     if (currentYearSpan) {
         currentYearSpan.textContent = new Date().getFullYear();
     }
 
+    // --- Contact Form Submission Using Fetch ---
     const contactForm = document.getElementById('contactForm');
     if (contactForm) {
-        contactForm.addEventListener('submit', function(event) {
-            event.preventDefault(); // Prevent default form submission
+        contactForm.addEventListener('submit', async function (event) {
+            event.preventDefault();
 
-            const name = document.getElementById('contactName').value;
-            const email = document.getElementById('contactEmail').value;
-            const message = document.getElementById('contactMessage').value;
+            const name = document.getElementById('contactName').value.trim();
+            const email = document.getElementById('contactEmail').value.trim();
+            const message = document.getElementById('contactMessage').value.trim();
 
-            // Basic client-side validation (can be expanded)
             if (!name || !email || !message) {
+                // Replace alert with a custom modal or message box
                 console.warn('Please fill in all fields.');
-                // In a real app, you'd show a user-friendly message on the UI.
+                // Example of a simple message box (you'd style this properly)
+                const msgBox = document.createElement('div');
+                msgBox.textContent = 'Please fill in all fields.';
+                msgBox.style.cssText = 'position: fixed; top: 20px; right: 20px; background-color: #ffdddd; border: 1px solid #ffaaaa; padding: 10px; border-radius: 5px; z-index: 1000;';
+                document.body.appendChild(msgBox);
+                setTimeout(() => msgBox.remove(), 3000);
                 return;
             }
 
-            console.log('Contact Form Submitted!');
-            console.log('Name:', name);
-            console.log('Email:', email);
-            console.log('Message:', message);
+            try {
+                const response = await fetch('/submit-contact', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ name, email, message })
+                });
 
-            // In a real application, you would send this data to a server using fetch() or XMLHttpRequest.
-            // For now, we'll just log and reset the form.
-            console.log('Thank you for your message! We will get back to you soon.');
-            contactForm.reset(); // Clear the form fields after submission.
+                if (response.ok) {
+                    // Replace alert with a custom modal or message box
+                    console.log('Thank you! Your message has been submitted successfully.');
+                    const msgBox = document.createElement('div');
+                    msgBox.textContent = 'Thank you! Your message has been submitted successfully.';
+                    msgBox.style.cssText = 'position: fixed; top: 20px; right: 20px; background-color: #ddffdd; border: 1px solid #aaffaa; padding: 10px; border-radius: 5px; z-index: 1000;';
+                    document.body.appendChild(msgBox);
+                    setTimeout(() => msgBox.remove(), 3000);
+                    contactForm.reset();
+                } else {
+                    const errorData = await response.json();
+                    // Replace alert with a custom modal or message box
+                    console.error('Submission failed:', errorData.error || 'Please try again later.');
+                    const msgBox = document.createElement('div');
+                    msgBox.textContent = 'Submission failed: ' + (errorData.error || 'Please try again later.');
+                    msgBox.style.cssText = 'position: fixed; top: 20px; right: 20px; background-color: #ffdddd; border: 1px solid #ffaaaa; padding: 10px; border-radius: 5px; z-index: 1000;';
+                    document.body.appendChild(msgBox);
+                    setTimeout(() => msgBox.remove(), 3000);
+                }
+            } catch (error) {
+                console.error('Submission error:', error);
+                // Replace alert with a custom modal or message box
+                const msgBox = document.createElement('div');
+                msgBox.textContent = 'An error occurred while submitting the form. Please try again.';
+                msgBox.style.cssText = 'position: fixed; top: 20px; right: 20px; background-color: #ffdddd; border: 1px solid #ffaaaa; padding: 10px; border-radius: 5px; z-index: 1000;';
+                document.body.appendChild(msgBox);
+                setTimeout(() => msgBox.remove(), 3000);
+            }
         });
     }
 
-    // Fade-in on scroll for elements with 'fade-in' class
+    // Fade-in animation
     const fadeEls = document.querySelectorAll('.fade-in');
     const observer = new IntersectionObserver(
         entries => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
                     entry.target.classList.add('visible');
-                    observer.unobserve(entry.target); // Stop observing once visible
+                    observer.unobserve(entry.target);
                 }
             });
         },
-        { threshold: 0.15 } // Trigger when 15% of the element is visible
+        { threshold: 0.15 }
     );
-    fadeEls.forEach(el => observer.observe(el)); // Start observing all fade-in elements
+    fadeEls.forEach(el => observer.observe(el));
+
+    // Hide page loader after all content is loaded and rendered
+    if (pageLoader) {
+        pageLoader.style.display = 'none'; // Hide loader
+    }
 });
+
+
+// --- Principal card visibility animation ---
 const principalCard = document.querySelector('.principal-message-card');
-
 if (principalCard) {
-  const observer = new IntersectionObserver(
-    entries => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          principalCard.classList.add('visible');
-          observer.unobserve(principalCard);
-        }
-      });
-    },
-    { threshold: 0.4 }
-  );
-
-  observer.observe(principalCard);
+    // There is no expand/collapse logic for the principal card in this index.html
+    // So, we'll just ensure it becomes visible.
+    const observer = new IntersectionObserver(
+        entries => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    principalCard.classList.add('visible');
+                    observer.unobserve(principalCard);
+                }
+            });
+        },
+        { threshold: 0.4 }
+    );
+    observer.observe(principalCard);
 }

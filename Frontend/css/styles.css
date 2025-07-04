@@ -1544,3 +1544,167 @@ nav {
         transform: translateY(0);
     }
 }
+/* Academic Programs Section */
+.program-card {
+    background-color: #ffffff;
+    padding: 30px;
+    border-radius: 15px; /* Consistent rounded corners */
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1); /* Enhanced shadow */
+    text-align: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: 1px solid #e0e0e0; /* Subtle border */
+}
+
+.program-card:hover {
+    transform: translateY(-10px); /* More pronounced lift */
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2); /* More pronounced shadow on hover */
+}
+/* Why Choose Us Section */
+.why-choose-us-item {
+    background-color: #ffffff;
+    padding: 30px;
+    border-radius: 15px; /* Consistent rounded corners */
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1); /* Enhanced shadow */
+    text-align: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: 1px solid #e0e0e0; /* Subtle border */
+}
+
+.why-choose-us-item:hover {
+    transform: translateY(-10px); /* More pronounced lift */
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2); /* More pronounced shadow on hover */
+}
+/* Student Life Section */
+.student-life-content {
+    background-color: #ffffff;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1); /* Enhanced shadow */
+    margin-top: 40px;
+    border: 1px solid #e0e0e0;
+}
+/* Gallery Section */
+.gallery-item {
+    background-color: #ffffff;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1); /* Enhanced shadow */
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: 1px solid #e0e0e0;
+    text-align: center;
+}
+
+.gallery-item:hover {
+    transform: translateY(-10px); /* More pronounced lift */
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2); /* More pronounced shadow on hover */
+}
+
+.gallery-item img {
+    width: 100%;
+    height: 200px; /* Fixed height for gallery images */
+    object-fit: cover;
+    display: block;
+    border-top-left-radius: 15px; /* Match card radius for top corners */
+    border-top-right-radius: 15px; /* Match card radius for top corners */
+}
+/* News & Events Section */
+.news-event-card {
+    background-color: #ffffff;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1); /* Enhanced shadow */
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: 1px solid #e0e0e0;
+}
+
+.news-event-card:hover {
+    transform: translateY(-10px); /* More pronounced lift */
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2); /* More pronounced shadow on hover */
+}
+
+.news-event-card .news-image {
+    width: 100%;
+    height: 220px; /* Fixed height for news images */
+    object-fit: cover;
+    display: block;
+    border-top-left-radius: 15px;
+    border-top-right-radius: 15px;
+}
+/* Testimonials Section */
+.testimonial-card {
+    background-color: #ffffff;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1); /* Enhanced shadow */
+    text-align: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: 1px solid #e0e0e0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* Pushes author/role to bottom if content is short */
+}
+
+.testimonial-card:hover {
+    transform: translateY(-10px); /* More pronounced lift */
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2); /* More pronounced shadow on hover */
+}
+/* Faculty Section */
+.faculty-card {
+    background-color: #ffffff;
+    padding: 25px;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1); /* Enhanced shadow */
+    text-align: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: 1px solid #e0e0e0;
+}
+
+.faculty-card:hover {
+    transform: translateY(-10px); /* More pronounced lift */
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2); /* More pronounced shadow on hover */
+}
+/* Quick Links & Resources Section */
+.quick-link-card {
+    background-color: #ffffff;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1); /* Enhanced shadow */
+    text-align: center;
+    text-decoration: none; /* Remove underline for links */
+    color: inherit; /* Inherit text color */
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: 1px solid #e0e0e0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.quick-link-card:hover {
+    transform: translateY(-10px); /* More pronounced lift */
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2); /* More pronounced shadow on hover */
+}
+/* Counter Section */
+.counter-item {
+    background-color: #2d3748; /* Slightly lighter dark blue for items */
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25); /* More pronounced shadow for counters */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    opacity: 0; /* Hidden by default for animation */
+    transform: translateY(20px);
+    transition: opacity 0.6s ease-out, transform 0.6s ease-out, box-shadow 0.3s ease; /* Added box-shadow to transition */
+    border: 1px solid rgba(255, 255, 255, 0.1); /* Added subtle white border */
+}
+
+.counter-item.animated {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.counter-item:hover {
+    transform: translateY(-5px); /* Slight lift on hover */
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.35); /* Even more pronounced shadow on hover */
+}
