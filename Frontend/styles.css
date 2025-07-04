@@ -198,7 +198,7 @@ nav {
 }
 
 .login-btn svg {
-    width: 50px;
+    width: 35px;
     height: 50px;
    padding: 0%;
    margin: 0;
@@ -581,15 +581,21 @@ nav {
 }
 
 .program-learn-more-btn {
-    color: #2563eb; /* text-blue-600 */
+    color: white;
+    background-color: #1d4ed8; /* text-blue-600 */
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
     font-weight: 600; /* font-semibold */
     display: flex; /* flex */
     align-items: center; /* items-center */
-    transition: color 0.3s ease; /* transition-colors */
+    transition: color 0.3s ease; /*FF transition-colors */
 }
 
 .program-learn-more-btn:hover {
-    color: #1e40af; /* hover:text-blue-800 */
+    color: #ffffff; /* hover:text-blue-800 */
 }
 
 .program-learn-more-btn svg {
@@ -1264,7 +1270,7 @@ nav {
 @keyframes fadeInUp {
   from {
     opacity: 0;
-    transform: translateY(40px);
+    transform: translateY(60px);
   }
   to {
     opacity: 1;
