@@ -437,3 +437,23 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 });
+<<<<<<< HEAD
+=======
+
+
+    // Fade-in on scroll
+    const fadeEls = document.querySelectorAll('.fade-in');
+    const observer = new IntersectionObserver(
+        entries => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    observer.unobserve(entry.target);
+                }
+            });
+        },
+        { threshold: 0.15 }
+    );
+    fadeEls.forEach(el => observer.observe(el));
+
+>>>>>>> cb933302dfa09d8fd0fd1a5fea4ba1a04031db9d
