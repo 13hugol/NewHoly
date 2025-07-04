@@ -437,8 +437,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 });
-<<<<<<< HEAD
-=======
 
 
     // Fade-in on scroll
@@ -456,4 +454,3 @@ document.addEventListener('DOMContentLoaded', () => {
     );
     fadeEls.forEach(el => observer.observe(el));
 
->>>>>>> cb933302dfa09d8fd0fd1a5fea4ba1a04031db9d
