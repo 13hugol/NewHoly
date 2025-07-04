@@ -3,51 +3,46 @@ const path = require('path');
 const { MongoClient, ObjectId } = require('mongodb');
 const multer = require('multer'); // For handling multipart/form-data (file uploads)
 const jwt = require('jsonwebtoken'); // For JSON Web Tokens
-const fs = require('fs'); // For file system operations (checking/creating upload directory)
+// const fs = require('fs'); // No longer needed for local file system operations
+const cloudinary = require('cloudinary').v2; // Cloudinary SDK
+const { CloudinaryStorage } = require('multer-storage-cloudinary'); // Multer storage for Cloudinary
+const cors = require('cors'); // Essential for frontend-backend communication
 
-// Assuming these are correctly set up in your project
+// Assuming dbconnect is correctly set up in your project
 const { dbconnect } = require('./dbconnect'); // This file is crucial for DB connection
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 // --- Configuration ---
-const JWT_SECRET = process.env.JWT_SECRET || 'your_jwt_secret_key'; // **IMPORTANT: Use a strong, environment-variable-based secret in production**
-const UPLOADS_DIR = path.join(__dirname, '../Frontend/Images'); // Directory to store uploaded images
+const JWT_SECRET = process.env.JWT_SECRET || 'your_jwt_secret_key_from_env'; // Use environment variable
+// UPLOADS_DIR and fs are removed as we are no longer storing files locally.
 
-// Ensure the uploads directory exists
-if (!fs.existsSync(UPLOADS_DIR)) {
-    fs.mkdirSync(UPLOADS_DIR, { recursive: true });
-}
+// Cloudinary Configuration - MUST be set as environment variables
+cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET
+});
 
-// Set up Multer for file uploads
-const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, UPLOADS_DIR);
+// Set up Multer with Cloudinary Storage
+const storage = new CloudinaryStorage({
+    cloudinary: cloudinary,
+    params: {
+        folder: 'school_website_uploads', // Folder in your Cloudinary account
+        format: async (req, file) => 'png', // Force format to png, or use file.mimetype.split('/')[1]
+        public_id: (req, file) => Date.now() + '-' + file.originalname.split('.')[0], // Unique filename
     },
-    filename: (req, file, cb) => {
-        // Generate a unique filename to prevent collisions
-        cb(null, Date.now() + '-' + file.originalname);
-    }
 });
 const upload = multer({ storage: storage });
 
 // Middleware
-app.use(express.json()); // Parses JSON bodies
-app.use(express.urlencoded({ extended: true })); // Parses URL-encoded bodies
+// IMPORTANT: Increase the limit for JSON and URL-encoded bodies
+app.use(express.json({ limit: '50mb' })); // Allows larger JSON payloads
+app.use(express.urlencoded({ extended: true, limit: '50mb' })); // Allows larger URL-encoded payloads
 
 // CORS (important for frontend-backend communication if they are on different origins)
-app.use((req, res, next) => {
-    res.setHeader('Access-Control-Allow-Origin', '*'); // Allow requests from any origin
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS'); // Allow specified HTTP methods
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization'); // Allow specified headers
-    // Handle preflight requests (OPTIONS method)
-    if (req.method === 'OPTIONS') {
-        return res.sendStatus(200); // Respond with 200 OK for preflight
-    }
-    next(); // Continue to the next middleware/route for actual requests
-});
-
+app.use(cors()); // Use the cors package directly
 
 // DB Collections (initialized after connection)
 let db, studentsCollection, programsCollection, contactsCollection, newsEventsCollection, testimonialsCollection, facultyCollection, quickLinksCollection, galleryCollection;
@@ -55,7 +50,7 @@ let db, studentsCollection, programsCollection, contactsCollection, newsEventsCo
 // Reusable CRUD function generator
 const generateCRUD = (collection, route) => {
     // GET all items (PUBLICLY ACCESSIBLE)
-    app.get(`/api/${route}`, async (req, res) => { // <-- REMOVED authenticateToken HERE
+    app.get(`/api/${route}`, async (req, res) => {
         try {
             const data = await collection.find().toArray();
             res.json({ data: data }); // Consistent response format
@@ -66,7 +61,7 @@ const generateCRUD = (collection, route) => {
     });
 
     // GET single item by ID (PUBLICLY ACCESSIBLE)
-    app.get(`/api/${route}/:id`, async (req, res) => { // <-- REMOVED authenticateToken HERE
+    app.get(`/api/${route}/:id`, async (req, res) => {
         try {
             const item = await collection.findOne({ _id: new ObjectId(req.params.id) });
             if (!item) {
@@ -79,23 +74,45 @@ const generateCRUD = (collection, route) => {
         }
     });
 
-    // POST new item (PROTECTED - requires authentication)
-    app.post(`/api/${route}`, authenticateToken, async (req, res) => {
+    // POST new item (PROTECTED - requires authentication, handles image upload)
+    // IMPORTANT: upload.single('image') must come BEFORE parsing req.body if it's multipart/form-data
+    app.post(`/api/${route}`, authenticateToken, upload.single('image'), async (req, res) => {
         try {
-            const result = await collection.insertOne(req.body);
+            const newItem = { ...req.body };
+            if (req.file) {
+                newItem.imageUrl = req.file.path; // Cloudinary URL
+            } else if (!req.body.imageUrl && req.body.hasImageField && req.body.hasImageField === 'true') {
+                // This condition handles cases where an image is expected but not provided
+                return res.status(400).json({ message: 'Image file is required for this item.' });
+            }
+
+            const result = await collection.insertOne(newItem);
             res.status(201).json({ success: true, insertedId: result.insertedId, message: `${route.slice(0, -1)} added successfully!` });
         } catch (err) {
             console.error(`Failed to add ${route}:`, err);
-            res.status(500).json({ message: `Failed to add ${route}` });
+            res.status(500).json({ message: `Failed to add ${route}. Error: ${err.message}` });
         }
     });
 
-    // PUT update item by ID (PROTECTED - requires authentication)
-    app.put(`/api/${route}/:id`, authenticateToken, async (req, res) => {
+    // PUT update item by ID (PROTECTED - requires authentication, handles image upload)
+    app.put(`/api/${route}/:id`, authenticateToken, upload.single('image'), async (req, res) => {
         try {
+            const updatedItem = { ...req.body };
+            if (req.file) {
+                // If a new image is uploaded, update the imageUrl
+                updatedItem.imageUrl = req.file.path; // Cloudinary URL
+                // Optional: Implement logic to delete old image from Cloudinary here
+                // (requires fetching old item to get its imageUrl and using cloudinary.uploader.destroy)
+            } else if (req.body.imageUrl === '') {
+                // If the frontend explicitly sends an empty string for imageUrl, remove the field
+                delete updatedItem.imageUrl;
+            }
+            // If no new file and imageUrl is not explicitly empty, the existing imageUrl (if any)
+            // from req.body will be retained.
+
             const result = await collection.updateOne(
                 { _id: new ObjectId(req.params.id) },
-                { $set: req.body }
+                { $set: updatedItem }
             );
             if (result.modifiedCount === 0 && result.matchedCount === 0) {
                 return res.status(404).json({ message: `${route.slice(0, -1)} not found or no changes made.` });
@@ -103,7 +120,7 @@ const generateCRUD = (collection, route) => {
             res.json({ success: true, message: `${route.slice(0, -1)} updated successfully!` });
         } catch (err) {
             console.error(`Failed to update ${route}:`, err);
-            res.status(500).json({ message: `Failed to update ${route}` });
+            res.status(500).json({ message: `Failed to update ${route}. Error: ${err.message}` });
         }
     });
 
@@ -155,8 +172,8 @@ app.post('/api/login', async (req, res) => {
 
     // --- Hardcoded Admin Credentials (for demo purposes) ---
     // In a real application, you would fetch user from DB and hash/compare passwords
-    const ADMIN_USERNAME = 'admin';
-    const ADMIN_PASSWORD = 'password123'; // Matches frontend's hardcoded password
+    const ADMIN_USERNAME = process.env.ADMIN_USERNAME || 'admin';
+    const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'password123';
 
     if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
         // Generate JWT
@@ -168,14 +185,14 @@ app.post('/api/login', async (req, res) => {
     }
 });
 
-// Image Upload Route (Protected)
+// Image Upload Route (Protected) - This route is specifically for standalone image uploads
+// It will now upload to Cloudinary and return the Cloudinary URL
 app.post('/api/upload', authenticateToken, upload.single('image'), (req, res) => {
     if (!req.file) {
         return res.status(400).json({ message: 'No image file uploaded.' });
     }
-    // Return the URL where the image can be accessed
-    // Assuming your server is running on PORT and serving static files from /uploads
-    const imageUrl = `/uploads/${req.file.filename}`;
+    // Return the Cloudinary URL where the image can be accessed
+    const imageUrl = req.file.path; // Multer-storage-cloudinary provides the Cloudinary URL here
     res.json({ imageUrl: imageUrl, message: 'Image uploaded successfully!' });
 });
 
@@ -242,8 +259,8 @@ app.delete('/api/contacts/:id', authenticateToken, async (req, res) => {
 // Serve static files from the 'Frontend' directory
 // This should be placed AFTER your API routes to prevent it from catching API requests
 app.use(express.static(path.join(__dirname, '../Frontend')));
-// Serve uploaded images directly
-app.use('/uploads', express.static(UPLOADS_DIR));
+// REMOVED: app.use('/uploads', express.static(UPLOADS_DIR));
+// Images are now served directly from Cloudinary URLs.
 
 // --- Admin Panel Route (Single Page App) ---
 
@@ -274,6 +291,7 @@ app.listen(PORT, () => {
         console.log('Connected to MongoDB');
 
         // Generate APIs for all collections *after* they are initialized
+        // These will now correctly handle image uploads for POST/PUT
         generateCRUD(programsCollection, 'programs');
         generateCRUD(newsEventsCollection, 'newsEvents');
         generateCRUD(testimonialsCollection, 'testimonials');
