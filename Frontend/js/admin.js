@@ -6,7 +6,6 @@ const adminPanel = document.getElementById('admin-panel');
 const loginForm = document.getElementById('login-form');
 const loginError = document.getElementById('login-error');
 const logoutBtn = document.getElementById('logout-btn');
-const pageLoader = document.getElementById('page-loader');
 
 // Section content containers
 const sections = {
@@ -17,6 +16,7 @@ const sections = {
     faculty: document.getElementById('faculty-section-content'),
     gallery: document.getElementById('gallery-section-content'),
     quickLinks: document.getElementById('quick-links-section-content'),
+    contacts: document.getElementById('contacts-section-content'),
 };
 
 // Forms
@@ -34,6 +34,7 @@ const testimonialsList = document.getElementById('testimonials-list');
 const facultyList = document.getElementById('faculty-list');
 const galleryList = document.getElementById('gallery-list');
 const quickLinksList = document.getElementById('quick-links-list');
+const contactMessagesList = document.getElementById('contacts-section-content') ? document.getElementById('contact-messages-list') : null; // Ensure it exists
 
 // Dashboard counts
 const dashboardCounts = {
@@ -43,28 +44,26 @@ const dashboardCounts = {
     faculty: document.getElementById('dashboard-faculty-count'),
     gallery: document.getElementById('dashboard-gallery-count'),
     quickLinks: document.getElementById('dashboard-quick-links-count'),
+    contacts: document.getElementById('dashboard-contacts-count'),
 };
 
-// Current editing IDs and image URLs for forms with file uploads
+// Current editing IDs (to keep track of which item is being edited)
 let currentEditing = {
     program: null,
     newsEvent: null,
     faculty: null,
     gallery: null,
     testimonial: null,
-    quickLink: null
+    quickLink: null,
+    contact: null
 };
-
-let currentNewsEventImageUrl = null;
-let currentFacultyImageUrl = null;
-let currentGalleryImageUrl = null;
 
 // --- Helper Functions ---
 
 /**
  * Displays a temporary message box instead of alert.
  * @param {string} message - The message to display.
- * @param {string} type - 'success' or 'error' for styling.
+ * @param {string} type - 'success', 'error', 'warning', or 'info' for styling.
  */
 function showMessageBox(message, type = 'info') {
     const msgBox = document.createElement('div');
@@ -91,9 +90,13 @@ function showMessageBox(message, type = 'info') {
     } else if (type === 'error') {
         msgBox.style.backgroundColor = '#f44336'; // Red
         msgBox.style.border = '1px solid #f44336';
+    } else if (type === 'warning') {
+        msgBox.style.backgroundColor = '#ffc107'; // Yellow/Orange
+        msgBox.style.border = '1px solid #ffc107';
+        msgBox.style.color = '#333'; // Darker text for warning
     } else {
         msgBox.style.backgroundColor = '#2196F3'; // Blue
-        msgBox.style.border = '1px solid #2196F3';
+        msgBox.style.border = '19px solid #2196F3';
     }
 
     document.body.appendChild(msgBox);
@@ -115,11 +118,13 @@ function showMessageBox(message, type = 'info') {
 
 /**
  * Fetches data from a protected API endpoint with authentication token.
+ * Automatically handles Content-Type for FormData.
  * @param {string} endpoint - The API endpoint URL.
  * @param {object} options - Fetch options (method, body, headers, etc.).
  * @returns {Promise<object>} - The JSON response data.
  */
 async function authenticatedFetch(endpoint, options = {}) {
+    console.log(`[authenticatedFetch] Attempting to fetch from: ${endpoint}`);
     const token = localStorage.getItem('adminToken');
     if (!token) {
         showMessageBox('Authentication required. Please log in.', 'error');
@@ -127,28 +132,34 @@ async function authenticatedFetch(endpoint, options = {}) {
         throw new Error('No authentication token found.');
     }
 
-    const headers = {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
-        ...options.headers // Allow overriding or adding more headers
-    };
+    const { silent, ...fetchOpts } = options;
+
+    // Do not force JSON header if using FormData
+    const headers = fetchOpts.body instanceof FormData
+      ? { 'Authorization': `Bearer ${token}` } // Only Authorization header for FormData
+      : { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` };
+
 
     try {
-        const response = await fetch(endpoint, { ...options, headers });
+        const response = await fetch(endpoint, { ...fetchOpts, headers });
+        console.log(`[authenticatedFetch] Response status for ${endpoint}: ${response.status}`);
         if (response.status === 401 || response.status === 403) {
             showMessageBox('Session expired or unauthorized. Please log in again.', 'error');
             localStorage.removeItem('adminToken');
             showLogin();
             throw new Error('Unauthorized or expired token.');
         }
+        const responseData = await response.json();
+        console.log(`[authenticatedFetch] Response data for ${endpoint}:`, responseData);
         if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+            throw new Error(responseData.message || `HTTP error! status: ${response.status}`);
         }
-        return response.json();
+        return responseData;
     } catch (error) {
-        console.error(`Error during authenticated fetch to ${endpoint}:`, error);
-        showMessageBox(`Error: ${error.message}`, 'error');
+        console.error(`[authenticatedFetch] Error during fetch to ${endpoint}:`, error);
+        if (!silent) { // Use silent option here
+            showMessageBox(`Error: ${error.message}`, 'error');
+        }
         throw error; // Re-throw to be handled by calling function
     }
 }
@@ -159,7 +170,11 @@ async function authenticatedFetch(endpoint, options = {}) {
  * @returns {Promise<string|null>} - The URL of the uploaded image or null on failure.
  */
 async function uploadImage(imageFile) {
-    if (!imageFile) return null;
+    console.log('[uploadImage] Attempting to upload image:', imageFile ? imageFile.name : 'No file provided');
+    if (!imageFile) {
+        console.log('[uploadImage] No image file to upload.');
+        return null;
+    }
 
     const formData = new FormData();
     formData.append('image', imageFile);
@@ -168,22 +183,19 @@ async function uploadImage(imageFile) {
         const response = await authenticatedFetch('/api/upload', {
             method: 'POST',
             body: formData,
-            // Do NOT set 'Content-Type' header for FormData, browser sets it automatically
-            headers: {
-                // Only Authorization header is needed; Content-Type is handled by FormData
-                'Authorization': `Bearer ${localStorage.getItem('adminToken')}`
-            }
         });
-        if (response.imageUrl) {
+        console.log('[uploadImage] Image upload response:', response);
+        if (response && response.imageUrl) {
             showMessageBox('Image uploaded successfully!', 'success');
             return response.imageUrl;
         } else {
-            showMessageBox('Image upload failed: ' + (response.message || 'Unknown error'), 'error');
+            const msg = response ? (response.message || 'Unknown error during upload') : 'No response from upload API.';
+            showMessageBox('Image upload failed: ' + msg, 'error');
             return null;
         }
     } catch (error) {
-        console.error('Image upload error:', error);
-        showMessageBox('Image upload failed.', 'error');
+        console.error('[uploadImage] Image upload error in uploadImage function:', error);
+        showMessageBox('Image upload failed unexpectedly.', 'error');
         return null;
     }
 }
@@ -195,9 +207,6 @@ async function uploadImage(imageFile) {
 function showLogin() {
     loginSection.style.display = 'flex';
     adminPanel.style.display = 'none';
-    pageLoader.style.display = 'none'; // Hide loader if showing
-    loginForm.reset(); // Clear login form
-    loginError.textContent = ''; // Clear any previous error messages
 }
 
 /**
@@ -206,7 +215,6 @@ function showLogin() {
 function showAdminPanel() {
     loginSection.style.display = 'none';
     adminPanel.style.display = 'flex';
-    pageLoader.style.display = 'none'; // Hide loader
     loadDashboardCounts(); // Load dashboard data on panel entry
     showSection('dashboard'); // Default to dashboard
 }
@@ -216,9 +224,22 @@ function showAdminPanel() {
  * @param {string} sectionId - The ID of the section to show (e.g., 'dashboard', 'programs').
  */
 function showSection(sectionId) {
+    // Remove 'active' class from all nav links
+    document.querySelectorAll('.sidebar-nav .nav-link').forEach(link => {
+        link.classList.remove('active-nav-item'); // Assuming 'active-nav-item' is the class from admin.css
+    });
+
+    // Add 'active' class to the clicked nav link
+    const activeNavLink = document.querySelector(`.sidebar-nav .nav-link[data-section="${sectionId}"]`);
+    if (activeNavLink) {
+        activeNavLink.classList.add('active-nav-item');
+    }
+
+    // Hide all content sections
     Object.values(sections).forEach(section => {
         if (section) section.classList.add('hidden');
     });
+    // Show the target section
     const targetSection = sections[sectionId];
     if (targetSection) {
         targetSection.classList.remove('hidden');
@@ -233,58 +254,64 @@ function showSection(sectionId) {
  * Resets all forms and hides their containers.
  */
 function resetForms() {
-    programForm.reset();
-    programForm.closest('.form-container').classList.add('hidden');
-    currentEditing.program = null;
+    const allFormContainers = document.querySelectorAll('.form-container');
+    allFormContainers.forEach(container => {
+        container.classList.add('hidden');
+        const form = container.querySelector('form');
+        if (form) {
+            form.reset();
+            // Clear hidden ID inputs
+            const idInput = form.querySelector('input[type="hidden"][name="_id"]');
+            if (idInput) idInput.value = '';
 
-    newsEventForm.reset();
-    newsEventForm.closest('.form-container').classList.add('hidden');
-    currentEditing.newsEvent = null;
-    document.getElementById('current-news-event-image-url').textContent = '';
-
-    testimonialForm.reset();
-    testimonialForm.closest('.form-container').classList.add('hidden');
-    currentEditing.testimonial = null;
-
-    facultyForm.reset();
-    facultyForm.closest('.form-container').classList.add('hidden');
-    currentEditing.faculty = null;
-    document.getElementById('current-faculty-image-url').textContent = '';
-
-    galleryForm.reset();
-    galleryForm.closest('.form-container').classList.add('hidden');
-    currentEditing.gallery = null;
-    document.getElementById('current-gallery-image-url').textContent = '';
-
-    quickLinkForm.reset();
-    quickLinkForm.closest('.form-container').classList.add('hidden');
-    currentEditing.quickLink = null;
+            // Clear file input displays and current image URLs
+            const fileNameDisplay = form.querySelector('.file-name-display');
+            if (fileNameDisplay) fileNameDisplay.textContent = 'No file chosen';
+            const currentImageUrlElement = form.querySelector('.current-image-info');
+            if (currentImageUrlElement) {
+                currentImageUrlElement.textContent = '';
+                currentImageUrlElement.dataset.currentUrl = '';
+            }
+        }
+    });
+    // Reset currentEditing state
+    for (const key in currentEditing) {
+        currentEditing[key] = null;
+    }
 }
 
 /**
  * Loads dashboard counts from the backend.
  */
 async function loadDashboardCounts() {
+    console.log('[loadDashboardCounts] Loading dashboard counts...');
     try {
-        const counts = {
-            programs: (await authenticatedFetch('/api/programs')).data.length,
-            newsEvents: (await authenticatedFetch('/api/newsEvents')).data.length,
-            testimonials: (await authenticatedFetch('/api/testimonials')).data.length,
-            faculty: (await authenticatedFetch('/api/faculty')).data.length,
-            gallery: (await authenticatedFetch('/api/gallery')).data.length,
-            quickLinks: (await authenticatedFetch('/api/quickLinks')).data.length,
-        };
+        // Fetch counts for each collection
+        const programsCount = (await authenticatedFetch('/api/programs', { silent: true })).data.length;
+        const newsEventsCount = (await authenticatedFetch('/api/newsEvents', { silent: true })).data.length;
+        const testimonialsCount = (await authenticatedFetch('/api/testimonials', { silent: true })).data.length;
+        const facultyCount = (await authenticatedFetch('/api/faculty', { silent: true })).data.length;
+        const galleryCount = (await authenticatedFetch('/api/gallery', { silent: true })).data.length;
+        const quickLinksCount = (await authenticatedFetch('/api/quickLinks', { silent: true })).data.length;
+        const contactsCount = (await authenticatedFetch('/api/contacts', { silent: true })).data.length;
 
-        dashboardCounts.programs.textContent = counts.programs;
-        dashboardCounts.newsEvents.textContent = counts.newsEvents;
-        dashboardCounts.testimonials.textContent = counts.testimonials;
-        dashboardCounts.faculty.textContent = counts.faculty;
-        dashboardCounts.gallery.textContent = counts.gallery;
-        dashboardCounts.quickLinks.textContent = counts.quickLinks;
+        // Update dashboard UI elements
+        if (dashboardCounts.programs) dashboardCounts.programs.textContent = programsCount;
+        if (dashboardCounts.newsEvents) dashboardCounts.newsEvents.textContent = newsEventsCount;
+        if (dashboardCounts.testimonials) dashboardCounts.testimonials.textContent = testimonialsCount;
+        if (dashboardCounts.faculty) dashboardCounts.faculty.textContent = facultyCount;
+        if (dashboardCounts.gallery) dashboardCounts.gallery.textContent = galleryCount;
+        if (dashboardCounts.quickLinks) dashboardCounts.quickLinks.textContent = quickLinksCount;
+        if (dashboardCounts.contacts) dashboardCounts.contacts.textContent = contactsCount;
+
+        console.log('[loadDashboardCounts] Dashboard counts loaded successfully.');
 
     } catch (error) {
-        console.error('Failed to load dashboard counts:', error);
-        // Specific error handling for dashboard counts if needed
+        console.error('[loadDashboardCounts] Failed to load dashboard counts:', error);
+        // Display 0 or N/A if counts fail to load
+        for (const key in dashboardCounts) {
+            if (dashboardCounts[key]) dashboardCounts[key].textContent = 'N/A';
+        }
     }
 }
 
@@ -292,20 +319,27 @@ async function loadDashboardCounts() {
  * Loads data for all sections (or specific ones) and renders them.
  */
 async function loadAllData() {
-    await loadPrograms();
-    await loadNewsEvents();
-    await loadTestimonials();
-    await loadFaculty();
-    await loadGallery();
-    await loadQuickLinks();
-    await loadContactMessages(); // Load contact messages for admin
+    console.log('[loadAllData] Loading all section data...');
+    // Load data for each section concurrently
+    await Promise.all([
+        loadPrograms(),
+        loadNewsEvents(),
+        loadTestimonials(),
+        loadFaculty(),
+        loadGallery(),
+        loadQuickLinks(),
+        loadContactMessages()
+    ]);
+    console.log('[loadAllData] All section data loading initiated.');
 }
 
 // --- Specific Section Load and Render Functions ---
 
 async function loadPrograms() {
     const dataList = programsList;
+    if (!dataList) return; // Guard clause
     dataList.innerHTML = '<p class="loading-message">Loading programs...</p>';
+    console.log('[loadPrograms] Fetching programs...');
     try {
         const response = await authenticatedFetch('/api/programs');
         const programs = response.data;
@@ -313,6 +347,7 @@ async function loadPrograms() {
 
         if (programs.length === 0) {
             dataList.innerHTML = '<p class="no-data-message">No programs added yet.</p>';
+            console.log('[loadPrograms] No programs found.');
             return;
         }
         programs.forEach(program => {
@@ -333,15 +368,18 @@ async function loadPrograms() {
             `;
             dataList.appendChild(itemDiv);
         });
+        console.log(`[loadPrograms] ${programs.length} programs rendered.`);
     } catch (error) {
         dataList.innerHTML = '<p class="error-message">Failed to load programs.</p>';
-        console.error('Error loading programs:', error);
+        console.error('[loadPrograms] Error loading programs:', error);
     }
 }
 
 async function loadNewsEvents() {
     const dataList = newsEventsList;
+    if (!dataList) return;
     dataList.innerHTML = '<p class="loading-message">Loading news & events...</p>';
+    console.log('[loadNewsEvents] Fetching news & events...');
     try {
         const response = await authenticatedFetch('/api/newsEvents');
         const newsEvents = response.data;
@@ -349,9 +387,11 @@ async function loadNewsEvents() {
 
         if (newsEvents.length === 0) {
             dataList.innerHTML = '<p class="no-data-message">No news or events added yet.</p>';
+            console.log('[loadNewsEvents] No news or events found.');
             return;
         }
         newsEvents.forEach(item => {
+            console.log(`[loadNewsEvents] Rendering item: ${item.title}, Image URL: ${item.imageUrl}`); // Added log
             const itemDiv = document.createElement('div');
             itemDiv.classList.add('data-item');
             itemDiv.innerHTML = `
@@ -370,15 +410,18 @@ async function loadNewsEvents() {
             `;
             dataList.appendChild(itemDiv);
         });
+        console.log(`[loadNewsEvents] ${newsEvents.length} news & events rendered.`);
     } catch (error) {
         dataList.innerHTML = '<p class="error-message">Failed to load news & events.</p>';
-        console.error('Error loading news & events:', error);
+        console.error('[loadNewsEvents] Error loading news & events:', error);
     }
 }
 
 async function loadTestimonials() {
     const dataList = testimonialsList;
+    if (!dataList) return;
     dataList.innerHTML = '<p class="loading-message">Loading testimonials...</p>';
+    console.log('[loadTestimonials] Fetching testimonials...');
     try {
         const response = await authenticatedFetch('/api/testimonials');
         const testimonials = response.data;
@@ -386,6 +429,7 @@ async function loadTestimonials() {
 
         if (testimonials.length === 0) {
             dataList.innerHTML = '<p class="no-data-message">No testimonials added yet.</p>';
+            console.log('[loadTestimonials] No testimonials found.');
             return;
         }
         testimonials.forEach(item => {
@@ -406,15 +450,18 @@ async function loadTestimonials() {
             `;
             dataList.appendChild(itemDiv);
         });
+        console.log(`[loadTestimonials] ${testimonials.length} testimonials rendered.`);
     } catch (error) {
         dataList.innerHTML = '<p class="error-message">Failed to load testimonials.</p>';
-        console.error('Error loading testimonials:', error);
+        console.error('[loadTestimonials] Error loading testimonials:', error);
     }
 }
 
 async function loadFaculty() {
     const dataList = facultyList;
+    if (!dataList) return;
     dataList.innerHTML = '<p class="loading-message">Loading faculty...</p>';
+    console.log('[loadFaculty] Fetching faculty...');
     try {
         const response = await authenticatedFetch('/api/faculty');
         const faculty = response.data;
@@ -422,9 +469,11 @@ async function loadFaculty() {
 
         if (faculty.length === 0) {
             dataList.innerHTML = '<p class="no-data-message">No faculty members added yet.</p>';
+            console.log('[loadFaculty] No faculty members found.');
             return;
         }
         faculty.forEach(item => {
+            console.log(`[loadFaculty] Rendering item: ${item.name}, Image URL: ${item.imageUrl}`); // Added log
             const itemDiv = document.createElement('div');
             itemDiv.classList.add('data-item');
             itemDiv.innerHTML = `
@@ -443,15 +492,18 @@ async function loadFaculty() {
             `;
             dataList.appendChild(itemDiv);
         });
+        console.log(`[loadFaculty] ${faculty.length} faculty members rendered.`);
     } catch (error) {
         dataList.innerHTML = '<p class="error-message">Failed to load faculty.</p>';
-        console.error('Error loading faculty:', error);
+        console.error('[loadFaculty] Error loading faculty:', error);
     }
 }
 
 async function loadGallery() {
     const dataList = galleryList;
+    if (!dataList) return;
     dataList.innerHTML = '<p class="loading-message">Loading gallery items...</p>';
+    console.log('[loadGallery] Fetching gallery items...');
     try {
         const response = await authenticatedFetch('/api/gallery');
         const galleryItems = response.data;
@@ -459,9 +511,11 @@ async function loadGallery() {
 
         if (galleryItems.length === 0) {
             dataList.innerHTML = '<p class="no-data-message">No gallery items added yet.</p>';
+            console.log('[loadGallery] No gallery items found.');
             return;
         }
         galleryItems.forEach(item => {
+            console.log(`[loadGallery] Rendering item: ${item.caption}, Image URL: ${item.imageUrl}`); // Added log
             const itemDiv = document.createElement('div');
             itemDiv.classList.add('data-item');
             itemDiv.innerHTML = `
@@ -478,15 +532,18 @@ async function loadGallery() {
             `;
             dataList.appendChild(itemDiv);
         });
+        console.log(`[loadGallery] ${galleryItems.length} gallery items rendered.`);
     } catch (error) {
         dataList.innerHTML = '<p class="error-message">Failed to load gallery items.</p>';
-        console.error('Error loading gallery items:', error);
+        console.error('[loadGallery] Error loading gallery items:', error);
     }
 }
 
 async function loadQuickLinks() {
     const dataList = quickLinksList;
+    if (!dataList) return;
     dataList.innerHTML = '<p class="loading-message">Loading quick links...</p>';
+    console.log('[loadQuickLinks] Fetching quick links...');
     try {
         const response = await authenticatedFetch('/api/quickLinks');
         const quickLinks = response.data;
@@ -494,6 +551,7 @@ async function loadQuickLinks() {
 
         if (quickLinks.length === 0) {
             dataList.innerHTML = '<p class="no-data-message">No quick links added yet.</p>';
+            console.log('[loadQuickLinks] No quick links found.');
             return;
         }
         quickLinks.forEach(item => {
@@ -515,16 +573,18 @@ async function loadQuickLinks() {
             `;
             dataList.appendChild(itemDiv);
         });
+        console.log(`[loadQuickLinks] ${quickLinks.length} quick links rendered.`);
     } catch (error) {
         dataList.innerHTML = '<p class="error-message">Failed to load quick links.</p>';
-        console.error('Error loading quick links:', error);
+        console.error('[loadQuickLinks] Error loading quick links:', error);
     }
 }
 
 async function loadContactMessages() {
-    const dataList = document.getElementById('contact-messages-list'); // Assuming you'll add a section for contacts
-    if (!dataList) return; // Exit if contact messages section doesn't exist yet
+    const dataList = contactMessagesList;
+    if (!dataList) return; // Guard clause
     dataList.innerHTML = '<p class="loading-message">Loading contact messages...</p>';
+    console.log('[loadContactMessages] Fetching contact messages...');
     try {
         const response = await authenticatedFetch('/api/contacts');
         const contacts = response.data;
@@ -532,6 +592,7 @@ async function loadContactMessages() {
 
         if (contacts.length === 0) {
             dataList.innerHTML = '<p class="no-data-message">No contact messages received yet.</p>';
+            console.log('[loadContactMessages] No contact messages found.');
             return;
         }
         contacts.forEach(item => {
@@ -551,9 +612,10 @@ async function loadContactMessages() {
             `;
             dataList.appendChild(itemDiv);
         });
+        console.log(`[loadContactMessages] ${contacts.length} contact messages rendered.`);
     } catch (error) {
         dataList.innerHTML = '<p class="error-message">Failed to load contact messages.</p>';
-        console.error('Error loading contact messages:', error);
+        console.error('[loadContactMessages] Error loading contact messages:', error);
     }
 }
 
@@ -565,6 +627,7 @@ loginForm.addEventListener('submit', async (event) => {
     event.preventDefault();
     const username = loginForm.username.value;
     const password = loginForm.password.value;
+    console.log('[Login] Attempting login...');
 
     try {
         const response = await fetch('/api/login', {
@@ -572,19 +635,21 @@ loginForm.addEventListener('submit', async (event) => {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ username, password })
         });
+        const data = await response.json();
+        console.log('[Login] Login API response:', data);
 
         if (response.ok) {
-            const data = await response.json();
             localStorage.setItem('adminToken', data.token);
             showMessageBox('Login successful!', 'success');
             showAdminPanel();
+            console.log('[Login] Login successful, showing admin panel.');
         } else {
-            const errorData = await response.json();
-            loginError.textContent = errorData.message || 'Login failed. Please try again.';
+            loginError.textContent = data.message || 'Login failed. Please try again.';
             showMessageBox('Login failed.', 'error');
+            console.error('[Login] Login failed:', data.message);
         }
     } catch (error) {
-        console.error('Login error:', error);
+        console.error('[Login] Login error:', error);
         loginError.textContent = 'An error occurred during login.';
         showMessageBox('An error occurred during login.', 'error');
     }
@@ -595,163 +660,212 @@ logoutBtn.addEventListener('click', () => {
     localStorage.removeItem('adminToken');
     showMessageBox('Logged out successfully.', 'info');
     showLogin();
+    console.log('[Logout] User logged out.');
 });
 
 // Sidebar Navigation
-document.querySelectorAll('.nav-link').forEach(link => {
+document.querySelectorAll('.sidebar-nav .nav-link').forEach(link => {
     link.addEventListener('click', (event) => {
         event.preventDefault();
-        const sectionId = event.target.dataset.section;
+        const sectionId = event.currentTarget.dataset.section;
+        console.log(`[Navigation] Navigating to section: ${sectionId}`);
         showSection(sectionId);
     });
 });
 
-// --- CRUD Form Submissions ---
-
-// Generic form submission handler
-async function handleFormSubmit(event, form, type, idField, imageUrlDisplayId) {
-    event.preventDefault();
-    const formData = new FormData(form);
-    const id = document.getElementById(idField).value;
-    const isEditing = !!id;
-
-    const data = {};
-    for (let [key, value] of formData.entries()) {
-        if (key !== 'image') { // Exclude image file itself from direct data
-            data[key] = value;
-        }
-    }
-
-    let imageUrl = null;
-    const imageFile = form.querySelector('input[type="file"]') ? form.querySelector('input[type="file"]').files[0] : null;
-
-    // If there's a new image file, upload it
-    if (imageFile) {
-        imageUrl = await uploadImage(imageFile);
-        if (imageUrl) {
-            data.imageUrl = imageUrl;
-        } else {
-            // If new image upload fails, and it's an edit, keep old image URL
-            if (isEditing && imageUrlDisplayId) {
-                data.imageUrl = document.getElementById(imageUrlDisplayId).dataset.currentUrl;
-            } else {
-                 showMessageBox('Image upload failed. Cannot save item without image.', 'error');
-                 return; // Prevent saving if image is required and upload failed
+// Dashboard Card Clickability
+document.querySelectorAll('.dashboard-card').forEach(card => {
+    card.addEventListener('click', (event) => {
+        const targetCard = event.target.closest('.dashboard-card');
+        if (targetCard) {
+            const sectionId = targetCard.dataset.targetSection;
+            if (sectionId) {
+                console.log(`[Dashboard Card] Navigating to section via card: ${sectionId}`);
+                showSection(sectionId);
             }
         }
-    } else if (isEditing && imageUrlDisplayId) {
-        // If no new image, but it's an edit, retain existing image URL
-        data.imageUrl = document.getElementById(imageUrlDisplayId).dataset.currentUrl;
-    }
+    });
+});
 
+
+// --- CRUD Form Submissions ---
+
+/**
+ * Generic form submission handler for Add/Edit operations.
+ * @param {Event} event - The form submit event.
+ * @param {HTMLFormElement} form - The form element being submitted.
+ * @param {string} type - The type of item (e.g., 'program', 'newsEvent').
+ * @param {string} idFieldId - The ID of the hidden input field storing the item's _id.
+ * @param {string|null} imageUrlDisplayId - The ID of the element displaying current image URL, if applicable.
+ */
+async function handleFormSubmit(e, type, formElement) {
+    e.preventDefault();
+    const formData = new FormData(formElement);
+
+    // Check if any file input has a selected file
+    const hasFile = [...formData.entries()].some(([key, value]) =>
+        value instanceof File && value.name
+    );
+
+    // Determine the body to send based on whether a file is present
+    const body = hasFile ? formData : JSON.stringify(Object.fromEntries(formData));
 
     try {
         let response;
-        if (isEditing) {
+        const id = formData.get('_id'); // Use _id as per your HTML forms
+
+        if (id) {
+            // Update existing entry
             response = await authenticatedFetch(`/api/${type}s/${id}`, {
                 method: 'PUT',
-                body: JSON.stringify(data)
+                body: body,
+                silent: true
             });
         } else {
+            // Create new entry
             response = await authenticatedFetch(`/api/${type}s`, {
                 method: 'POST',
-                body: JSON.stringify(data)
+                body: body,
+                silent: true
             });
         }
 
-        if (response.success) {
-            showMessageBox(response.message, 'success');
-            form.reset();
-            form.closest('.form-container').classList.add('hidden');
+        // Check response.ok for success, as authenticatedFetch now throws on !response.ok
+        if (response) { // If response is not null (meaning no error was thrown by authenticatedFetch)
+            showMessageBox(`${type.charAt(0).toUpperCase() + type.slice(1)} saved successfully!`, 'success');
+            formElement.reset();
+            formElement.closest('.form-container').classList.add('hidden');
             currentEditing[type] = null;
-            loadAllData(); // Reload data for all relevant sections
-            loadDashboardCounts(); // Update dashboard counts
-        } else {
-            showMessageBox('Operation failed: ' + (response.message || 'Unknown error'), 'error');
+
+            // Clear file input display name and current image URL display
+            const imageInput = formElement.querySelector('input[type="file"]');
+            if (imageInput) {
+                const fileNameDisplay = imageInput.closest('.form-group').querySelector('.file-name-display');
+                if (fileNameDisplay) fileNameDisplay.textContent = 'No file chosen';
+                imageInput.value = ''; // Clear the actual file input
+            }
+            const currentImageUrlElement = formElement.querySelector('.current-image-info');
+            if (currentImageUrlElement) {
+                currentImageUrlElement.textContent = '';
+                currentImageUrlElement.dataset.currentUrl = '';
+            }
+
+            console.log(`[handleFormSubmit] ${type} saved successfully. Reloading data...`);
+            await loadAllData(); // Reload data for all relevant sections
+            await loadDashboardCounts(); // Update dashboard counts
+            console.log(`[handleFormSubmit] Data reloaded after ${type} save.`);
         }
     } catch (error) {
-        console.error(`Error saving ${type}:`, error);
-        showMessageBox(`Failed to save ${type}.`, 'error');
+        // Error message already shown by authenticatedFetch due to silent: false (default) or explicit showMessageBox
+        console.error(`[handleFormSubmit] Failed to save ${type}:`, error);
+        // showMessageBox(`Failed to save ${type}.`, 'error'); // Avoid double message
     }
 }
 
+
 // Program Form
-programForm.addEventListener('submit', (event) => {
-    handleFormSubmit(event, programForm, 'program', 'program-id');
-});
-document.getElementById('cancel-program-edit').addEventListener('click', () => {
-    programForm.reset();
-    programForm.closest('.form-container').classList.add('hidden');
-    currentEditing.program = null;
-});
+if (programForm) {
+    programForm.addEventListener('submit', (event) => {
+        handleFormSubmit(event, 'program', programForm);
+    });
+    document.getElementById('cancel-program-edit').addEventListener('click', () => {
+        programForm.reset();
+        programForm.closest('.form-container').classList.add('hidden');
+        currentEditing.program = null;
+        console.log('[Program Form] Edit cancelled.');
+    });
+}
+
 
 // News & Event Form
-newsEventForm.addEventListener('submit', (event) => {
-    handleFormSubmit(event, newsEventForm, 'newsEvent', 'news-event-id', 'current-news-event-image-url');
-});
-document.getElementById('cancel-news-event-edit').addEventListener('click', () => {
-    newsEventForm.reset();
-    newsEventForm.closest('.form-container').classList.add('hidden');
-    currentEditing.newsEvent = null;
-    document.getElementById('current-news-event-image-url').textContent = '';
-});
+if (newsEventForm) {
+    newsEventForm.addEventListener('submit', (event) => {
+        handleFormSubmit(event, 'newsEvent', newsEventForm);
+    });
+    document.getElementById('cancel-news-event-edit').addEventListener('click', () => {
+        newsEventForm.reset();
+        newsEventForm.closest('.form-container').classList.add('hidden');
+        currentEditing.newsEvent = null;
+        document.getElementById('current-news-event-image-url').textContent = '';
+        document.getElementById('news-event-image').value = ''; // Clear file input
+        const fileNameDisplay = newsEventForm.querySelector('.file-name-display');
+        if (fileNameDisplay) fileNameDisplay.textContent = 'No file chosen';
+        console.log('[News Event Form] Edit cancelled.');
+    });
+}
 
 // Testimonial Form
-testimonialForm.addEventListener('submit', (event) => {
-    handleFormSubmit(event, testimonialForm, 'testimonial', 'testimonial-id');
-});
-document.getElementById('cancel-testimonial-edit').addEventListener('click', () => {
-    testimonialForm.reset();
-    testimonialForm.closest('.form-container').classList.add('hidden');
-    currentEditing.testimonial = null;
-});
+if (testimonialForm) {
+    testimonialForm.addEventListener('submit', (event) => {
+        handleFormSubmit(event, 'testimonial', testimonialForm);
+    });
+    document.getElementById('cancel-testimonial-edit').addEventListener('click', () => {
+        testimonialForm.reset();
+        testimonialForm.closest('.form-container').classList.add('hidden');
+        currentEditing.testimonial = null;
+        console.log('[Testimonial Form] Edit cancelled.');
+    });
+}
 
 // Faculty Form
-facultyForm.addEventListener('submit', (event) => {
-    handleFormSubmit(event, facultyForm, 'faculty', 'faculty-id', 'current-faculty-image-url');
-});
-document.getElementById('cancel-faculty-edit').addEventListener('click', () => {
-    facultyForm.reset();
-    facultyForm.closest('.form-container').classList.add('hidden');
-    currentEditing.faculty = null;
-    document.getElementById('current-faculty-image-url').textContent = '';
-});
+if (facultyForm) {
+    facultyForm.addEventListener('submit', (event) => {
+        handleFormSubmit(event, 'faculty', facultyForm);
+    });
+    document.getElementById('cancel-faculty-edit').addEventListener('click', () => {
+        facultyForm.reset();
+        facultyForm.closest('.form-container').classList.add('hidden');
+        currentEditing.faculty = null;
+        document.getElementById('current-faculty-image-url').textContent = '';
+        document.getElementById('faculty-image').value = ''; // Clear file input
+        const fileNameDisplay = facultyForm.querySelector('.file-name-display');
+        if (fileNameDisplay) fileNameDisplay.textContent = 'No file chosen';
+        console.log('[Faculty Form] Edit cancelled.');
+    });
+}
 
 // Gallery Form
-galleryForm.addEventListener('submit', (event) => {
-    handleFormSubmit(event, galleryForm, 'gallery', 'gallery-id', 'current-gallery-image-url');
-});
-document.getElementById('cancel-gallery-edit').addEventListener('click', () => {
-    galleryForm.reset();
-    galleryForm.closest('.form-container').classList.add('hidden');
-    currentEditing.gallery = null;
-    document.getElementById('current-gallery-image-url').textContent = '';
-});
+if (galleryForm) {
+    galleryForm.addEventListener('submit', (event) => {
+        handleFormSubmit(event, 'gallery', galleryForm);
+    });
+    document.getElementById('cancel-gallery-edit').addEventListener('click', () => {
+        galleryForm.reset();
+        galleryForm.closest('.form-container').classList.add('hidden');
+        currentEditing.gallery = null;
+        document.getElementById('current-gallery-image-url').textContent = '';
+        document.getElementById('gallery-image').value = ''; // Clear file input
+        const fileNameDisplay = galleryForm.querySelector('.file-name-display');
+        if (fileNameDisplay) fileNameDisplay.textContent = 'No file chosen';
+        console.log('[Gallery Form] Edit cancelled.');
+    });
+}
 
 // Quick Link Form
-quickLinkForm.addEventListener('submit', (event) => {
-    handleFormSubmit(event, quickLinkForm, 'quickLink', 'quick-link-id');
-});
-document.getElementById('cancel-quick-link-edit').addEventListener('click', () => {
-    quickLinkForm.reset();
-    quickLinkForm.closest('.form-container').classList.add('hidden');
-    currentEditing.quickLink = null;
-});
+if (quickLinkForm) {
+    quickLinkForm.addEventListener('submit', (event) => {
+        handleFormSubmit(event, 'quickLink', quickLinkForm);
+    });
+    document.getElementById('cancel-quick-link-edit').addEventListener('click', () => {
+        quickLinkForm.reset();
+        quickLinkForm.closest('.form-container').classList.add('hidden');
+        currentEditing.quickLink = null;
+        console.log('[Quick Link Form] Edit cancelled.');
+    });
+}
 
 
 // --- Edit and Delete Button Delegation ---
 document.addEventListener('click', async (event) => {
     // Handle Edit
-    if (event.target.classList.contains('edit-btn')) {
-        const id = event.target.dataset.id;
-        const type = event.target.dataset.type;
-        let form, idField, imageUrlDisplay;
+    if (event.target.classList.contains('edit-btn') || event.target.closest('.edit-btn')) {
+        const btn = event.target.closest('.edit-btn');
+        const id = btn.dataset.id;
+        const type = btn.dataset.type;
+        console.log(`[Edit Button] Clicked edit for ${type} with ID: ${id}`);
 
-        // Show the correct form and populate it
-        Object.values(sections).forEach(section => {
-            const formContainer = section.querySelector('.form-container');
-            if (formContainer) formContainer.classList.add('hidden');
-        });
+        // Hide all forms first
+        resetForms(); // Use the unified resetForms function
 
         try {
             const response = await authenticatedFetch(`/api/${type}s/${id}`);
@@ -759,100 +873,235 @@ document.addEventListener('click', async (event) => {
 
             if (!item) {
                 showMessageBox('Item not found for editing.', 'error');
+                console.error(`[Edit Button] Item not found for ${type} with ID: ${id}`);
                 return;
             }
 
             currentEditing[type] = id; // Store ID of item being edited
+            console.log(`[Edit Button] Fetched item for editing:`, item);
+
+            let formToPopulate;
+            let idFieldElement;
+            let imageUrlDisplayElement;
+            let fileNameDisplayElement;
 
             switch (type) {
                 case 'program':
-                    form = programForm;
-                    idField = 'program-id';
-                    form.querySelector('#program-title').value = item.title;
-                    form.querySelector('#program-description').value = item.description;
-                    form.querySelector('#program-icon-svg').value = item.iconSvg || '';
+                    formToPopulate = programForm;
+                    idFieldElement = document.getElementById('program-id');
+                    if (formToPopulate) { // Ensure form exists before accessing elements
+                        formToPopulate.querySelector('#program-title').value = item.title || '';
+                        formToPopulate.querySelector('#program-description').value = item.description || '';
+                        formToPopulate.querySelector('#program-icon-svg').value = item.iconSvg || '';
+                    }
                     break;
                 case 'newsEvent':
-                    form = newsEventForm;
-                    idField = 'news-event-id';
-                    imageUrlDisplay = document.getElementById('current-news-event-image-url');
-                    form.querySelector('#news-event-title').value = item.title;
-                    form.querySelector('#news-event-date').value = item.date;
-                    form.querySelector('#news-event-description').value = item.description;
-                    form.querySelector('#news-event-link').value = item.link || '';
-                    form.querySelector('#news-event-icon-svg').value = item.iconSvg || '';
-                    if (item.imageUrl) {
-                        imageUrlDisplay.textContent = `Current Image: ${item.imageUrl.split('/').pop()}`;
-                        imageUrlDisplay.dataset.currentUrl = item.imageUrl; // Store for later use
-                    } else {
-                        imageUrlDisplay.textContent = '';
-                        imageUrlDisplay.dataset.currentUrl = '';
+                    formToPopulate = newsEventForm;
+                    idFieldElement = document.getElementById('news-event-id');
+                    imageUrlDisplayElement = document.getElementById('current-news-event-image-url');
+                    fileNameDisplayElement = formToPopulate ? formToPopulate.querySelector('.file-name-display') : null;
+
+                    if (formToPopulate) {
+                        formToPopulate.querySelector('#news-event-title').value = item.title || '';
+                        formToPopulate.querySelector('#news-event-date').value = item.date || '';
+                        formToPopulate.querySelector('#news-event-description').value = item.description || '';
+                        formToPopulate.querySelector('#news-event-link').value = item.link || '';
+                        formToPopulate.querySelector('#news-event-icon-svg').value = item.iconSvg || '';
+                    }
+
+                    if (item.imageUrl && imageUrlDisplayElement) {
+                        imageUrlDisplayElement.textContent = `Current Image: ${item.imageUrl.split('/').pop().split('?')[0]}`;
+                        imageUrlDisplayElement.dataset.currentUrl = item.imageUrl;
+                        if (fileNameDisplayElement) fileNameDisplayElement.textContent = item.imageUrl.split('/').pop().split('?')[0];
+                    } else if (imageUrlDisplayElement) {
+                        imageUrlDisplayElement.textContent = '';
+                        imageUrlDisplayElement.dataset.currentUrl = '';
+                        if (fileNameDisplayElement) fileNameDisplayElement.textContent = 'No file chosen';
                     }
                     break;
                 case 'testimonial':
-                    form = testimonialForm;
-                    idField = 'testimonial-id';
-                    form.querySelector('#testimonial-quote').value = item.quote;
-                    form.querySelector('#testimonial-author').value = item.author;
-                    form.querySelector('#testimonial-role').value = item.role;
-                    form.querySelector('#testimonial-icon-svg').value = item.iconSvg || '';
+                    formToPopulate = testimonialForm;
+                    idFieldElement = document.getElementById('testimonial-id');
+                    if (formToPopulate) {
+                        formToPopulate.querySelector('#testimonial-quote').value = item.quote || '';
+                        formToPopulate.querySelector('#testimonial-author').value = item.author || '';
+                        formToPopulate.querySelector('#testimonial-role').value = item.role || '';
+                        formToPopulate.querySelector('#testimonial-icon-svg').value = item.iconSvg || '';
+                    }
                     break;
                 case 'faculty':
-                    form = facultyForm;
-                    idField = 'faculty-id';
-                    imageUrlDisplay = document.getElementById('current-faculty-image-url');
-                    form.querySelector('#faculty-name').value = item.name;
-                    form.querySelector('#faculty-role').value = item.role;
-                    form.querySelector('#faculty-description').value = item.description;
-                    if (item.imageUrl) {
-                        imageUrlDisplay.textContent = `Current Image: ${item.imageUrl.split('/').pop()}`;
-                        imageUrlDisplay.dataset.currentUrl = item.imageUrl;
-                    } else {
-                        imageUrlDisplay.textContent = '';
-                        imageUrlDisplay.dataset.currentUrl = '';
+                    formToPopulate = facultyForm;
+                    idFieldElement = document.getElementById('faculty-id');
+                    imageUrlDisplayElement = document.getElementById('current-faculty-image-url');
+                    fileNameDisplayElement = formToPopulate ? formToPopulate.querySelector('.file-name-display') : null;
+
+                    if (formToPopulate) {
+                        formToPopulate.querySelector('#faculty-name').value = item.name || '';
+                        formToPopulate.querySelector('#faculty-role').value = item.role || '';
+                        formToPopulate.querySelector('#faculty-description').value = item.description || '';
+                    }
+
+                    if (item.imageUrl && imageUrlDisplayElement) {
+                        imageUrlDisplayElement.textContent = `Current Image: ${item.imageUrl.split('/').pop().split('?')[0]}`;
+                        imageUrlDisplayElement.dataset.currentUrl = item.imageUrl;
+                        if (fileNameDisplayElement) fileNameDisplayElement.textContent = item.imageUrl.split('/').pop().split('?')[0];
+                    } else if (imageUrlDisplayElement) {
+                        imageUrlDisplayElement.textContent = '';
+                        imageUrlDisplayElement.dataset.currentUrl = '';
+                        if (fileNameDisplayElement) fileNameDisplayElement.textContent = 'No file chosen';
                     }
                     break;
                 case 'gallery':
-                    form = galleryForm;
-                    idField = 'gallery-id';
-                    imageUrlDisplay = document.getElementById('current-gallery-image-url');
-                    form.querySelector('#gallery-caption').value = item.caption;
-                    if (item.imageUrl) {
-                        imageUrlDisplay.textContent = `Current Image: ${item.imageUrl.split('/').pop()}`;
-                        imageUrlDisplay.dataset.currentUrl = item.imageUrl;
-                    } else {
-                        imageUrlDisplay.textContent = '';
-                        imageUrlDisplay.dataset.currentUrl = '';
+                    formToPopulate = galleryForm;
+                    idFieldElement = document.getElementById('gallery-id');
+                    imageUrlDisplayElement = document.getElementById('current-gallery-image-url');
+                    fileNameDisplayElement = formToPopulate ? formToPopulate.querySelector('.file-name-display') : null;
+
+                    if (formToPopulate) {
+                        formToPopulate.querySelector('#gallery-caption').value = item.caption || '';
+                    }
+
+                    if (item.imageUrl && imageUrlDisplayElement) {
+                        imageUrlDisplayElement.textContent = `Current Image: ${item.imageUrl.split('/').pop().split('?')[0]}`;
+                        imageUrlDisplayElement.dataset.currentUrl = item.imageUrl;
+                        if (fileNameDisplayElement) fileNameDisplayElement.textContent = item.imageUrl.split('/').pop().split('?')[0];
+                    } else if (imageUrlDisplayElement) {
+                        imageUrlDisplayElement.textContent = '';
+                        imageUrlDisplayElement.dataset.currentUrl = '';
+                        if (fileNameDisplayElement) fileNameDisplayElement.textContent = 'No file chosen';
                     }
                     break;
                 case 'quickLink':
-                    form = quickLinkForm;
-                    idField = 'quick-link-id';
-                    form.querySelector('#quick-link-title').value = item.title;
-                    form.querySelector('#quick-link-description').value = item.description;
-                    form.querySelector('#quick-link-url').value = item.url;
-                    form.querySelector('#quick-link-icon-svg').value = item.iconSvg || '';
+                    formToPopulate = quickLinkForm;
+                    idFieldElement = document.getElementById('quick-link-id');
+                    if (formToPopulate) {
+                        formToPopulate.querySelector('#quick-link-title').value = item.title || '';
+                        formToPopulate.querySelector('#quick-link-description').value = item.description || '';
+                        formToPopulate.querySelector('#quick-link-url').value = item.url || '';
+                        formToPopulate.querySelector('#quick-link-icon-svg').value = item.iconSvg || '';
+                    }
                     break;
                 default:
-                    console.warn('Unknown item type for edit:', type);
+                    console.warn('[Edit Button] Unknown item type for edit:', type);
                     return;
             }
-            form.querySelector(`#${idField}`).value = id;
-            form.closest('.form-container').classList.remove('hidden'); // Show the form
-            window.scrollTo({ top: 0, behavior: 'smooth' }); // Scroll to top to show form
+            if (idFieldElement) idFieldElement.value = id;
+            if (formToPopulate) {
+                formToPopulate.closest('.form-container').classList.remove('hidden');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+                console.log(`[Edit Button] Form for ${type} populated and shown.`);
+            } else {
+                console.error(`[Edit Button] Form element for type ${type} not found.`);
+                showMessageBox('Error: Form not found for editing.', 'error');
+            }
         } catch (error) {
-            console.error('Failed to fetch item for edit:', error);
+            console.error('[Edit Button] Failed to fetch item for edit:', error);
             showMessageBox('Failed to load item for editing.', 'error');
         }
     }
 
     // Handle Delete
-    if (event.target.classList.contains('delete-btn')) {
-        const id = event.target.dataset.id;
-        const type = event.target.dataset.type;
+    if (event.target.classList.contains('delete-btn') || event.target.closest('.delete-btn')) {
+        const btn = event.target.closest('.delete-btn');
+        const id = btn.dataset.id;
+        const type = btn.dataset.type;
+        console.log(`[Delete Button] Clicked delete for ${type} with ID: ${id}`);
 
-        // Simple confirmation (replace with custom modal if needed)
-        if (!confirm(`Are you sure you want to delete this ${type}?`)) {
+        // Show a real confirmation modal and wait for user input
+        const userConfirmed = await showConfirmationModal(`Are you sure you want to delete this ${type}? This action cannot be undone.`);
+// --- Confirmation Modal Implementation ---
+function showConfirmationModal(message) {
+    return new Promise((resolve) => {
+        // Create modal overlay
+        const overlay = document.createElement('div');
+        overlay.style.position = 'fixed';
+        overlay.style.top = '0';
+        overlay.style.left = '0';
+        overlay.style.width = '100vw';
+        overlay.style.height = '100vh';
+        overlay.style.background = 'rgba(0,0,0,0.35)';
+        overlay.style.display = 'flex';
+        overlay.style.alignItems = 'center';
+        overlay.style.justifyContent = 'center';
+        overlay.style.zIndex = '2000';
+
+        // Create modal box
+        const modal = document.createElement('div');
+        modal.style.background = '#fff';
+        modal.style.padding = '32px 28px 20px 28px';
+        modal.style.borderRadius = '10px';
+        modal.style.boxShadow = '0 8px 32px rgba(0,0,0,0.18)';
+        modal.style.maxWidth = '350px';
+        modal.style.width = '90%';
+        modal.style.textAlign = 'center';
+        modal.style.fontFamily = 'Inter, sans-serif';
+
+        // Message
+        const msg = document.createElement('div');
+        msg.textContent = message;
+        msg.style.marginBottom = '24px';
+        msg.style.fontSize = '1.08rem';
+        msg.style.color = '#333';
+
+        // Buttons
+        const btnContainer = document.createElement('div');
+        btnContainer.style.display = 'flex';
+        btnContainer.style.justifyContent = 'center';
+        btnContainer.style.gap = '18px';
+
+        const confirmBtn = document.createElement('button');
+        confirmBtn.textContent = 'Confirm';
+        confirmBtn.style.background = '#f44336';
+        confirmBtn.style.color = '#fff';
+        confirmBtn.style.border = 'none';
+        confirmBtn.style.padding = '8px 20px';
+        confirmBtn.style.borderRadius = '5px';
+        confirmBtn.style.fontWeight = '600';
+        confirmBtn.style.cursor = 'pointer';
+        confirmBtn.style.fontSize = '1rem';
+
+        const cancelBtn = document.createElement('button');
+        cancelBtn.textContent = 'Cancel';
+        cancelBtn.style.background = '#eee';
+        cancelBtn.style.color = '#333';
+        cancelBtn.style.border = 'none';
+        cancelBtn.style.padding = '8px 20px';
+        cancelBtn.style.borderRadius = '5px';
+        cancelBtn.style.fontWeight = '600';
+        cancelBtn.style.cursor = 'pointer';
+        cancelBtn.style.fontSize = '1rem';
+
+        // Button actions
+        confirmBtn.onclick = () => {
+            document.body.removeChild(overlay);
+            resolve(true);
+        };
+        cancelBtn.onclick = () => {
+            document.body.removeChild(overlay);
+            resolve(false);
+        };
+
+        // Keyboard accessibility
+        overlay.tabIndex = -1;
+        overlay.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                document.body.removeChild(overlay);
+                resolve(false);
+            }
+        });
+
+        btnContainer.appendChild(confirmBtn);
+        btnContainer.appendChild(cancelBtn);
+        modal.appendChild(msg);
+        modal.appendChild(btnContainer);
+        overlay.appendChild(modal);
+        document.body.appendChild(overlay);
+        overlay.focus();
+    });
+}
+
+        if (!userConfirmed) {
+            console.log('[Delete Button] Deletion cancelled by user (or auto-cancel).');
             return;
         }
 
@@ -860,15 +1109,19 @@ document.addEventListener('click', async (event) => {
             const response = await authenticatedFetch(`/api/${type}s/${id}`, {
                 method: 'DELETE'
             });
-            if (response.success) {
-                showMessageBox(response.message, 'success');
-                loadAllData(); // Reload data for all relevant sections
-                loadDashboardCounts(); // Update dashboard counts
+            console.log(`[Delete Button] API response for ${type} deletion:`, response);
+            if (response) { // Check response existence for success
+                showMessageBox(response.message || 'Item deleted successfully!', 'success');                console.log(`[Delete Button] ${type} deleted successfully. Reloading data...`);
+                await loadAllData();
+                await loadDashboardCounts();
+                console.log(`[Delete Button] Data reloaded after ${type} deletion.`);
             } else {
-                showMessageBox('Deletion failed: ' + (response.message || 'Unknown error'), 'error');
+                const errorData = await response.json(); // Try to parse error message
+                showMessageBox('Deletion failed: ' + (errorData.message || 'Unknown error'), 'error');
+                console.error(`[Delete Button] ${type} deletion failed:`, errorData.message);
             }
         } catch (error) {
-            console.error(`Error deleting ${type}:`, error);
+            console.error(`[Delete Button] Error deleting ${type}:`, error);
             showMessageBox(`Failed to delete ${type}.`, 'error');
         }
     }
@@ -876,11 +1129,12 @@ document.addEventListener('click', async (event) => {
 
 // --- Add New Item Buttons ---
 document.querySelectorAll('.admin-section').forEach(section => {
-    const addBtn = section.querySelector('.add-new-btn'); // Assuming you'll add these buttons
+    const addBtn = section.querySelector('.add-new-btn');
     if (addBtn) {
         addBtn.addEventListener('click', () => {
             const formContainer = section.querySelector('.form-container');
             if (formContainer) {
+                console.log('[Add New Button] Clicked. Resetting forms and showing new form.');
                 resetForms(); // Reset all forms first
                 formContainer.classList.remove('hidden'); // Show specific form
                 window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -889,132 +1143,37 @@ document.querySelectorAll('.admin-section').forEach(section => {
     }
 });
 
-// Manually add event listeners for "Add New" buttons since they might not exist yet
-// Or, ensure they are part of the HTML and then attach listeners
-// For now, let's assume the forms are initially hidden and revealed by clicking "Add New" or "Edit"
-// We need to add "Add New" buttons to admin.html for each section.
+// File input change listener to display file name
+document.querySelectorAll('input[type="file"]').forEach(input => {
+    input.addEventListener('change', function() {
+        const fileNameDisplay = this.closest('.form-group').querySelector('.file-name-display');
+        if (fileNameDisplay) {
+            if (this.files.length > 0) {
+                fileNameDisplay.textContent = this.files[0].name;
+                console.log(`[File Input] Selected file: ${this.files[0].name}`);
+            } else {
+                fileNameDisplay.textContent = 'No file chosen';
+                console.log('[File Input] No file chosen.');
+            }
+        }
+    });
+});
+
 
 // Initial setup: Hide all forms initially and add event listeners for their "Add New" buttons
 document.addEventListener('DOMContentLoaded', () => {
+    console.log('[DOMContentLoaded] Initializing admin panel...');
     // Hide all form containers by default
     document.querySelectorAll('.form-container').forEach(container => {
         container.classList.add('hidden');
     });
 
-    // Add "Add New" buttons dynamically or ensure they are in admin.html
-    // For now, let's assume they are in admin.html and we just need to attach listeners.
-    // If not, you'd add them via JS here.
-    // Example for Programs section:
-    const programsSection = document.getElementById('programs-section-content');
-    if (programsSection) {
-        let addProgramBtn = programsSection.querySelector('.add-new-btn');
-        if (!addProgramBtn) { // If button doesn't exist, create it
-            addProgramBtn = document.createElement('button');
-            addProgramBtn.classList.add('add-new-btn', 'save-btn'); // Using save-btn for styling
-            addProgramBtn.innerHTML = '<i class="fas fa-plus-circle"></i> Add New Program';
-            programsSection.insertBefore(addProgramBtn, programsSection.querySelector('h2:nth-of-type(2)')); // Insert before "Existing Programs" H2
-        }
-        addProgramBtn.addEventListener('click', () => {
-            resetForms();
-            programForm.closest('.form-container').classList.remove('hidden');
-            document.getElementById('program-id').value = ''; // Ensure ID is clear for new item
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        });
-    }
-
-    const newsEventsSection = document.getElementById('news-events-section-content');
-    if (newsEventsSection) {
-        let addNewsEventBtn = newsEventsSection.querySelector('.add-new-btn');
-        if (!addNewsEventBtn) {
-            addNewsEventBtn = document.createElement('button');
-            addNewsEventBtn.classList.add('add-new-btn', 'save-btn');
-            addNewsEventBtn.innerHTML = '<i class="fas fa-plus-circle"></i> Add New News/Event';
-            newsEventsSection.insertBefore(addNewsEventBtn, newsEventsSection.querySelector('h2:nth-of-type(2)'));
-        }
-        addNewsEventBtn.addEventListener('click', () => {
-            resetForms();
-            newsEventForm.closest('.form-container').classList.remove('hidden');
-            document.getElementById('news-event-id').value = '';
-            document.getElementById('current-news-event-image-url').textContent = '';
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        });
-    }
-
-    const testimonialsSection = document.getElementById('testimonials-section-content');
-    if (testimonialsSection) {
-        let addTestimonialBtn = testimonialsSection.querySelector('.add-new-btn');
-        if (!addTestimonialBtn) {
-            addTestimonialBtn = document.createElement('button');
-            addTestimonialBtn.classList.add('add-new-btn', 'save-btn');
-            addTestimonialBtn.innerHTML = '<i class="fas fa-plus-circle"></i> Add New Testimonial';
-            testimonialsSection.insertBefore(addTestimonialBtn, testimonialsSection.querySelector('h2:nth-of-type(2)'));
-        }
-        addTestimonialBtn.addEventListener('click', () => {
-            resetForms();
-            testimonialForm.closest('.form-container').classList.remove('hidden');
-            document.getElementById('testimonial-id').value = '';
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        });
-    }
-
-    const facultySection = document.getElementById('faculty-section-content');
-    if (facultySection) {
-        let addFacultyBtn = facultySection.querySelector('.add-new-btn');
-        if (!addFacultyBtn) {
-            addFacultyBtn = document.createElement('button');
-            addFacultyBtn.classList.add('add-new-btn', 'save-btn');
-            addFacultyBtn.innerHTML = '<i class="fas fa-plus-circle"></i> Add New Faculty Member';
-            facultySection.insertBefore(addFacultyBtn, facultySection.querySelector('h2:nth-of-type(2)'));
-        }
-        addFacultyBtn.addEventListener('click', () => {
-            resetForms();
-            facultyForm.closest('.form-container').classList.remove('hidden');
-            document.getElementById('faculty-id').value = '';
-            document.getElementById('current-faculty-image-url').textContent = '';
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        });
-    }
-
-    const gallerySection = document.getElementById('gallery-section-content');
-    if (gallerySection) {
-        let addGalleryBtn = gallerySection.querySelector('.add-new-btn');
-        if (!addGalleryBtn) {
-            addGalleryBtn = document.createElement('button');
-            addGalleryBtn.classList.add('add-new-btn', 'save-btn');
-            addGalleryBtn.innerHTML = '<i class="fas fa-plus-circle"></i> Add New Gallery Item';
-            gallerySection.insertBefore(addGalleryBtn, gallerySection.querySelector('h2:nth-of-type(2)'));
-        }
-        addGalleryBtn.addEventListener('click', () => {
-            resetForms();
-            galleryForm.closest('.form-container').classList.remove('hidden');
-            document.getElementById('gallery-id').value = '';
-            document.getElementById('current-gallery-image-url').textContent = '';
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        });
-    }
-
-    const quickLinksSection = document.getElementById('quick-links-section-content');
-    if (quickLinksSection) {
-        let addQuickLinkBtn = quickLinksSection.querySelector('.add-new-btn');
-        if (!addQuickLinkBtn) {
-            addQuickLinkBtn = document.createElement('button');
-            addQuickLinkBtn.classList.add('add-new-btn', 'save-btn');
-            addQuickLinkBtn.innerHTML = '<i class="fas fa-plus-circle"></i> Add New Quick Link';
-            quickLinksSection.insertBefore(addQuickLinkBtn, quickLinksSection.querySelector('h2:nth-of-type(2)'));
-        }
-        addQuickLinkBtn.addEventListener('click', () => {
-            resetForms();
-            quickLinkForm.closest('.form-container').classList.remove('hidden');
-            document.getElementById('quick-link-id').value = '';
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        });
-    }
-
     // Initial check for authentication token
     if (localStorage.getItem('adminToken')) {
+        console.log('[DOMContentLoaded] Admin token found, showing admin panel.');
         showAdminPanel();
     } else {
+        console.log('[DOMContentLoaded] No admin token found, showing login page.');
         showLogin();
     }
 });
-

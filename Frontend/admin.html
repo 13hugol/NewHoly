@@ -13,11 +13,6 @@
 </head>
 <body>
 
-    <!-- Page Loader -->
-    <div id="page-loader">
-        <div></div>
-    </div>
-
     <!-- Login Section -->
     <div id="login-section">
         <div class="login-container">
@@ -103,49 +98,49 @@
             <section id="dashboard-section-content" class="admin-section active">
                 <h1>Dashboard</h1>
                 <div class="dashboard-grid">
-                    <div class="dashboard-card">
+                    <div class="dashboard-card" data-target-section="programs">
                         <div>
                             <h3>Total Programs</h3>
                             <p id="dashboard-programs-count">0</p>
                         </div>
                         <i class="fas fa-book-open"></i>
                     </div>
-                    <div class="dashboard-card">
+                    <div class="dashboard-card" data-target-section="newsEvents">
                         <div>
                             <h3>Total News & Events</h3>
                             <p id="dashboard-news-events-count">0</p>
                         </div>
                         <i class="fas fa-bullhorn"></i>
                     </div>
-                    <div class="dashboard-card">
+                    <div class="dashboard-card" data-target-section="testimonials">
                         <div>
                             <h3>Total Testimonials</h3>
                             <p id="dashboard-testimonials-count">0</p>
                         </div>
                         <i class="fas fa-quote-right"></i>
                     </div>
-                    <div class="dashboard-card">
+                    <div class="dashboard-card" data-target-section="faculty">
                         <div>
                             <h3>Total Faculty</h3>
                             <p id="dashboard-faculty-count">0</p>
                         </div>
                         <i class="fas fa-users"></i>
                     </div>
-                    <div class="dashboard-card">
+                    <div class="dashboard-card" data-target-section="gallery">
                         <div>
                             <h3>Total Gallery Items</h3>
                             <p id="dashboard-gallery-count">0</p>
                         </div>
                         <i class="fas fa-images"></i>
                     </div>
-                    <div class="dashboard-card">
+                    <div class="dashboard-card" data-target-section="quickLinks">
                         <div>
                             <h3>Total Quick Links</h3>
                             <p id="dashboard-quick-links-count">0</p>
                         </div>
                         <i class="fas fa-link"></i>
                     </div>
-                    <div class="dashboard-card">
+                    <div class="dashboard-card" data-target-section="contacts">
                         <div>
                             <h3>Total Contact Messages</h3>
                             <p id="dashboard-contacts-count">0</p>
@@ -162,7 +157,7 @@
                 <div class="form-container hidden">
                     <h2>Add/Edit Program</h2>
                     <form id="program-form">
-                        <input type="hidden" id="program-id">
+                        <input type="hidden" id="program-id" name="_id">
                         <div class="form-group">
                             <label for="program-title">Title:</label>
                             <input type="text" id="program-title" name="title" required>
@@ -196,7 +191,7 @@
                 <div class="form-container hidden">
                     <h2>Add/Edit News/Event</h2>
                     <form id="news-event-form">
-                        <input type="hidden" id="news-event-id">
+                        <input type="hidden" id="news-event-id" name="_id">
                         <div class="form-group">
                             <label for="news-event-title">Title:</label>
                             <input type="text" id="news-event-title" name="title" required>
@@ -219,8 +214,12 @@
                         </div>
                         <div class="form-group">
                             <label for="news-event-image">Image:</label>
-                            <input type="file" id="news-event-image" name="image" accept="image/*">
-                            <p id="current-news-event-image-url" class="current-image-info"></p>
+                            <div class="file-input-wrapper">
+                                <button type="button" class="file-input-button" onclick="document.getElementById('news-event-image').click()">Choose File</button>
+                                <input type="file" id="news-event-image" name="image" accept="image/*" class="hidden">
+                                <span class="file-name-display" id="news-image-name">No file chosen</span>
+                            </div>
+                            <p id="current-news-event-image-url" class="current-image-info" data-current-url=""></p>
                         </div>
                         <div class="form-actions">
                             <button type="submit" class="save-btn">Save News/Event</button>
@@ -243,7 +242,7 @@
                 <div class="form-container hidden">
                     <h2>Add/Edit Testimonial</h2>
                     <form id="testimonial-form">
-                        <input type="hidden" id="testimonial-id">
+                        <input type="hidden" id="testimonial-id" name="_id">
                         <div class="form-group">
                             <label for="testimonial-quote">Quote:</label>
                             <textarea id="testimonial-quote" name="quote" rows="3" required></textarea>
@@ -281,7 +280,7 @@
                 <div class="form-container hidden">
                     <h2>Add/Edit Faculty Member</h2>
                     <form id="faculty-form">
-                        <input type="hidden" id="faculty-id">
+                        <input type="hidden" id="faculty-id" name="_id">
                         <div class="form-group">
                             <label for="faculty-name">Name:</label>
                             <input type="text" id="faculty-name" name="name" required>
@@ -296,8 +295,12 @@
                         </div>
                         <div class="form-group">
                             <label for="faculty-image">Image:</label>
-                            <input type="file" id="faculty-image" name="image" accept="image/*">
-                            <p id="current-faculty-image-url" class="current-image-info"></p>
+                            <div class="file-input-wrapper">
+                                <button type="button" class="file-input-button" onclick="document.getElementById('faculty-image').click()">Choose File</button>
+                                <input type="file" id="faculty-image" name="image" accept="image/*" class="hidden">
+                                <span class="file-name-display" id="faculty-image-name">No file chosen</span>
+                            </div>
+                            <p id="current-faculty-image-url" class="current-image-info" data-current-url=""></p>
                         </div>
                         <div class="form-actions">
                             <button type="submit" class="save-btn">Save Faculty Member</button>
@@ -320,15 +323,19 @@
                 <div class="form-container hidden">
                     <h2>Add/Edit Gallery Item</h2>
                     <form id="gallery-form">
-                        <input type="hidden" id="gallery-id">
+                        <input type="hidden" id="gallery-id" name="_id">
                         <div class="form-group">
                             <label for="gallery-caption">Caption:</label>
                             <input type="text" id="gallery-caption" name="caption" required>
                         </div>
                         <div class="form-group">
                             <label for="gallery-image">Image:</label>
-                            <input type="file" id="gallery-image" name="image" accept="image/*">
-                            <p id="current-gallery-image-url" class="current-image-info"></p>
+                            <div class="file-input-wrapper">
+                                <button type="button" class="file-input-button" onclick="document.getElementById('gallery-image').click()">Choose File</button>
+                                <input type="file" id="gallery-image" name="image" accept="image/*" class="hidden">
+                                <span class="file-name-display" id="gallery-image-name">No file chosen</span>
+                            </div>
+                            <p id="current-gallery-image-url" class="current-image-info" data-current-url=""></p>
                         </div>
                         <div class="form-actions">
                             <button type="submit" class="save-btn">Save Gallery Item</button>
@@ -351,7 +358,7 @@
                 <div class="form-container hidden">
                     <h2>Add/Edit Quick Link</h2>
                     <form id="quick-link-form">
-                        <input type="hidden" id="quick-link-id">
+                        <input type="hidden" id="quick-link-id" name="_id">
                         <div class="form-group">
                             <label for="quick-link-title">Title:</label>
                             <input type="text" id="quick-link-title" name="title" required>
