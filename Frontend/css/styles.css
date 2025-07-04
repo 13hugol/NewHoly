@@ -231,6 +231,7 @@ nav {
     border-radius: 50%;
     background: none;
     transition: background 0.2s;
+    padding: 0.5rem; /* Added padding for better click area */
 }
 
 .login-btn a:hover {
@@ -238,17 +239,27 @@ nav {
 }
 
 .login-btn svg {
-    width: 35px;
-    height: 50px;
-   padding: 0%;
-   margin: 0;
+    width: 35px; /* Adjusted size for the new SVG */
+    height: 35px; /* Adjusted size for the new SVG */
+    padding: 0%;
+    margin: 0;
     transition: 0.2s;
 }
 
 .login-btn a:hover svg {
-    background-color: #1a237e;
+    animation: sizer 0.69s forwards;
 }
-
+@keyframes sizer {
+    0%{
+        scale: 100%;
+    }
+    50%{
+        scale: 150%;
+    }
+    100%{
+        scale: 100%;
+    }
+}
 /* Responsive Navigation */
 @media (max-width: 768px) {
     .hamburger {
@@ -338,110 +349,161 @@ nav {
 }
 
 /* Dashboard Section (Principal/Vice-Principal Cards) */
-.dashboard {
-    padding: 2rem;
-    background-color: #f8fafc; /* Gray-50 from Tailwind */
+.principal-message-card {
+  background: #ffffff;
+  border-radius: 1rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  padding: 2rem;
+  max-width: 900px;
+  margin: 2rem auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  opacity: 0;
+  transform: translateY(30px);
+  transition: all 0.6s ease;
 }
 
-.card-wrapper {
-    display: flex;
-    flex-wrap: wrap; /* Allow cards to wrap on smaller screens */
-    gap: 2rem;
-    justify-content: center;
-    max-width: 1280px;
-    margin: 0 auto;
+.principal-message-card.visible {
+  opacity: 1;
+  transform: translateY(0);
 }
 
-.card {
-    background-color: #ffffff;
-    border-radius: 1rem;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
-    padding: 2rem;
-    flex: 1;
-    min-width: 300px;
-    max-width: 45%;
-    display: flex;
-    position: relative;
-    align-items: center;
-    text-align: center;
-    flex-direction: column;
-    justify-content: space-between;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+.principal-message-header {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
 }
 
-.card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+.principal-photo {
+  width: 120px;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 3px solid #1e3a8a;
 }
 
-.card .header {
-    margin-bottom: 1rem;
-    display: flex; /* Use flexbox for header content */
-    flex-direction: column; /* Stack header elements vertically */
-    align-items: center; /* Center elements in header */
-    width: 100%; /* Ensure header takes full width */
+.principal-details h2 {
+  font-size: 1.5rem;
+  color: #1e3a8a;
+  margin-bottom: 0.25rem;
 }
 
-.card strong {
-    font-size: 1.75rem; /* text-3xl */
-    font-weight: 700; /* font-bold */
-    color: #1a202c; /* gray-900 */
+.principal-details h3 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-bottom: 0.25rem;
+  color: #111827;
 }
 
-.card .para {
-    font-size: 1rem; /* text-base */
-    color: #4a5568; /* gray-700 */
-    line-height: 1.6;
+.principal-title {
+  font-size: 1rem;
+  color: #6b7280;
+  margin: 0;
 }
 
-.card .quotes {
-    width: 24px;
-    height: 24px;
-    fill: #a0aec0; /* gray-400 */
-    margin-bottom: 0.5rem;
+.principal-message-body {
+  font-size: 1rem;
+  line-height: 1.7;
+  color: #374151;
 }
 
-.card .Pfooter {
-    margin-top: 1.5rem;
+.principal-signature {
+  text-align: right;
 }
 
-.viewbtn {
-    background-color: #2563eb; /* blue-600 */
-    color: white;
-    padding: 0.75rem 1.5rem;
-    border-radius: 0.5rem;
-    font-weight: 600;
-    border: none;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    margin-top: 1rem;
+.signature-img {
+  height: 60px;
+  opacity: 0.8;
 }
 
-.viewbtn:hover {
-    background-color: #1d4ed8; /* blue-700 */
-}
-
-.more-info {
-    max-height: 0;
-    overflow: hidden;
-    transition: max-height 0.5s ease-out;
-    margin-top: 1rem;
-    color: #4a5568;
-}
-
-.card.expanded .more-info {
-    max-height: 200px; /* Adjust as needed */
-    transition: max-height 0.5s ease-in;
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @media (max-width: 768px) {
+  .principal-message-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .principal-photo {
+    width: 100px;
+    height: 100px;
+  }
+
+  .principal-signature {
+    text-align: left;
+  }
+}
+/* ====== End Principal Card Styles ====== */
+
+/* Photo styles */
+.photo{
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-top: 1rem;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); /* More prominent shadow for photo */
+    border: 4px solid #facc15; /* Yellow border for the photo */
+    transition: width 0.5s ease-in-out, height 0.5s ease-in-out, border-color 0.3s ease;
+}
+
+/* Photo size when card is expanded */
+.card.expanded .photo {
+    width: 200px;
+    height: 200px;
+}
+
+/* Responsive adjustments for the principal card */
+@media (max-width: 768px) {
     .card {
-        max-width: 100%; /* Full width on small screens */
+        flex-direction: column;
+        max-width: 100%;
+        text-align: center;
+        padding: 1.5rem;
+        background-image: linear-gradient(rgba(30, 58, 138, 0.85), rgba(30, 58, 138, 0.85)) /* Slightly stronger overlay on mobile */
+    }
+
+    .card-initial-content {
+        width: 100%;
+        padding-right: 0;
+        margin-bottom: 1rem;
+    }
+
+    .more-info {
+        max-height: 0;
+        opacity: 0;
+        padding-left: 0;
+        transition: max-height 0.5s ease-in-out, opacity 0.5s ease-in-out;
+    }
+
+    .card.expanded .more-info {
+        max-height: 300px;
+        opacity: 1;
+        padding-top: 1rem;
+        text-align: center;
+    }
+
+    .photo {
+        width: 120px;
+        height: 120px;
+    }
+
+    .card.expanded .photo {
+        width: 150px;
+        height: 150px;
     }
 }
+
 
 /* About Us Section Styles */
 .about-us-section {
@@ -648,23 +710,7 @@ nav {
 .program-learn-more-btn:hover svg {
     transform: translateX(0.25rem); /* group-hover:translate-x-1 */
 }
-.Photo {
-    width: 150px;
-    height: 150px;
-    border-radius: 50%;
-    object-fit: cover;
-    display: block;
-    margin: 0 auto 1rem auto;
-    border: 6px solid white;
-    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
-    background-color: white;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
 
-.Photo:hover {
-    transform: scale(1.05);
-    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.2);
-}
 .school-container {
     max-width: 1280px; /* Max width for content */
     margin-left: auto;
@@ -743,20 +789,20 @@ nav {
     align-items: center;
 }
 
-/* Icon styling (emulating Lucide icons with emojis) */
+/* Icon styling for contact section - now using Lucide SVGs */
 .contact-icon {
-    display: inline-block;
+    display: inline-flex; /* Changed to flex to center SVG */
+    align-items: center;
+    justify-content: center;
     width: 1.5rem;
     height: 1.5rem;
     margin-right: 0.75rem;
     color: #facc15; /* Yellow color for icons */
-    vertical-align: middle;
-    text-align: center; /* Center emoji */
-    line-height: 1.5rem; /* Center emoji vertically */
 }
-.contact-icon-mail::before { content: "✉️"; }
-.contact-icon-address::before { content: "🏠"; }
-.contact-icon-phone::before { content: "📞"; }
+.contact-icon svg {
+    width: 100%;
+    height: 100%;
+}
 
 
 /* Form Styling */
@@ -1156,15 +1202,17 @@ nav {
     transform: translateY(-2px);
 }
 
-.faculty-display-container.expanded .show-more-button {
-    display: none; /* Hide button when expanded */
-}
+/* The JS handles hiding this button when expanded, so this CSS rule is not strictly needed but can act as a fallback */
+/* .faculty-display-container.expanded .show-more-button {
+    display: none;
+} */
 
 /* New Counter Section Styles */
 .counter-section {
     padding: 5rem 0;
-    background-color: #ffffff; /* Dark blue background */
-    color: #ffffff;
+    /* Changed background-color to a dark blue to make white text visible */
+    background-color: #1e3a8a; /* Dark blue background */
+    color: #ffffff; /* White text */
     text-align: center;
 }
 
@@ -1182,7 +1230,7 @@ nav {
     align-items: center;
     padding: 1.5rem;
     border-radius: 1.5rem; /* More rounded corners */
-    background-color: #1e3a8a; /* Slightly transparent white */
+    background-color: rgba(255, 255, 255, 0.1); /* Slightly transparent white for items */
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3); /* Stronger shadow */
     transition: transform 0.4s ease-out, background-color 0.3s ease, opacity 0.6s ease-out; /* Added opacity to transition */
     opacity: 0; /* Initially hidden for animation */
@@ -1244,7 +1292,7 @@ nav {
 @keyframes fadeInUp {
     from {
         opacity: 0;
-        transform: translateY(60px);
+        transform: translateY(50px);
     }
     to {
         opacity: 1;
@@ -1483,85 +1531,6 @@ nav {
   opacity: 1;
   transform: translateY(0);
   animation: fadeInUp 0.8s cubic-bezier(0.23, 1, 0.32, 1);
-}
-
-.counter-section {
-    padding: 5rem 0;
-    background-color: #ffffff; /* Dark blue background */
-    color: #ffffff;
-    text-align: center;
-}
-
-.counter-grid-container {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 2rem;
-    justify-content: center;
-    align-items: flex-start; /* Align items to the start of the cross axis */
-}
-
-.counter-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 1.5rem;
-    border-radius: 1.5rem; /* More rounded corners */
-    background-color: #1e3a8a; /* Slightly transparent white */
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3); /* Stronger shadow */
-    transition: transform 0.4s ease-out, background-color 0.3s ease, opacity 0.6s ease-out; /* Added opacity to transition */
-    opacity: 0; /* Initially hidden for animation */
-    transform: translateY(50px); /* Start slightly below for fade-in-up */
-}
-
-.counter-item.animated {
-    opacity: 1;
-    transform: translateY(0);
-    /* No need for animation property here if using transition and adding 'animated' class */
-}
-
-/* Staggered animation delay using CSS variables and nth-child */
-.counter-item:nth-child(1) { transition-delay: 0.1s; }
-.counter-item:nth-child(2) { transition-delay: 0.2s; }
-.counter-item:nth-child(3) { transition-delay: 0.3s; }
-.counter-item:nth-child(4) { transition-delay: 0.4s; }
-
-
-.counter-item:hover {
-    transform: translateY(-10px) scale(1.05); /* More pronounced pop-up on hover */
-    background-color: rgb(36, 26, 94);
-}
-
-.icon-holder {
-    font-size: 3.5rem; /* Larger icon size */
-    margin-bottom: 0.75rem;
-    color: #facc15; /* Yellow icon color */
-}
-
-.icon-holder i {
-    /* Ensure Font Awesome icons are styled correctly */
-    line-height: 1; /* Adjust line-height to prevent extra space */
-}
-
-.counter-value {
-    font-size: 4rem; /* Larger number size */
-    font-weight: 700;
-    margin-bottom: 0.5rem;
-    color: #ffffff;
-    display: flex;
-    align-items: baseline; /* Align number and suffix */
-}
-
-.counter-value .suffix {
-    font-size: 1.8rem; /* Smaller size for '%' */
-    font-weight: 600;
-    margin-left: 0.25rem;
-    color: #facc15; /* Yellow for suffix */
-}
-
-.counter-text {
-    font-size: 1.35rem; /* Larger text */
-    font-weight: 600;
-    color: #cbd5e1; /* Light gray text */
 }
 
 /* Keyframes for fade-in-up animation (still useful for initial appearance) */

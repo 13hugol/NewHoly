@@ -5,8 +5,9 @@ let facultyData = [];
 let galleryData = [];
 let quickLinksData = [];
 
-// --- Utility Functions ---
-
+// --- username & pass ---
+const ADMIN_USERNAME = 'admin';
+const ADMIN_PASSWORD = 'admin';
 /**
  * Loads all data from localStorage.
  */
@@ -45,10 +46,6 @@ const loginSection = document.getElementById('loginSection');
 const dashboardSection = document.getElementById('dashboardSection');
 const logoutBtn = document.getElementById('logoutBtn');
 const loginMessage = document.getElementById('loginMessage');
-
-// Hardcoded credentials for demonstration (DO NOT use in production)
-const ADMIN_USERNAME = 'admin';
-const ADMIN_PASSWORD = 'admin';
 
 /**
  * Handles user login.
