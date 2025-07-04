@@ -1202,7 +1202,7 @@ nav {
     transform: translateY(-2px);
 }
 
-/* The JS handles hiding this button when expanded, so this CSS rule is not strictly needed but can act as a fallback */
+/* The JS handles hiding tzhis button when expanded, so this CSS rule is not strictly needed but can act as a fallback */
 /* .faculty-display-container.expanded .show-more-button {
     display: none;
 } */
@@ -1708,3 +1708,27 @@ nav {
     transform: translateY(-5px); /* Slight lift on hover */
     box-shadow: 0 15px 40px rgba(0, 0, 0, 0.35); /* Even more pronounced shadow on hover */
 }
+    #scrollToTopBtn {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      width: 50px;
+      height: 50px;
+      background-color:transparent; /* White background */
+      color: #0c0c0c;
+      border: none;
+      border-radius: 50%;
+      font-size: 24px;
+      cursor: pointer;
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 999;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+      transition: background 0.3s;
+    }
+
+    #scrollToTopBtn:hover {
+      background-color:rgb(56, 56, 253);
+      animation: sizer 0.3s forwards;
+    }
