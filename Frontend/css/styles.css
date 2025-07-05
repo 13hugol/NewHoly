@@ -1294,14 +1294,28 @@ nav {
 
 /* Keyframes for fade-in-up animation (still useful for initial appearance) */
 @keyframes fadeInUp {
-    from {
-        opacity: 0;
-        transform: translateY(50px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* The class that will be observed and animated */
+.fade-in-up {
+  opacity: 0; /* Hidden by default */
+  transform: translateY(40px); /* Start 40px down */
+  transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+  will-change: opacity, transform;
+}
+
+/* When the 'visible' class is added by JS, the animation triggers */
+.fade-in-up.visible {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 
@@ -1851,3 +1865,133 @@ nav {
       background-color:#4A90E2; /* Secondary Vibrant Blue on hover */
       animation: sizer 0.3s forwards;
     }
+.section-subtitle {
+    text-align: center;
+    max-width: 800px;
+    margin: -2rem auto 3rem auto;
+    font-size: 1.1rem;
+    color: #4a5568;
+}
+
+/* Icon prefix for headings */
+.icon-prefix {
+    margin-right: 0.5rem;
+    color: #1e3a8a; /* Primary Dark Blue */
+}
+
+
+/* Student Life Section Improvements */
+.student-life-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2rem;
+    justify-content: center;
+    margin-top: 2rem;
+}
+
+.student-life-column {
+    flex: 1;
+    min-width: 300px; /* Ensures columns don't get too squished */
+    background: #ffffff;
+    padding: 2rem;
+    border-radius: 1rem;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+
+.student-life-column h3 {
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+    color: #1a202c;
+}
+
+.student-life-list {
+    list-style-type: none;
+    padding-left: 0;
+}
+
+.student-life-list li {
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #e2e8f0;
+    color: #374151;
+}
+
+.student-life-list li:before {
+    content: '\f00c'; /* Font Awesome check icon */
+    font-family: 'Font Awesome 5 Free';
+    font-weight: 900;
+    color: #28a745;
+    margin-right: 0.75rem;
+}
+
+
+/* Improved Footer Styles */
+.school-footer {
+    background-color: #111827;
+    color: #d1d5db;
+    padding: 3rem 0 1rem 0;
+}
+
+.footer-content {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 2rem;
+    padding-bottom: 2rem;
+    margin-bottom: 2rem;
+    border-bottom: 1px solid #374151;
+}
+
+.footer-logo {
+    text-align: center;
+}
+
+@media (min-width: 768px) {
+    .footer-logo {
+        text-align: left;
+    }
+}
+
+.footer-logo img {
+    height: 50px;
+    margin-bottom: 0.5rem;
+    background-color: white;
+    border-radius: 50%;
+}
+
+.footer-logo h4 {
+    color: #ffffff;
+    font-size: 1.25rem;
+    margin: 0;
+}
+
+.footer-logo p {
+    margin: 0.25rem 0 0 0;
+    font-size: 0.9rem;
+}
+
+.footer-social-links .social-icon-link {
+    font-size: 1.25rem;
+    color: #9ca3af;
+    margin: 0 0.5rem;
+    transition: color 0.3s ease, transform 0.3s ease;
+}
+
+.footer-social-links .social-icon-link:hover {
+    color: #ffffff;
+    transform: translateY(-3px);
+}
+
+.footer-bottom {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    font-size: 0.9rem;
+    color: #9ca3af;
+}
+
+.footer-bottom .footer-links a {
+    margin-left: 1rem;
+}
