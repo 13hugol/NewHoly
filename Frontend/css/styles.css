@@ -9,6 +9,43 @@ body {
     color: #333; /* Default text color */
 }
 
+/* Page Loader Styles */
+.page-loader {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #1e3a8a; /* Primary Dark Blue */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999; /* Ensure it's on top of everything */
+    opacity: 1;
+    visibility: visible;
+    transition: opacity 0.5s ease-out, visibility 0.5s ease-out;
+}
+
+.page-loader.hidden {
+    opacity: 0;
+    visibility: hidden;
+}
+
+.loader-spinner {
+    border: 8px solid #facc15; /* Accent Yellow */
+    border-top: 8px solid #ffffff; /* White top border for spinning effect */
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    animation: spin 1.2s cubic-bezier(0.68, -0.55, 0.27, 1.55) infinite; /* Professional bouncy spin */
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+
 /* Reusable Container */
 .school-container {
     max-width: 1280px; /* Max width for content */
@@ -30,7 +67,7 @@ body {
     font-weight: 700; /* font-bold */
     text-align: center;
     margin-bottom: 3rem; /* mb-12 */
-    color: #1e3a8a; /* Dark blue for titles */
+    color: #1e3a8a; /* Primary Dark Blue */
 }
 
 /* Hero Section Styles */
@@ -70,6 +107,9 @@ body {
 @media (max-width: 768px) {
     .hero {
         height: 40vh;
+        /* For mobile, fixed background-attachment can sometimes cause issues or be less performant.
+           Consider removing it or using a media query if you notice problems.
+           background-attachment: scroll; */
     }
     .hero-logo {
         width: 80px;
@@ -101,7 +141,9 @@ nav {
     justify-content: space-between;
     align-items: center;
 }
-
+.logo{
+    width: 50px;
+}
 .nav-container {
     display: flex;
     justify-content: space-between;
@@ -144,7 +186,7 @@ nav {
 }
 
 .dropdown a:hover {
-    color: #2563eb; /* Blue-600 from Tailwind */
+    color: #4A90E2; /* Secondary Vibrant Blue */
 }
 
 .dropdown-content {
@@ -166,12 +208,12 @@ nav {
     text-decoration: none;
     display: block;
     text-align: left;
-    transition: background-color 0.3s ease;
     font-weight: 400;
+    transition: background-color 0.3s ease;
 }
 
 .dropdown-content a:hover {
-    background-color: #e2e8f0; /* Gray-200 from Tailwind */
+    background-color: #e2e8f0; /* Light Gray */
 }
 
 .dropdown:hover .dropdown-content {
@@ -191,6 +233,7 @@ nav {
     border-radius: 50%;
     background: none;
     transition: background 0.2s;
+    padding: 0.5rem; /* Added padding for better click area */
 }
 
 .login-btn a:hover {
@@ -198,17 +241,29 @@ nav {
 }
 
 .login-btn svg {
-    width: 35px;
-    height: 50px;
-   padding: 0%;
-   margin: 0;
+    width: 35px; /* Adjusted size for the new SVG */
+    height: 35px; /* Adjusted size for the new SVG */
+    padding: 0%;
+    margin: 0;
     transition: 0.2s;
+    color: #1e3a8a; /* Primary Dark Blue */
 }
 
 .login-btn a:hover svg {
-    background-color: #1a237e;
+    animation: sizer 0.69s forwards;
+    color: #4A90E2; /* Secondary Vibrant Blue on hover */
 }
-
+@keyframes sizer {
+    0%{
+        scale: 100%;
+    }
+    50%{
+        scale: 150%;
+    }
+    100%{
+        scale: 100%;
+    }
+}
 /* Responsive Navigation */
 @media (max-width: 768px) {
     .hamburger {
@@ -280,7 +335,7 @@ nav {
 
 .pics {
     display: flex;
-    transition: transform 0.5s ease-in-out;
+    transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94); /* Smooth ease-in-out */
 }
 
 .pics img {
@@ -298,110 +353,161 @@ nav {
 }
 
 /* Dashboard Section (Principal/Vice-Principal Cards) */
-.dashboard {
-    padding: 2rem;
-    background-color: #f8fafc; /* Gray-50 from Tailwind */
+.principal-message-card {
+  background: #ffffff;
+  border-radius: 1rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  padding: 2rem;
+  max-width: 900px;
+  margin: 2rem auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  opacity: 0;
+  transform: translateY(30px);
+  transition: all 0.6s ease;
 }
 
-.card-wrapper {
-    display: flex;
-    flex-wrap: wrap; /* Allow cards to wrap on smaller screens */
-    gap: 2rem;
-    justify-content: center;
-    max-width: 1280px;
-    margin: 0 auto;
+.principal-message-card.visible {
+  opacity: 1;
+  transform: translateY(0);
 }
 
-.card {
-    background-color: #ffffff;
-    border-radius: 1rem;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
-    padding: 2rem;
-    flex: 1;
-    min-width: 300px;
-    max-width: 45%;
-    display: flex;
-    position: relative;
-    align-items: center;
-    text-align: center;
-    flex-direction: column;
-    justify-content: space-between;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+.principal-message-header {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
 }
 
-.card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+.principal-photo {
+  width: 120px;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 3px solid #1e3a8a; /* Primary Dark Blue */
 }
 
-.card .header {
-    margin-bottom: 1rem;
-    display: flex; /* Use flexbox for header content */
-    flex-direction: column; /* Stack header elements vertically */
-    align-items: center; /* Center elements in header */
-    width: 100%; /* Ensure header takes full width */
+.principal-details h2 {
+  font-size: 1.5rem;
+  color: #1e3a8a; /* Primary Dark Blue */
+  margin-bottom: 0.25rem;
 }
 
-.card strong {
-    font-size: 1.75rem; /* text-3xl */
-    font-weight: 700; /* font-bold */
-    color: #1a202c; /* gray-900 */
+.principal-details h3 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-bottom: 0.25rem;
+  color: #111827; /* Dark text */
 }
 
-.card .para {
-    font-size: 1rem; /* text-base */
-    color: #4a5568; /* gray-700 */
-    line-height: 1.6;
+.principal-title {
+  font-size: 1rem;
+  color: #6b7280; /* Light Gray text */
+  margin: 0;
 }
 
-.card .quotes {
-    width: 24px;
-    height: 24px;
-    fill: #a0aec0; /* gray-400 */
-    margin-bottom: 0.5rem;
+.principal-message-body {
+  font-size: 1rem;
+  line-height: 1.7;
+  color: #374151; /* Medium Gray text */
 }
 
-.card .Pfooter {
-    margin-top: 1.5rem;
+.principal-signature {
+  text-align: right;
 }
 
-.viewbtn {
-    background-color: #2563eb; /* blue-600 */
-    color: white;
-    padding: 0.75rem 1.5rem;
-    border-radius: 0.5rem;
-    font-weight: 600;
-    border: none;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    margin-top: 1rem;
+.signature-img {
+  height: 60px;
+  opacity: 0.8;
 }
 
-.viewbtn:hover {
-    background-color: #1d4ed8; /* blue-700 */
-}
-
-.more-info {
-    max-height: 0;
-    overflow: hidden;
-    transition: max-height 0.5s ease-out;
-    margin-top: 1rem;
-    color: #4a5568;
-}
-
-.card.expanded .more-info {
-    max-height: 200px; /* Adjust as needed */
-    transition: max-height 0.5s ease-in;
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @media (max-width: 768px) {
+  .principal-message-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .principal-photo {
+    width: 100px;
+    height: 100px;
+  }
+
+  .principal-signature {
+    text-align: left;
+  }
+}
+/* ====== End Principal Card Styles ====== */
+
+/* Photo styles */
+.photo{
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-top: 1rem;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); /* More prominent shadow for photo */
+    border: 4px solid #facc15; /* Accent Yellow */
+    transition: width 0.5s ease-in-out, height 0.5s ease-in-out, border-color 0.3s ease;
+}
+
+/* Photo size when card is expanded */
+.card.expanded .photo {
+    width: 200px;
+    height: 200px;
+}
+
+/* Responsive adjustments for the principal card */
+@media (max-width: 768px) {
     .card {
-        max-width: 100%; /* Full width on small screens */
+        flex-direction: column;
+        max-width: 100%;
+        text-align: center;
+        padding: 1.5rem;
+        background-image: linear-gradient(rgba(30, 58, 138, 0.85), rgba(30, 58, 138, 0.85)) /* Slightly stronger overlay on mobile */
+    }
+
+    .card-initial-content {
+        width: 100%;
+        padding-right: 0;
+        margin-bottom: 1rem;
+    }
+
+    .more-info {
+        max-height: 0;
+        opacity: 0;
+        padding-left: 0;
+        transition: max-height 0.5s ease-in-out, opacity 0.5s ease-in-out;
+    }
+
+    .card.expanded .more-info {
+        max-height: 300px;
+        opacity: 1;
+        padding-top: 1rem;
+        text-align: center;
+    }
+
+    .photo {
+        width: 120px;
+        height: 120px;
+    }
+
+    .card.expanded .photo {
+        width: 150px;
+        height: 150px;
     }
 }
+
 
 /* About Us Section Styles */
 .about-us-section {
@@ -441,13 +547,13 @@ nav {
 .about-us-text h3 {
     font-size: 1.75rem;
     font-weight: 700;
-    color: #1a202c;
+    color: #1a202c; /* Dark text */
     margin-bottom: 1rem;
 }
 
 .about-us-text p {
     font-size: 1rem;
-    color: #4a5568;
+    color: #4a5568; /* Medium Gray text */
     margin-bottom: 1rem;
 }
 
@@ -459,7 +565,7 @@ nav {
 .programs-section {
     padding-top: 5rem; /* py-20 */
     padding-bottom: 5rem; /* py-20 */
-    background-color: #f9fafb; /* bg-gray-50 */
+    background-color: #f9fafb; /* Light Gray */
 }
 
 .programs-container {
@@ -493,14 +599,14 @@ nav {
     font-size: 2.25rem; /* text-4xl */
     line-height: 2.5rem; /* text-4xl */
     font-weight: 700; /* font-bold */
-    color: #1a202c; /* text-gray-900 */
+    color: #1a202c; /* Dark text */
     margin-bottom: 1rem; /* mb-4 */
 }
 
 .programs-header p {
     font-size: 1.25rem; /* text-xl */
     line-height: 1.75rem; /* text-xl */
-    color: #4a5568; /* text-gray-600 */
+    color: #4a5568; /* Medium Gray text */
     max-width: 48rem; /* max-w-3xl */
     margin-left: auto; /* mx-auto */
     margin-right: auto; /* mx-auto */
@@ -524,7 +630,7 @@ nav {
 }
 
 .program-card {
-    background-color: #ffffff; /* bg-white */
+    background-color: #ffffff; /* White */
     border-radius: 0.75rem; /* rounded-xl */
     box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); /* shadow-lg */
     transition: box-shadow 0.3s ease-in-out; /* transition-shadow duration-300 */
@@ -548,7 +654,7 @@ nav {
     justify-content: center; /* justify-center */
     margin-bottom: 1.5rem; /* mb-6 */
     transition: transform 0.2s ease-in-out; /* transition-transform duration-200 */
-    background-color: #2563eb; /* Default blue for program icons */
+    background-color: #1e3a8a; /* Primary Dark Blue */
 }
 
 .program-card:hover .program-icon-wrapper {
@@ -558,19 +664,19 @@ nav {
 .program-icon-wrapper svg {
     height: 2rem; /* h-8 */
     width: 2rem; /* w-8 */
-    color: #ffffff; /* text-white */
+    color: #ffffff; /* White */
 }
 
 .program-card h3 {
     font-size: 1.25rem; /* text-xl */
     line-height: 1.75rem; /* text-xl */
     font-weight: 700; /* font-bold */
-    color: #1a202c; /* text-gray-900 */
+    color: #1a202c; /* Dark text */
     margin-bottom: 1rem; /* mb-4 */
 }
 
 .program-card p {
-    color: #4a5568; /* text-gray-600 */
+    color: #4a5568; /* Medium Gray text */
     line-height: 1.625; /* leading-relaxed */
 }
 
@@ -582,7 +688,7 @@ nav {
 
 .program-learn-more-btn {
     color: white;
-    background-color: #1d4ed8; /* text-blue-600 */
+    background-color: #1e3a8a; /* Primary Dark Blue */
     padding: 0.75rem 1.5rem;
     border-radius: 0.5rem;
     font-weight: 600;
@@ -595,7 +701,8 @@ nav {
 }
 
 .program-learn-more-btn:hover {
-    color: #ffffff; /* hover:text-blue-800 */
+    background-color: #4A90E2; /* Secondary Vibrant Blue on hover */
+    color: #ffffff;
 }
 
 .program-learn-more-btn svg {
@@ -608,23 +715,7 @@ nav {
 .program-learn-more-btn:hover svg {
     transform: translateX(0.25rem); /* group-hover:translate-x-1 */
 }
-.Photo {
-    width: 150px;
-    height: 150px;
-    border-radius: 50%;
-    object-fit: cover;
-    display: block;
-    margin: 0 auto 1rem auto;
-    border: 6px solid white;
-    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
-    background-color: white;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
 
-.Photo:hover {
-    transform: scale(1.05);
-    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.2);
-}
 .school-container {
     max-width: 1280px; /* Max width for content */
     margin-left: auto;
@@ -648,7 +739,7 @@ nav {
 .gallery-section .section-title,
 .quick-links-resources-section .section-title,
 .student-life-section .section-title {
-    color: #1e3a8a; /* Default for most sections */
+    color: #1e3a8a; /* Primary Dark Blue for most sections */
 }
 
 .school-contact-section .section-title {
@@ -660,7 +751,7 @@ nav {
 .school-contact-section {
     padding-top: 4rem;
     padding-bottom: 4rem;
-    background-color: #1e3a8a; /* Dark blue background */
+    background-color: #1e3a8a; /* Primary Dark Blue */
     color: #ffffff; /* White text */
 }
 
@@ -703,20 +794,20 @@ nav {
     align-items: center;
 }
 
-/* Icon styling (emulating Lucide icons with emojis) */
+/* Icon styling for contact section - now using Lucide SVGs */
 .contact-icon {
-    display: inline-block;
+    display: inline-flex; /* Changed to flex to center SVG */
+    align-items: center;
+    justify-content: center;
     width: 1.5rem;
     height: 1.5rem;
     margin-right: 0.75rem;
-    color: #facc15; /* Yellow color for icons */
-    vertical-align: middle;
-    text-align: center; /* Center emoji */
-    line-height: 1.5rem; /* Center emoji vertically */
+    color: #facc15; /* Accent Yellow */
 }
-.contact-icon-mail::before { content: "✉️"; }
-.contact-icon-address::before { content: "🏠"; }
-.contact-icon-phone::before { content: "📞"; }
+.contact-icon svg {
+    width: 100%;
+    height: 100%;
+}
 
 
 /* Form Styling */
@@ -752,8 +843,8 @@ nav {
 .contact-form input:focus,
 .contact-form textarea:focus {
     outline: none;
-    border-color: #facc15; /* Yellow border on focus */
-    box-shadow: 0 0 0 2px #facc15; /* Yellow glow on focus */
+    border-color: #facc15; /* Accent Yellow on focus */
+    box-shadow: 0 0 0 2px #facc15; /* Accent Yellow glow on focus */
 }
 
 .contact-form textarea {
@@ -762,8 +853,8 @@ nav {
 
 .submit-button {
     width: 100%;
-    background-color: #f59e0b; /* Yellow button background */
-    color: #1e3a8a; /* Dark blue text on button */
+    background-color: #facc15; /* Accent Yellow */
+    color: #1e3a8a; /* Primary Dark Blue text on button */
     font-weight: 700;
     padding: 0.75rem 1.5rem;
     border-radius: 9999px; /* Fully rounded button */
@@ -876,7 +967,7 @@ nav {
 }
 
 .news-icon-wrapper {
-    background-color: #2563eb; /* Blue background for icon */
+    background-color: #1e3a8a; /* Primary Dark Blue */
     padding: 1rem;
     display: flex;
     justify-content: center;
@@ -897,24 +988,24 @@ nav {
 .news-content h3 {
     font-size: 1.375rem;
     font-weight: 700;
-    color: #1a202c;
+    color: #1a202c; /* Dark text */
     margin-bottom: 0.75rem;
 }
 
 .news-date {
     font-size: 0.875rem;
-    color: #6b7280; /* Gray text */
+    color: #6b7280; /* Light Gray text */
     margin-bottom: 1rem;
 }
 
 .news-content p {
     font-size: 1rem;
-    color: #4a5568;
+    color: #4a5568; /* Medium Gray text */
     margin-bottom: 1rem;
 }
 
 .news-read-more-btn {
-    color: #2563eb;
+    color: #1e3a8a; /* Primary Dark Blue */
     text-decoration: none;
     font-weight: 600;
     display: inline-flex;
@@ -923,7 +1014,7 @@ nav {
 }
 
 .news-read-more-btn:hover {
-    color: #1e40af;
+    color: #4A90E2; /* Secondary Vibrant Blue on hover */
 }
 
 /* Testimonial Section Styles */
@@ -965,7 +1056,7 @@ nav {
 }
 
 .testimonial-icon-wrapper {
-    color: #f59e0b; /* Yellow icon color */
+    color: #facc15; /* Accent Yellow */
     margin-bottom: 1rem;
 }
 
@@ -977,19 +1068,19 @@ nav {
 .testimonial-quote {
     font-size: 1.125rem;
     font-style: italic;
-    color: #4a5568;
+    color: #4a5568; /* Medium Gray text */
     margin-bottom: 1rem;
 }
 
 .testimonial-author {
     font-weight: 600;
-    color: #1a202c;
+    color: #1a202c; /* Dark text */
     margin-bottom: 0.25rem;
 }
 
 .testimonial-role {
     font-size: 0.875rem;
-    color: #6b7280;
+    color: #6b7280; /* Light Gray text */
 }
 
 /* Faculty Section Styles */
@@ -998,10 +1089,24 @@ nav {
     background-color: #e2e8f0; /* Light blue-gray background */
 }
 
+.faculty-display-container {
+    position: relative; /* Needed for absolute positioning of overlay */
+    overflow: hidden; /* Hide overflow when blurred */
+    /* Adjusted max-height to ensure only one row is visible initially for FACULTY_DISPLAY_LIMIT = 3 */
+    max-height: 450px; /* Estimated height for 2 rows of cards + some padding/margin, adjusted for FACULTY_DISPLAY_LIMIT = 6 */
+    transition: max-height 0.7s ease-in-out; /* Smooth transition for expansion */
+}
+
+.faculty-display-container.expanded {
+    max-height: 2000px; /* Large enough to show all content */
+    transition: max-height 0.7s ease-in-out;
+}
+
 .faculty-grid {
     display: grid;
     grid-template-columns: 1fr;
     gap: 2rem;
+    transition: filter 0.7s ease-in-out; /* Smooth blur transition */
 }
 
 @media (min-width: 640px) {
@@ -1023,6 +1128,10 @@ nav {
     padding: 1.5rem;
     text-align: center;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: 1px solid #e0e0e0;
+    display: flex; /* Use flexbox for internal alignment */
+    flex-direction: column;
+    align-items: center;
 }
 
 .faculty-card:hover {
@@ -1030,34 +1139,185 @@ nav {
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
 }
 
-.faculty-photo {
-    width: 100px;
-    height: 100px;
+.faculty-card img { /* Targeting the image directly within the card */
+    width: 100px; /* Fixed width for circular image */
+    height: 100px; /* Fixed height for circular image */
     border-radius: 50%;
     object-fit: cover;
-    margin: 0 auto 1rem auto;
-    border: 3px solid #2563eb; /* Blue border */
+    margin: 0 auto 1rem auto; /* Center and add bottom margin */
+    border: 3px solid #1e3a8a; /* Primary Dark Blue */
+    flex-shrink: 0; /* Prevent image from shrinking */
 }
 
 .faculty-card h3 {
     font-size: 1.25rem;
     font-weight: 700;
-    color: #1a202c;
+    color: #1a202c; /* Dark text */
     margin-bottom: 0.5rem;
 }
 
 .faculty-role {
     font-size: 0.95rem;
-    color: #2563eb; /* Blue color for role */
+    color: #4A90E2; /* Secondary Vibrant Blue for role */
     font-weight: 600;
     margin-bottom: 1rem;
 }
 
 .faculty-description {
     font-size: 0.95rem;
-    color: #4a5568;
+    color: #4a5568; /* Medium Gray text */
     line-height: 1.5;
+    flex-grow: 1; /* Allow description to take up available space */
 }
+
+.faculty-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    /* Adjusted height for a more noticeable blur area */
+    height: 150px;
+    /* Adjusted gradient for a more pronounced blur effect at the bottom */
+    background: linear-gradient(to top, rgba(226, 232, 240, 0.98) 0%, rgba(226, 232, 240, 0.8) 50%, rgba(226, 232, 240, 0) 100%);
+    pointer-events: none; /* Allows clicks to pass through to the button */
+    transition: opacity 0.7s ease-in-out;
+    z-index: 5; /* Ensure overlay is above grid but below button */
+}
+
+.faculty-display-container.expanded .faculty-overlay {
+    opacity: 0; /* Hide overlay when expanded */
+}
+
+.show-more-button {
+    /* Set display to none by default in CSS, let JS override */
+    display: none; /* Hidden by default */
+    margin: 1.5rem auto 0; /* Center button below content */
+    background-color: #1e3a8a; /* Primary Dark Blue */
+    color: white;
+    padding: 0.8rem 2rem;
+    border: none;
+    border-radius: 9999px; /* Fully rounded */
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    position: relative; /* Position relative to its normal flow */
+    z-index: 10; /* Ensure it's above the overlay */
+}
+
+.show-more-button:hover {
+    background-color: #4A90E2; /* Secondary Vibrant Blue on hover */
+    transform: translateY(-2px);
+}
+
+/* New Counter Section Styles */
+.counter-section {
+    padding: 5rem 0;
+    background-color: #1e3a8a; /* Primary Dark Blue */
+    color: #ffffff; /* White text */
+    text-align: center;
+}
+
+.counter-grid-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 2rem;
+    justify-content: center;
+    align-items: flex-start; /* Align items to the start of the cross axis */
+}
+
+.counter-item {
+    background-color: #2d3748; /* Darker shade of Primary Blue for items */
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25); /* More pronounced shadow for counters */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    opacity: 0; /* Hidden by default for animation */
+    transform: translateY(20px);
+    transition: opacity 0.6s ease-out, transform 0.6s ease-out, box-shadow 0.3s ease; /* Added box-shadow to transition */
+    border: 1px solid rgba(255, 255, 255, 0.1); /* Added subtle white border */
+}
+
+.counter-item.animated {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Staggered animation delay using CSS variables and nth-child */
+.counter-item:nth-child(1) { transition-delay: 0.1s; }
+.counter-item:nth-child(2) { transition-delay: 0.2s; }
+.counter-item:nth-child(3) { transition-delay: 0.3s; }
+.counter-item:nth-child(4) { transition-delay: 0.4s; }
+
+
+.counter-item:hover {
+    transform: translateY(-10px) scale(1.05); /* More pronounced pop-up on hover */
+    background-color: #1e3a8a; /* Primary Dark Blue on hover */
+}
+
+.icon-holder {
+    font-size: 3.5rem; /* Larger icon size */
+    margin-bottom: 0.75rem;
+    color: #facc15; /* Accent Yellow */
+}
+
+.icon-holder i {
+    /* Ensure Font Awesome icons are styled correctly */
+    line-height: 1; /* Adjust line-height to prevent extra space */
+}
+
+.counter-value {
+    font-size: 4rem; /* Larger number size */
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    color: #ffffff;
+    display: flex;
+    align-items: baseline; /* Align number and suffix */
+}
+
+.counter-value .suffix {
+    font-size: 1.8rem; /* Smaller size for '%' */
+    font-weight: 600;
+    margin-left: 0.25rem;
+    color: #facc15; /* Accent Yellow for suffix */
+}
+
+.counter-text {
+    font-size: 1.35rem; /* Larger text */
+    font-weight: 600;
+    color: #cbd5e1; /* Light gray text */
+}
+
+/* Keyframes for fade-in-up animation (still useful for initial appearance) */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* The class that will be observed and animated */
+.fade-in-up {
+  opacity: 0; /* Hidden by default */
+  transform: translateY(40px); /* Start 40px down */
+  transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+  will-change: opacity, transform;
+}
+
+/* When the 'visible' class is added by JS, the animation triggers */
+.fade-in-up.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
 
 /* Why Choose Us Section Styles */
 .why-choose-us-section {
@@ -1098,7 +1358,7 @@ nav {
 }
 
 .why-choose-us-icon-wrapper {
-    color: #1e3a8a; /* Dark blue icon color */
+    color: #1e3a8a; /* Primary Dark Blue */
     margin-bottom: 1rem;
 }
 
@@ -1110,19 +1370,19 @@ nav {
 .why-choose-us-item h3 {
     font-size: 1.5rem;
     font-weight: 700;
-    color: #1a202c;
+    color: #1a202c; /* Dark text */
     margin-bottom: 0.75rem;
 }
 
 .why-choose-us-item p {
     font-size: 1rem;
-    color: #4a5568;
+    color: #4a5568; /* Medium Gray text */
 }
 
 /* Student Life Section Styles */
 .student-life-section {
     padding: 5rem 0;
-    background-color: #e0f2f7; /* Light cyan background */
+    background-color: #e0f2f7; /* Light cyan background (kept for a subtle contrast) */
 }
 
 .student-life-content {
@@ -1134,14 +1394,14 @@ nav {
 .student-life-content h3 {
     font-size: 1.75rem;
     font-weight: 700;
-    color: #1a202c;
+    color: #1a202c; /* Dark text */
     margin-top: 2rem;
     margin-bottom: 1rem;
 }
 
 .student-life-content p {
     font-size: 1rem;
-    color: #4a5568;
+    color: #4a5568; /* Medium Gray text */
     margin-bottom: 1.5rem;
 }
 
@@ -1155,7 +1415,7 @@ nav {
 
 .student-life-list li {
     font-size: 1.1rem;
-    color: #1e3a8a;
+    color: #1e3a8a; /* Primary Dark Blue */
     margin-bottom: 0.75rem;
     display: flex;
     align-items: center;
@@ -1163,7 +1423,7 @@ nav {
 
 .student-life-list .list-icon {
     margin-right: 0.75rem;
-    color: #28a745; /* Green checkmark */
+    color: #28a745; /* Green checkmark (kept for semantic meaning) */
     font-weight: bold;
 }
 
@@ -1185,6 +1445,11 @@ nav {
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
     overflow: hidden;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
+    display: flex;
+    flex-direction: column;
+
+    break-inside: avoid;
+    margin-bottom: 1.5rem;
 }
 
 .gallery-item:hover {
@@ -1194,7 +1459,9 @@ nav {
 
 .gallery-item img {
     width: 100%;
-    height: 200px; /* Fixed height for gallery images */
+    /* Removed fixed height, using aspect-ratio on the image itself */
+    height: auto; /* Allow height to adjust based on aspect ratio */
+    aspect-ratio: 4/3; /* Common aspect ratio for photos (width / height) */
     object-fit: cover;
     display: block;
     transition: transform 0.3s ease;
@@ -1208,14 +1475,18 @@ nav {
     padding: 1rem;
     font-size: 1rem;
     font-weight: 600;
-    color: #1a202c;
+    color: #1a202c; /* Dark text */
     text-align: center;
+    flex-grow: 1; /* Allow caption to take available space */
+    display: flex; /* Use flex to center text vertically if needed */
+    align-items: center;
+    justify-content: center;
 }
 
 /* Quick Links & Resources Section Styles */
 .quick-links-resources-section {
     padding: 5rem 0;
-    background-color: #f0f4f8;
+    background-color: #f0f4f8; /* Light blue-gray */
 }
 
 .quick-links-grid {
@@ -1245,7 +1516,7 @@ nav {
 }
 
 .quick-link-icon-wrapper {
-    color: #2563eb; /* Blue icon color */
+    color: #1e3a8a; /* Primary Dark Blue */
     margin-bottom: 0.75rem;
 }
 
@@ -1257,13 +1528,13 @@ nav {
 .quick-link-card h3 {
     font-size: 1.25rem;
     font-weight: 700;
-    color: #1a202c;
+    color: #1a202c; /* Dark text */
     margin-bottom: 0.5rem;
 }
 
 .quick-link-card p {
     font-size: 0.9rem;
-    color: #4a5568;
+    color: #4a5568; /* Medium Gray text */
 }
 
 /* Fade-in animation */
@@ -1291,85 +1562,6 @@ nav {
   animation: fadeInUp 0.8s cubic-bezier(0.23, 1, 0.32, 1);
 }
 
-.counter-section {
-    padding: 5rem 0;
-    background-color: #ffffff; /* Dark blue background */
-    color: #ffffff;
-    text-align: center;
-}
-
-.counter-grid-container {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 2rem;
-    justify-content: center;
-    align-items: flex-start; /* Align items to the start of the cross axis */
-}
-
-.counter-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 1.5rem;
-    border-radius: 1.5rem; /* More rounded corners */
-    background-color: #1e3a8a; /* Slightly transparent white */
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3); /* Stronger shadow */
-    transition: transform 0.4s ease-out, background-color 0.3s ease, opacity 0.6s ease-out; /* Added opacity to transition */
-    opacity: 0; /* Initially hidden for animation */
-    transform: translateY(50px); /* Start slightly below for fade-in-up */
-}
-
-.counter-item.animated {
-    opacity: 1;
-    transform: translateY(0);
-    /* No need for animation property here if using transition and adding 'animated' class */
-}
-
-/* Staggered animation delay using CSS variables and nth-child */
-.counter-item:nth-child(1) { transition-delay: 0.1s; }
-.counter-item:nth-child(2) { transition-delay: 0.2s; }
-.counter-item:nth-child(3) { transition-delay: 0.3s; }
-.counter-item:nth-child(4) { transition-delay: 0.4s; }
-
-
-.counter-item:hover {
-    transform: translateY(-10px) scale(1.05); /* More pronounced pop-up on hover */
-    background-color: rgb(36, 26, 94);
-}
-
-.icon-holder {
-    font-size: 3.5rem; /* Larger icon size */
-    margin-bottom: 0.75rem;
-    color: #facc15; /* Yellow icon color */
-}
-
-.icon-holder i {
-    /* Ensure Font Awesome icons are styled correctly */
-    line-height: 1; /* Adjust line-height to prevent extra space */
-}
-
-.counter-value {
-    font-size: 4rem; /* Larger number size */
-    font-weight: 700;
-    margin-bottom: 0.5rem;
-    color: #ffffff;
-    display: flex;
-    align-items: baseline; /* Align number and suffix */
-}
-
-.counter-value .suffix {
-    font-size: 1.8rem; /* Smaller size for '%' */
-    font-weight: 600;
-    margin-left: 0.25rem;
-    color: #facc15; /* Yellow for suffix */
-}
-
-.counter-text {
-    font-size: 1.35rem; /* Larger text */
-    font-weight: 600;
-    color: #cbd5e1; /* Light gray text */
-}
-
 /* Keyframes for fade-in-up animation (still useful for initial appearance) */
 @keyframes fadeInUp {
     from {
@@ -1380,4 +1572,426 @@ nav {
         opacity: 1;
         transform: translateY(0);
     }
+}
+/* Academic Programs Section */
+.program-card {
+    background-color: #ffffff;
+    padding: 30px;
+    border-radius: 15px; /* Consistent rounded corners */
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1); /* Enhanced shadow */
+    text-align: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: 1px solid #e0e0e0; /* Subtle border */
+}
+
+.program-card:hover {
+    transform: translateY(-10px); /* More pronounced lift */
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2); /* More pronounced shadow on hover */
+}
+/* Why Choose Us Section */
+.why-choose-us-item {
+    background-color: #ffffff;
+    padding: 30px;
+    border-radius: 15px; /* Consistent rounded corners */
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1); /* Enhanced shadow */
+    text-align: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: 1px solid #e0e0e0; /* Subtle border */
+}
+
+.why-choose-us-item:hover {
+    transform: translateY(-10px); /* More pronounced lift */
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2); /* More pronounced shadow on hover */
+}
+/* Student Life Section */
+.student-life-content {
+    background-color: #ffffff;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1); /* Enhanced shadow */
+    margin-top: 40px;
+    border: 1px solid #e0e0e0;
+}
+/* Gallery Section */
+.gallery-section {
+    padding: 5rem 0;
+    background-color: #ffffff;
+}
+
+/* Wrapper for the slider and arrows */
+.gallery-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+/* The horizontally scrollable container */
+.gallery-container {
+    display: flex;
+    gap: 1.5rem; /* Space between items */
+    padding: 1rem 0;
+    overflow-x: auto; /* Allows horizontal scrolling */
+    scroll-behavior: smooth; /* Enables smooth scrolling */
+    /* Hide scrollbar for a cleaner look */
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+}
+.gallery-container::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, and Opera */
+}
+
+/* Individual gallery item (the "card") */
+.gallery-item {
+    /* Each item takes up 1/3 of the container width, minus gap space */
+    flex: 0 0 calc((100% / 3) - 1rem); 
+    background-color: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    overflow: hidden; /* Ensures image corners are rounded */
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.2s ease-in-out;
+}
+
+.gallery-item:hover {
+    transform: translateY(-5px);
+}
+
+.gallery-item img {
+    width: 100%;
+    height: auto; /* This is key for maintaining aspect ratio */
+    display: block; /* Removes bottom space under the image */
+}
+
+.gallery-item p {
+    padding: 1rem;
+    margin: 0;
+    font-size: 0.9rem;
+    color: #555;
+    text-align: left;
+    line-height: 1.4;
+}
+
+/* Arrow Buttons */
+.gallery-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: rgba(255, 255, 255, 0.9);
+    border: 1px solid #ddd;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+    cursor: pointer;
+    z-index: 10;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: background-color 0.2s, opacity 0.2s;
+}
+
+.gallery-arrow:hover {
+    background-color: #fff;
+}
+
+.gallery-arrow:disabled {
+    cursor: not-allowed;
+    opacity: 0.4;
+}
+
+#scroll-left {
+    left: -25px; /* Position outside the container */
+}
+
+#scroll-right {
+    right: -25px; /* Position outside the container */
+}
+
+/* Responsive adjustments for smaller screens */
+@media (max-width: 900px) {
+    .gallery-item {
+        /* Show 2 items on medium screens */
+        flex-basis: calc((100% / 2) - 0.75rem);
+    }
+}
+
+@media (max-width: 600px) {
+    .gallery-item {
+        /* Show 1 item on small screens */
+        flex-basis: 90%;
+    }
+    .gallery-arrow {
+        width: 40px;
+        height: 40px;
+        font-size: 20px;
+    }
+    #scroll-left {
+        left: -15px;
+    }
+    #scroll-right {
+        right: -15px;
+    }
+}
+/* News & Events Section */
+.news-event-card {
+    background-color: #ffffff;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1); /* Enhanced shadow */
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: 1px solid #e0e0e0;
+}
+
+.news-event-card:hover {
+    transform: translateY(-10px); /* More pronounced lift */
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2); /* More pronounced shadow on hover */
+}
+
+.news-event-card .news-image {
+    width: 100%;
+    height: auto; /* Changed to auto */
+    aspect-ratio: 16/9; /* Added aspect ratio for consistent image sizing */
+    object-fit: cover;
+    display: block;
+    border-top-left-radius: 15px;
+    border-top-right-radius: 15px;
+}
+/* Testimonials Section */
+.testimonial-card {
+    background-color: #ffffff;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1); /* Enhanced shadow */
+    text-align: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: 1px solid #e0e0e0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* Pushes author/role to bottom if content is short */
+}
+
+.testimonial-card:hover {
+    transform: translateY(-10px); /* More pronounced lift */
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2); /* More pronounced shadow on hover */
+}
+/* Faculty Section */
+.faculty-card {
+    background-color: #ffffff;
+    padding: 25px;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1); /* Enhanced shadow */
+    text-align: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: 1px solid #e0e0e0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.faculty-card:hover {
+    transform: translateY(-10px); /* More pronounced lift */
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2); /* More pronounced shadow on hover */
+}
+/* Quick Links & Resources Section */
+.quick-link-card {
+    background-color: #ffffff;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1); /* Enhanced shadow */
+    text-align: center;
+    text-decoration: none; /* Remove underline for links */
+    color: inherit; /* Inherit text color */
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: 1px solid #e0e0e0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.quick-link-card:hover {
+    transform: translateY(-10px); /* More pronounced lift */
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2); /* More pronounced shadow on hover */
+}
+/* Counter Section */
+.counter-item {
+    background-color: #2d3748; /* Slightly lighter dark blue for items */
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25); /* More pronounced shadow for counters */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    opacity: 0; /* Hidden by default for animation */
+    transform: translateY(20px);
+    transition: opacity 0.6s ease-out, transform 0.6s ease-out, box-shadow 0.3s ease; /* Added box-shadow to transition */
+    border: 1px solid rgba(255, 255, 255, 0.1); /* Added subtle white border */
+}
+
+.counter-item.animated {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.counter-item:hover {
+    transform: translateY(-5px); /* Slight lift on hover */
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.35); /* Even more pronounced shadow on hover */
+}
+    #scrollToTopBtn {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      width: 50px;
+      height: 50px;
+      background-color:transparent; /* White background */
+      color: #0c0c0c;
+      border: none;
+      border-radius: 50%;
+      font-size: 24px;
+      cursor: pointer;
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 999;
+      box-shadow: 0 0px 9px rgba(0, 0, 0, 0.788);
+      transition: background 0.3s;
+    }
+
+    #scrollToTopBtn:hover {
+      background-color:#4A90E2; /* Secondary Vibrant Blue on hover */
+      animation: sizer 0.3s forwards;
+    }
+.section-subtitle {
+    text-align: center;
+    max-width: 800px;
+    margin: -2rem auto 3rem auto;
+    font-size: 1.1rem;
+    color: #4a5568;
+}
+
+/* Icon prefix for headings */
+.icon-prefix {
+    margin-right: 0.5rem;
+    color: #1e3a8a; /* Primary Dark Blue */
+}
+
+
+/* Student Life Section Improvements */
+.student-life-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2rem;
+    justify-content: center;
+    margin-top: 2rem;
+}
+
+.student-life-column {
+    flex: 1;
+    min-width: 300px; /* Ensures columns don't get too squished */
+    background: #ffffff;
+    padding: 2rem;
+    border-radius: 1rem;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+
+.student-life-column h3 {
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+    color: #1a202c;
+}
+
+.student-life-list {
+    list-style-type: none;
+    padding-left: 0;
+}
+
+.student-life-list li {
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #e2e8f0;
+    color: #374151;
+}
+
+.student-life-list li:before {
+    content: '\f00c'; /* Font Awesome check icon */
+    font-family: 'Font Awesome 5 Free';
+    font-weight: 900;
+    color: #28a745;
+    margin-right: 0.75rem;
+}
+
+
+/* Improved Footer Styles */
+.school-footer {
+    background-color: #111827;
+    color: #d1d5db;
+    padding: 3rem 0 1rem 0;
+}
+
+.footer-content {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 2rem;
+    padding-bottom: 2rem;
+    margin-bottom: 2rem;
+    border-bottom: 1px solid #374151;
+}
+
+.footer-logo {
+    text-align: center;
+}
+
+@media (min-width: 768px) {
+    .footer-logo {
+        text-align: left;
+    }
+}
+
+.footer-logo img {
+    height: 50px;
+    margin-bottom: 0.5rem;
+    background-color: white;
+    border-radius: 50%;
+}
+
+.footer-logo h4 {
+    color: #ffffff;
+    font-size: 1.25rem;
+    margin: 0;
+}
+
+.footer-logo p {
+    margin: 0.25rem 0 0 0;
+    font-size: 0.9rem;
+}
+
+.footer-social-links .social-icon-link {
+    font-size: 1.25rem;
+    color: #9ca3af;
+    margin: 0 0.5rem;
+    transition: color 0.3s ease, transform 0.3s ease;
+}
+
+.footer-social-links .social-icon-link:hover {
+    color: #ffffff;
+    transform: translateY(-3px);
+}
+
+.footer-bottom {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    font-size: 0.9rem;
+    color: #9ca3af;
+}
+
+.footer-bottom .footer-links a {
+    margin-left: 1rem;
 }

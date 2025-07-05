@@ -3,285 +3,418 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Panel - New Holy Cross</title>
+    <title>New Holy Cross School - Admin Panel</title>
+    <!-- Google Font: Inter -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Custom Admin CSS -->
     <link rel="stylesheet" href="css/admin.css">
 </head>
 <body>
-    <div class="admin-wrapper">
-        <header class="admin-header">
-            <h1>New Holy Cross Admin Panel</h1>
-            <button id="logoutBtn" class="admin-button logout-button" style="display: none;">Logout</button>
-        </header>
 
-        <main class="admin-main">
-            <!-- Login Section -->
-            <section id="loginSection" class="admin-section login-section">
-                <h2>Admin Login</h2>
-                <form id="loginForm" class="admin-form login-form">
-                    <div class="form-group">
-                        <label for="username">Username:</label>
-                        <input type="text" id="username" required>
+    <!-- Login Section -->
+    <div id="login-section" class="login-section"> <!-- Removed 'hidden' class here -->
+        <div class="login-container">
+            <h2>Admin Login</h2>
+            <form id="login-form">
+                <div class="form-group">
+                    <label for="username">Username:</label>
+                    <input type="text" id="username" name="username" placeholder="Enter your username" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password:</label>
+                    <input type="password" id="password" name="password" placeholder="********" required>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="save-btn">
+                        Login
+                    </button>
+                </div>
+                <p id="login-error" class="error-message"></p>
+            </form>
+        </div>
+    </div>
+
+    <!-- Admin Panel Section -->
+    <div id="admin-panel">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">NHCS Admin</div>
+            <nav class="sidebar-nav">
+                <ul>
+                    <li>
+                        <a href="#" data-section="dashboard" class="nav-link">
+                            <i class="fas fa-tachometer-alt"></i> Dashboard
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" data-section="programs" class="nav-link">
+                            <i class="fas fa-book-open"></i> Academic Programs
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" data-section="newsEvents" class="nav-link">
+                            <i class="fas fa-bullhorn"></i> News & Events
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" data-section="testimonials" class="nav-link">
+                            <i class="fas fa-quote-right"></i> Testimonials
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" data-section="faculty" class="nav-link">
+                            <i class="fas fa-users"></i> Faculty
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" data-section="gallery" class="nav-link">
+                            <i class="fas fa-images"></i> Gallery
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" data-section="quickLinks" class="nav-link">
+                            <i class="fas fa-link"></i> Quick Links
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" data-section="contacts" class="nav-link">
+                            <i class="fas fa-envelope"></i> Contact Messages
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+            <div class="sidebar-footer">
+                <button id="logout-btn" class="cancel-btn">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Dashboard Section -->
+            <section id="dashboard-section-content" class="admin-section active">
+                <h1>Dashboard</h1>
+                <div class="dashboard-grid">
+                    <div class="dashboard-card" data-target-section="programs">
+                        <div>
+                            <h3>Total Programs</h3>
+                            <p id="dashboard-programs-count">0</p>
+                        </div>
+                        <i class="fas fa-book-open"></i>
                     </div>
-                    <div class="form-group">
-                        <label for="password">Password:</label>
-                        <input type="password" id="password" required>
+                    <div class="dashboard-card" data-target-section="newsEvents">
+                        <div>
+                            <h3>Total News & Events</h3>
+                            <p id="dashboard-news-events-count">0</p>
+                        </div>
+                        <i class="fas fa-bullhorn"></i>
                     </div>
-                    <button type="submit" class="admin-button primary-button">Login</button>
-                    <p id="loginMessage" class="error-message"></p>
-                </form>
+                    <div class="dashboard-card" data-target-section="testimonials">
+                        <div>
+                            <h3>Total Testimonials</h3>
+                            <p id="dashboard-testimonials-count">0</p>
+                        </div>
+                        <i class="fas fa-quote-right"></i>
+                    </div>
+                    <div class="dashboard-card" data-target-section="faculty">
+                        <div>
+                            <h3>Total Faculty</h3>
+                            <p id="dashboard-faculty-count">0</p>
+                        </div>
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="dashboard-card" data-target-section="gallery">
+                        <div>
+                            <h3>Total Gallery Items</h3>
+                            <p id="dashboard-gallery-count">0</p>
+                        </div>
+                        <i class="fas fa-images"></i>
+                    </div>
+                    <div class="dashboard-card" data-target-section="quickLinks">
+                        <div>
+                            <h3>Total Quick Links</h3>
+                            <p id="dashboard-quick-links-count">0</p>
+                        </div>
+                        <i class="fas fa-link"></i>
+                    </div>
+                    <div class="dashboard-card" data-target-section="contacts">
+                        <div>
+                            <h3>Total Contact Messages</h3>
+                            <p id="dashboard-contacts-count">0</p>
+                        </div>
+                        <i class="fas fa-envelope"></i>
+                    </div>
+                </div>
             </section>
 
-            <!-- Dashboard Section (Visible after login) -->
-            <section id="dashboardSection" class="admin-section dashboard-section" style="display: none;">
-                <nav class="admin-sidebar">
-                    <ul>
-                        <li><a href="#programs-management" class="sidebar-link active" data-section="programs">Academic Programs</a></li>
-                        <li><a href="#news-events-management" class="sidebar-link" data-section="news">News & Events</a></li>
-                        <li><a href="#testimonials-management" class="sidebar-link" data-section="testimonials">Testimonials</a></li>
-                        <li><a href="#faculty-management" class="sidebar-link" data-section="faculty">Faculty</a></li>
-                        <li><a href="#gallery-management" class="sidebar-link" data-section="gallery">Gallery</a></li>
-                        <li><a href="#quick-links-management" class="sidebar-link" data-section="quickLinks">Quick Links</a></li>
-                    </ul>
-                </nav>
-
-                <div class="admin-content-area">
-                    <!-- Academic Programs Management -->
-                    <div id="programs-management" class="management-section active-management-section">
-                        <h2>Manage Academic Programs</h2>
-                        <form id="programForm" class="admin-form">
-                            <input type="hidden" id="programIndex">
-                            <div class="form-group">
-                                <label for="programTitle">Title:</label>
-                                <input type="text" id="programTitle" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="programDescription">Description:</label>
-                                <textarea id="programDescription" rows="3" required></textarea>
-                            </div>
-                            <div class="form-group">
-                                <label for="programIconSvg">Icon SVG (Lucide format):</label>
-                                <textarea id="programIconSvg" rows="2" required placeholder="<svg>...</svg>"></textarea>
-                            </div>
-                            <button type="submit" class="admin-button primary-button">Save Program</button>
-                            <button type="button" class="admin-button secondary-button" onclick="clearForm('program')">Clear Form</button>
-                        </form>
-                        <div class="table-container">
-                            <table class="data-table">
-                                <thead>
-                                    <tr>
-                                        <th>Title</th>
-                                        <th>Description</th>
-                                        <th>Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="programsTableBody">
-                                    <!-- Data will be injected here -->
-                                </tbody>
-                            </table>
+            <!-- Academic Programs Section -->
+            <section id="programs-section-content" class="admin-section hidden">
+                <h1>Manage Academic Programs</h1>
+                <button class="add-new-btn save-btn"><i class="fas fa-plus-circle"></i> Add New Program</button>
+                <div class="form-container hidden">
+                    <h2>Add/Edit Program</h2>
+                    <form id="program-form">
+                        <input type="hidden" id="program-id" name="_id">
+                        <div class="form-group">
+                            <label for="program-title">Title:</label>
+                            <input type="text" id="program-title" name="title" required>
                         </div>
-                    </div>
-
-                    <!-- News & Events Management -->
-                    <div id="news-events-management" class="management-section">
-                        <h2>Manage News & Events</h2>
-                        <form id="newsForm" class="admin-form">
-                            <input type="hidden" id="newsIndex">
-                            <div class="form-group">
-                                <label for="newsTitle">Title:</label>
-                                <input type="text" id="newsTitle" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="newsDate">Date:</label>
-                                <input type="text" id="newsDate" placeholder="e.g., July 15, 2025" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="newsDescription">Description:</label>
-                                <textarea id="newsDescription" rows="3" required></textarea>
-                            </div>
-                            <div class="form-group">
-                                <label for="newsLink">Link (URL):</label>
-                                <input type="url" id="newsLink" placeholder="e.g., #news-detail-sports-day" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="newsIconSvg">Icon SVG (Lucide format):</label>
-                                <textarea id="newsIconSvg" rows="2" required placeholder="<svg>...</svg>"></textarea>
-                            </div>
-                            <button type="submit" class="admin-button primary-button">Save News Item</button>
-                            <button type="button" class="admin-button secondary-button" onclick="clearForm('news')">Clear Form</button>
-                        </form>
-                        <div class="table-container">
-                            <table class="data-table">
-                                <thead>
-                                    <tr>
-                                        <th>Title</th>
-                                        <th>Date</th>
-                                        <th>Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="newsTableBody">
-                                    <!-- Data will be injected here -->
-                                </tbody>
-                            </table>
+                        <div class="form-group">
+                            <label for="program-description">Description:</label>
+                            <textarea id="program-description" name="description" rows="3" required></textarea>
                         </div>
-                    </div>
-
-                    <!-- Testimonials Management -->
-                    <div id="testimonials-management" class="management-section">
-                        <h2>Manage Testimonials</h2>
-                        <form id="testimonialForm" class="admin-form">
-                            <input type="hidden" id="testimonialIndex">
-                            <div class="form-group">
-                                <label for="testimonialQuote">Quote:</label>
-                                <textarea id="testimonialQuote" rows="3" required></textarea>
-                            </div>
-                            <div class="form-group">
-                                <label for="testimonialAuthor">Author:</label>
-                                <input type="text" id="testimonialAuthor" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="testimonialRole">Role:</label>
-                                <input type="text" id="testimonialRole" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="testimonialIconSvg">Icon SVG (Lucide format):</label>
-                                <textarea id="testimonialIconSvg" rows="2" required placeholder="<svg>...</svg>"></textarea>
-                            </div>
-                            <button type="submit" class="admin-button primary-button">Save Testimonial</button>
-                            <button type="button" class="admin-button secondary-button" onclick="clearForm('testimonial')">Clear Form</button>
-                        </form>
-                        <div class="table-container">
-                            <table class="data-table">
-                                <thead>
-                                    <tr>
-                                        <th>Author</th>
-                                        <th>Quote</th>
-                                        <th>Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="testimonialsTableBody">
-                                    <!-- Data will be injected here -->
-                                </tbody>
-                            </table>
+                        <div class="form-group">
+                            <label for="program-icon-svg">Icon SVG (e.g., &lt;svg>...&lt;/svg>):</label>
+                            <textarea id="program-icon-svg" name="iconSvg" rows="3"></textarea>
                         </div>
-                    </div>
-
-                    <!-- Faculty Management -->
-                    <div id="faculty-management" class="management-section">
-                        <h2>Manage Faculty</h2>
-                        <form id="facultyForm" class="admin-form">
-                            <input type="hidden" id="facultyIndex">
-                            <div class="form-group">
-                                <label for="facultyName">Name:</label>
-                                <input type="text" id="facultyName" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="facultyRole">Role:</label>
-                                <input type="text" id="facultyRole" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="facultyDescription">Description:</label>
-                                <textarea id="facultyDescription" rows="3" required></textarea>
-                            </div>
-                            <div class="form-group">
-                                <label for="facultyImageUrl">Image URL:</label>
-                                <input type="url" id="facultyImageUrl" placeholder="e.g., Images/teacher1.jpg" required>
-                            </div>
-                            <button type="submit" class="admin-button primary-button">Save Faculty</button>
-                            <button type="button" class="admin-button secondary-button" onclick="clearForm('faculty')">Clear Form</button>
-                        </form>
-                        <div class="table-container">
-                            <table class="data-table">
-                                <thead>
-                                    <tr>
-                                        <th>Name</th>
-                                        <th>Role</th>
-                                        <th>Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="facultyTableBody">
-                                    <!-- Data will be injected here -->
-                                </tbody>
-                            </table>
+                        <div class="form-actions">
+                            <button type="submit" class="save-btn">Save Program</button>
+                            <button type="button" id="cancel-program-edit" class="cancel-btn">Cancel</button>
                         </div>
-                    </div>
+                    </form>
+                </div>
 
-                    <!-- Gallery Management -->
-                    <div id="gallery-management" class="management-section">
-                        <h2>Manage Gallery</h2>
-                        <form id="galleryForm" class="admin-form">
-                            <input type="hidden" id="galleryIndex">
-                            <div class="form-group">
-                                <label for="galleryCaption">Caption:</label>
-                                <input type="text" id="galleryCaption" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="galleryImageUrl">Image URL:</label>
-                                <input type="url" id="galleryImageUrl" placeholder="e.g., Images/gallery1.jpg" required>
-                            </div>
-                            <button type="submit" class="admin-button primary-button">Save Gallery Item</button>
-                            <button type="button" class="admin-button secondary-button" onclick="clearForm('gallery')">Clear Form</button>
-                        </form>
-                        <div class="table-container">
-                            <table class="data-table">
-                                <thead>
-                                    <tr>
-                                        <th>Caption</th>
-                                        <th>Image</th>
-                                        <th>Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="galleryTableBody">
-                                    <!-- Data will be injected here -->
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
+                <h2>Existing Programs</h2>
+                <div id="programs-list" class="data-list">
+                    <!-- Programs will be loaded here by JavaScript -->
+                    <p class="no-data-message">No programs added yet.</p>
+                </div>
+            </section>
 
-                    <!-- Quick Links Management -->
-                    <div id="quick-links-management" class="management-section">
-                        <h2>Manage Quick Links</h2>
-                        <form id="quickLinkForm" class="admin-form">
-                            <input type="hidden" id="quickLinkIndex">
-                            <div class="form-group">
-                                <label for="quickLinkTitle">Title:</label>
-                                <input type="text" id="quickLinkTitle" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="quickLinkDescription">Description:</label>
-                                <textarea id="quickLinkDescription" rows="3" required></textarea>
-                            </div>
-                            <div class="form-group">
-                                <label for="quickLinkUrl">URL:</label>
-                                <input type="url" id="quickLinkUrl" placeholder="e.g., documents/academic-calendar.pdf" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="quickLinkIconSvg">Icon SVG (Lucide format):</label>
-                                <textarea id="quickLinkIconSvg" rows="2" required placeholder="<svg>...</svg>"></textarea>
-                            </div>
-                            <button type="submit" class="admin-button primary-button">Save Quick Link</button>
-                            <button type="button" class="admin-button secondary-button" onclick="clearForm('quickLink')">Clear Form</button>
-                        </form>
-                        <div class="table-container">
-                            <table class="data-table">
-                                <thead>
-                                    <tr>
-                                        <th>Title</th>
-                                        <th>URL</th>
-                                        <th>Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="quickLinksTableBody">
-                                    <!-- Data will be injected here -->
-                                </tbody>
-                            </table>
+            <!-- News & Events Section -->
+            <section id="news-events-section-content" class="admin-section hidden">
+                <h1>Manage News & Events</h1>
+                <button class="add-new-btn save-btn"><i class="fas fa-plus-circle"></i> Add New News/Event</button>
+                <div class="form-container hidden">
+                    <h2>Add/Edit News/Event</h2>
+                    <form id="news-event-form">
+                        <input type="hidden" id="news-event-id" name="_id">
+                        <div class="form-group">
+                            <label for="news-event-title">Title:</label>
+                            <input type="text" id="news-event-title" name="title" required>
                         </div>
-                    </div>
+                        <div class="form-group">
+                            <label for="news-event-date">Date:</label>
+                            <input type="date" id="news-event-date" name="date" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="news-event-description">Description:</label>
+                            <textarea id="news-event-description" name="description" rows="3" required></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="news-event-link">Link (Optional):</label>
+                            <input type="url" id="news-event-link" name="link">
+                        </div>
+                        <div class="form-group">
+                            <label for="news-event-icon-svg">Icon SVG (Optional):</label>
+                            <textarea id="news-event-icon-svg" name="iconSvg" rows="3"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="news-event-image">Image:</label>
+                            <div class="file-input-wrapper">
+                                <button type="button" class="file-input-button" onclick="document.getElementById('news-event-image').click()">Choose File</button>
+                                <input type="file" id="news-event-image" name="image" accept="image/*" class="hidden">
+                                <span class="file-name-display" id="news-image-name">No file chosen</span>
+                            </div>
+                            <p id="current-news-event-image-url" class="current-image-info" data-current-url=""></p>
+                        </div>
+                        <div class="form-actions">
+                            <button type="submit" class="save-btn">Save News/Event</button>
+                            <button type="button" id="cancel-news-event-edit" class="cancel-btn">Cancel</button>
+                        </div>
+                    </form>
+                </div>
+
+                <h2>Existing News & Events</h2>
+                <div id="news-events-list" class="data-list">
+                    <!-- News & Events will be loaded here by JavaScript -->
+                    <p class="no-data-message">No news or events added yet.</p>
+                </div>
+            </section>
+
+            <!-- Testimonials Section -->
+            <section id="testimonials-section-content" class="admin-section hidden">
+                <h1>Manage Testimonials</h1>
+                <button class="add-new-btn save-btn"><i class="fas fa-plus-circle"></i> Add New Testimonial</button>
+                <div class="form-container hidden">
+                    <h2>Add/Edit Testimonial</h2>
+                    <form id="testimonial-form">
+                        <input type="hidden" id="testimonial-id" name="_id">
+                        <div class="form-group">
+                            <label for="testimonial-quote">Quote:</label>
+                            <textarea id="testimonial-quote" name="quote" rows="3" required></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="testimonial-author">Author:</label>
+                            <input type="text" id="testimonial-author" name="author" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="testimonial-role">Role:</label>
+                            <input type="text" id="testimonial-role" name="role" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="testimonial-icon-svg">Icon SVG (Optional):</label>
+                            <textarea id="testimonial-icon-svg" name="iconSvg" rows="3"></textarea>
+                        </div>
+                        <div class="form-actions">
+                            <button type="submit" class="save-btn">Save Testimonial</button>
+                            <button type="button" id="cancel-testimonial-edit" class="cancel-btn">Cancel</button>
+                        </div>
+                    </form>
+                </div>
+
+                <h2>Existing Testimonials</h2>
+                <div id="testimonials-list" class="data-list">
+                    <!-- Testimonials will be loaded here by JavaScript -->
+                    <p class="no-data-message">No testimonials added yet.</p>
+                </div>
+            </section>
+
+            <!-- Faculty Section -->
+            <section id="faculty-section-content" class="admin-section hidden">
+                <h1>Manage Faculty</h1>
+                <button class="add-new-btn save-btn"><i class="fas fa-plus-circle"></i> Add New Faculty Member</button>
+                <div class="form-container hidden">
+                    <h2>Add/Edit Faculty Member</h2>
+                    <form id="faculty-form">
+                        <input type="hidden" id="faculty-id" name="_id">
+                        <div class="form-group">
+                            <label for="faculty-name">Name:</label>
+                            <input type="text" id="faculty-name" name="name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="faculty-role">Role:</label>
+                            <input type="text" id="faculty-role" name="role" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="faculty-description">Description:</label>
+                            <textarea id="faculty-description" name="description" rows="3" required></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="faculty-image">Image:</label>
+                            <div class="file-input-wrapper">
+                                <button type="button" class="file-input-button" onclick="document.getElementById('faculty-image').click()">Choose File</button>
+                                <input type="file" id="faculty-image" name="image" accept="image/*" class="hidden">
+                                <span class="file-name-display" id="faculty-image-name">No file chosen</span>
+                            </div>
+                            <p id="current-faculty-image-url" class="current-image-info" data-current-url=""></p>
+                        </div>
+                        <div class="form-actions">
+                            <button type="submit" class="save-btn">Save Faculty Member</button>
+                            <button type="button" id="cancel-faculty-edit" class="cancel-btn">Cancel</button>
+                        </div>
+                    </form>
+                </div>
+
+                <h2>Existing Faculty</h2>
+                <div id="faculty-list" class="data-list">
+                    <!-- Faculty members will be loaded here by JavaScript -->
+                    <p class="no-data-message">No faculty members added yet.</p>
+                </div>
+            </section>
+
+            <!-- Gallery Section -->
+            <section id="gallery-section-content" class="admin-section hidden">
+                <h1>Manage Gallery</h1>
+                <button class="add-new-btn save-btn"><i class="fas fa-plus-circle"></i> Add New Gallery Item</button>
+                <div class="form-container hidden">
+                    <h2>Add/Edit Gallery Item</h2>
+                    <form id="gallery-form">
+                        <input type="hidden" id="gallery-id" name="_id">
+                        <div class="form-group">
+                            <label for="gallery-caption">Caption:</label>
+                            <input type="text" id="gallery-caption" name="caption" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="gallery-image">Image:</label>
+                            <div class="file-input-wrapper">
+                                <button type="button" class="file-input-button" onclick="document.getElementById('gallery-image').click()">Choose File</button>
+                                <input type="file" id="gallery-image" name="image" accept="image/*" class="hidden">
+                                <span class="file-name-display" id="gallery-image-name">No file chosen</span>
+                            </div>
+                            <p id="current-gallery-image-url" class="current-image-info" data-current-url=""></p>
+                        </div>
+                        <div class="form-actions">
+                            <button type="submit" class="save-btn">Save Gallery Item</button>
+                            <button type="button" id="cancel-gallery-edit" class="cancel-btn">Cancel</button>
+                        </div>
+                    </form>
+                </div>
+
+                <h2>Existing Gallery Items</h2>
+                <div id="gallery-list" class="data-list">
+                    <!-- Gallery items will be loaded here by JavaScript -->
+                    <p class="no-data-message">No gallery items added yet.</p>
+                </div>
+            </section>
+
+            <!-- Quick Links Section -->
+            <section id="quick-links-section-content" class="admin-section hidden">
+                <h1>Manage Quick Links</h1>
+                <button class="add-new-btn save-btn"><i class="fas fa-plus-circle"></i> Add New Quick Link</button>
+                <div class="form-container hidden">
+                    <h2>Add/Edit Quick Link</h2>
+                    <form id="quick-link-form">
+                        <input type="hidden" id="quick-link-id" name="_id">
+                        <div class="form-group">
+                            <label for="quick-link-title">Title:</label>
+                            <input type="text" id="quick-link-title" name="title" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="quick-link-description">Description:</label>
+                            <textarea id="quick-link-description" name="description" rows="3" required></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="quick-link-url">URL:</label>
+                            <input type="url" id="quick-link-url" name="url" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="quick-link-icon-svg">Icon SVG (e.g., &lt;svg>...&lt;/svg>):</label>
+                            <textarea id="quick-link-icon-svg" name="iconSvg" rows="3"></textarea>
+                        </div>
+                        <div class="form-actions">
+                            <button type="submit" class="save-btn">Save Quick Link</button>
+                            <button type="button" id="cancel-quick-link-edit" class="cancel-btn">Cancel</button>
+                        </div>
+                    </form>
+                </div>
+
+                <h2>Existing Quick Links</h2>
+                <div id="quick-links-list" class="data-list">
+                    <!-- Quick links will be loaded here by JavaScript -->
+                    <p class="no-data-message">No quick links added yet.</p>
+                </div>
+            </section>
+
+            <!-- Contact Messages Section -->
+            <section id="contacts-section-content" class="admin-section hidden">
+                <h1>Contact Messages</h1>
+                <div id="contacts-list" class="data-list"> <!-- Added id="contacts-list" here -->
+                    <!-- Contact messages will be loaded here by JavaScript -->
+                    <!-- Example structure for a contact message with reply button -->
+                    <!--
+                    <li class="contact-message-item">
+                        <div>
+                            <strong>From:</strong> John Doe (john.doe@example.com)<br>
+                            <strong>Message:</strong> This is a test message from a user.<br>
+                            <small>Received: 2023-10-26, 10:00 AM</small>
+                        </div>
+                        <div class="actions">
+                            <a href="mailto:john.doe@example.com?subject=Re: Your Inquiry&body=Dear John," class="btn btn-reply"><i class="fas fa-reply"></i> Reply</a>
+                            <button class="btn btn-delete" data-id="someContactId123" data-type="contact">Delete</button>
+                        </div>
+                    </li>
+                    -->
                 </div>
             </section>
         </main>
     </div>
 
+    <!-- The reply modal is no longer needed for direct mailto links, so it's removed -->
+    <!-- Admin JavaScript -->
     <script src="js/admin.js"></script>
 </body>
 </html>

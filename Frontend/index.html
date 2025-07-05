@@ -3,18 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>New Holy Cross</title>
+    <title>New Holy Cross School, Kathmandu</title>
     <!-- Google Font: Inter -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome for Icons (updated to v6 for consistency with admin panel) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <!-- Link to external CSS file -->
     <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
-    <div class="hero">
+    <!-- Page Loader - Added for consistency with script.js -->
+    <div id="page-loader">
+        <div></div>
+    </div>
+
+    <!-- Hero Section with ID for smooth scrolling -->
+    <div class="hero" id="hero-section">
         <div class="hero-content">
-            <!-- Using the actual Logo.svg -->
-            <img src="Images/Logo.svg" alt="New Holy Cross Logo" class="hero-logo">
-            <h1 class="hero-title">New Holy Cross</h1>
+            <img src="/Images/Logo.svg" alt="New Holy Cross School Logo" class="hero-logo" loading="lazy">
+            <h1 class="hero-title">New Holy Cross School</h1>
+            <p class="hero-subtitle">Educating Young Minds for 25 Years</p>
         </div>
     </div>
     <header>
@@ -31,12 +39,11 @@
                     <div class="dropdown">
                         <a href="#about-us-section" class="lnk">About Us ▾</a>
                         <div class="dropdown-content">
-                            <a class="dptext" href="#about-us-section" style="padding-left: 10px;">Our History</a>
+                            <a class="dptext" href="#about-us-section">Our History</a>
                             <a class="dptext" href="#about-us-section">Mission & Vision</a>
                             <a class="dptext" href="#dashboard-section">Principal's Message</a>
                         </div>
                     </div>
-
                     <div class="dropdown">
                         <a href="#programs" class="lnk">Academics ▾</a>
                         <div class="dropdown-content">
@@ -45,10 +52,7 @@
                             <a class="dptext" href="#programs">Timetable</a>
                         </div>
                     </div>
-
-                    <div class="dropdown">
-                        <a href="admission.html">Admissions</a>
-                    </div>
+                    <div class="dropdown"><a href="admission.html">Admissions</a></div>
                     <div class="dropdown">
                         <a href="#student-life-section" class="sym">Student Life ▾</a>
                         <div class="dropdown-content">
@@ -57,15 +61,13 @@
                             <a class="dptext" href="#student-life-section">Field Trips</a>
                         </div>
                     </div>
-
                     <div class="dropdown"><a href="#gallery-section">Gallery</a></div>
                     <div class="dropdown"><a href="#news-events">Notices</a></div>
                     <div class="dropdown"><a href="#school-contact-section">Contact</a></div>
                 </div>
                 <div class="login-btn">
                     <a href="admin.html" title="Admin Login">
-                       <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="500" zoomAndPan="magnify" viewBox="0 0 375 374.999991" height="500" preserveAspectRatio="xMidYMid meet" version="1.2"><defs><clipPath id="484bc6b88b"><path d="M 88.742188 0 L 284.933594 0 L 284.933594 196.191406 L 88.742188 196.191406 Z M 88.742188 0 "/></clipPath><clipPath id="1cf7ee4f93"><path d="M 186.839844 0 C 132.664062 0 88.742188 43.917969 88.742188 98.09375 C 88.742188 152.269531 132.664062 196.191406 186.839844 196.191406 C 241.015625 196.191406 284.933594 152.269531 284.933594 98.09375 C 284.933594 43.917969 241.015625 0 186.839844 0 Z M 186.839844 0 "/></clipPath><clipPath id="b08116248e"><path d="M 44.101562 230 L 358 230 L 358 375 L 44.101562 375 Z M 44.101562 230 "/></clipPath><clipPath id="e6a5196d3c"><path d="M 44.101562 229.820312 L 358.351562 229.820312 L 358.351562 375 L 44.101562 375 Z M 44.101562 229.820312 "/></clipPath><clipPath id="f31516151b"><path d="M 30 218.441406 L 344 218.441406 L 344 375 L 30 375 Z M 30 218.441406 "/></clipPath></defs><g id="b06697e4ca"><g clip-rule="nonzero" clip-path="url(#484bc6b88b)"><g clip-rule="nonzero" clip-path="url(#1cf7ee4f93)"><path style=" stroke:none;fill-rule:nonzero;fill:#000000;fill-opacity:1;" d="M 88.742188 0 L 284.933594 0 L 284.933594 196.191406 L 88.742188 196.191406 Z M 88.742188 0 "/></g></g><g clip-rule="nonzero" clip-path="url(#b08116248e)"><path style=" stroke:none;fill-rule:nonzero;fill:#ffffff;fill-opacity:1;" d="M 44.867188 374.789062 C 51.230469 294.027344 118.964844 230.351562 201.226562 230.351562 C 283.488281 230.351562 351.121094 294.027344 357.480469 374.789062 Z M 45.929688 374.789062 C 52.289062 294.664062 119.496094 231.410156 201.226562 231.410156 C 282.957031 231.410156 350.058594 294.664062 356.527344 374.789062 Z M 45.929688 374.789062 "/><path style=" stroke:none;fill-rule:nonzero;fill:#000000;fill-opacity:1;" d="M 45.929688 374.789062 L 44.867188 374.789062 C 51.230469 294.027344 118.964844 230.351562 201.226562 230.351562 C 283.488281 230.351562 351.121094 294.027344 357.480469 374.789062 L 44.867188 374.789062 C 51.230469 294.027344 118.964844 230.351562 201.226562 230.351562 C 283.488281 230.351562 351.121094 294.027344 357.480469 374.789062 Z M 45.929688 374.789062 "/></g><g clip-rule="nonzero" clip-path="url(#e6a5196d3c)"><path style="fill:none;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke:#fef8fb;stroke-opacity:1;stroke-miterlimit:10;" d="M 110.501181 283.100004 L 109.49888 283.100004 C 115.501627 207.000818 179.39827 147.001165 256.999157 147.001165 C 334.600045 147.001165 398.400879 207.000818 404.399941 283.100004 L 109.49888 283.100004 C 115.501627 207.000818 179.39827 147.001165 256.999157 147.001165 C 334.600045 147.001165 398.400879 207.000818 404.399941 283.100004 Z M 110.501181 283.100004 " transform="matrix(1.060062,0,0,1.061269,-71.208368,74.343761)"/></g><g clip-rule="nonzero" clip-path="url(#f31516151b)"><path style=" stroke:none;fill-rule:nonzero;fill:#000000;fill-opacity:1;" d="M 186.933594 218.414062 C 230.289062 218.414062 269.523438 235.972656 297.765625 264.371094 C 326.160156 292.769531 343.714844 332.007812 343.714844 375.21875 L 322.191406 375.21875 C 322.191406 337.964844 307.078125 304.066406 282.652344 279.640625 C 258.074219 255.210938 224.335938 239.941406 186.933594 239.941406 C 149.6875 239.941406 115.796875 255.210938 91.371094 279.640625 C 66.945312 304.066406 51.832031 337.964844 51.832031 375.21875 L 30.308594 375.21875 C 30.308594 332.007812 47.710938 292.769531 76.105469 264.371094 C 104.5 235.972656 143.734375 218.414062 186.933594 218.414062 Z M 186.933594 218.414062 "/></g></g></svg>
-
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-user"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
                     </a>
                 </div>
             </div>
@@ -73,56 +75,48 @@
     </header>
     <div class="scroll">
         <div id="slider" class="pics">
-            <!-- Using the actual image paths for the slider -->
-            <img src="Images/holly1.png" alt="Slide 1">
-            <img src="Images/holly2.jpg" alt="Slide 2">
-            <img src="Images/holly3.jpg" alt="Slide 3">
-            <img src="Images/holly4.jpg" alt="Slide 4">
+            <img src="Images/holly1.png" alt="Students in classroom" loading="lazy">
+            <img src="Images/holly2.jpg" alt="School building exterior" loading="lazy">
+            <img src="Images/holly3.jpg" alt="Students in library" loading="lazy">
         </div>
     </div>
 
-    <!-- Dashboard Section (Principal/Vice-Principal Cards) -->
+    <!-- Dashboard Section (Principal's Message) -->
     <section id="dashboard-section" class="dashboard fade-in">
-        <div class="card-wrapper">
-            <div class="card principal">
-                <div class="content">
-                    <div class="header">
-                        <strong>Bhugol Gautam</strong>
-                        <img src="Images/Principal.jpg" class="Photo">
-                        <p class="para">Principal</p>
-                    </div>
-                    <div class="Pfooter">
-                        <p class="para">
-                            We try to provide you the best education that is possible
-                        </p>
-                        <button class="viewbtn" onclick="expandCard(this)">
-                            <span> View more </span>
-                        </button>
-                        <div class="more-info">
-                            <p>This is the expanded detailed section with more information about the Principal's message and vision for the school.</p>
-                        </div>
-                    </div>
+        <div class="principal-message-card">
+            <div class="principal-message-header">
+                <img src="Images/Principal.jpg" alt="Principal Dinesh Kumar Karki" class="principal-photo" onerror="this.onerror=null;this.src='https://placehold.co/120x120/1e3a8a/ffffff?text=Principal';" loading="lazy">
+                <div class="principal-details">
+                    <h2>Message from the Principal</h2>
+                    <h3>Mr. Dinesh Kumar Karki</h3>
+                    <p class="principal-title">Principal, New Holy Cross School</p>
                 </div>
             </div>
-            
+            <div class="principal-message-body">
+                <p>Welcome to New Holy Cross School! We are dedicated to "Educating Young Minds" and fostering a nurturing environment that promotes holistic development and excellence. Our journey of 25 years has been marked by a commitment to innovation, compassion, and curiosity, preparing students to thrive in an ever-changing world.</p>
+            </div>
+            <div class="principal-signature">
+                <img src="https://placehold.co/150x60/ffffff/333333?text=Signature" alt="Signature of Principal" class="signature-img" loading="lazy">
+            </div>
         </div>
     </section>
 
     <!-- About Us Section -->
     <section id="about-us-section" class="about-us-section fade-in">
         <div class="school-container">
-            <h2 class="section-title">About New Holy Cross</h2>
+            <h2 class="section-title">About New Holy Cross School</h2>
             <div class="about-us-content">
                 <div class="about-us-image">
-                    <img src="https://placehold.co/600x400/1e3a8a/ffffff?text=Our+School+Building" alt="School Building">
+                    <img src="/Images/holly3.jpg" alt="New Holy Cross School Building" loading="lazy">
                 </div>
                 <div class="about-us-text">
                     <h3>Our History & Philosophy</h3>
-                    <p>Founded in 19XX, New Holy Cross has been a beacon of learning, dedicated to fostering intellectual curiosity, personal growth, and a strong sense of community. Our philosophy centers on providing a holistic education that balances academic rigor with character development.</p>
-                    <p>We believe in nurturing every student's unique potential, encouraging them to explore their interests, challenge themselves, and become responsible global citizens. Our commitment to excellence is reflected in our innovative curriculum, dedicated faculty, and vibrant campus life.</p>
-                    <h3>Mission & Vision</h3>
-                    <p><strong>Mission:</strong> To empower students with knowledge, skills, and values to thrive in a dynamic world.</p>
-                    <p><strong>Vision:</strong> To be a leading educational institution recognized for academic excellence, innovative teaching, and a nurturing environment that inspires lifelong learning.</p>
+                    <p>Founded 25 years ago, New Holy Cross School, located in Kageshwori Manohara-09, Kathmandu, has been a beacon of learning, dedicated to fostering intellectual curiosity, personal growth, and a strong sense of community. Our philosophy centers on providing a holistic education that balances academic rigor with character development.</p>
+                    <p>We believe in nurturing every student's unique potential, encouraging them to explore their interests, challenge themselves, and become responsible global citizens.</p>
+                    
+                    <h3>Our Mission & Vision</h3>
+                    <p><strong><i class="fas fa-bullseye icon-prefix"></i> Mission:</strong> To empower students with knowledge, skills, and values to thrive in a dynamic world.</p>
+                    <p><strong><i class="fas fa-eye icon-prefix"></i> Vision:</strong> To be a leading educational institution recognized for academic excellence and a nurturing environment that inspires lifelong learning.</p>
                 </div>
             </div>
         </div>
@@ -130,17 +124,16 @@
 
     <!-- Academic Programs Section -->
     <section id="programs" class="programs-section fade-in">
-        <div class="programs-container">
-            <div class="programs-header">
-                <h2>Academic Programs</h2>
-                <p>
-                    Our comprehensive curriculum is designed to challenge and inspire students across all disciplines,
-                    preparing them for success in higher education and beyond.
-                </p>
-            </div>
-
+        <div class="school-container">
+            <h2 class="section-title">Academic Programs</h2>
+            <p class="section-subtitle">Our comprehensive curriculum emphasizes practical learning, designed to challenge and inspire students across all disciplines.</p>
             <div id="programs-grid" class="programs-grid">
-                <!-- Program cards will be injected here by JavaScript -->
+                <!-- Placeholder card that matches JS structure. This will be replaced by renderPrograms(). -->
+                <div class="program-card">
+                    <div class="program-icon"><i class="fas fa-book"></i></div>
+                    <h3>Loading Program...</h3>
+                    <p>Fetching details about our excellent academic offerings.</p>
+                </div>
             </div>
         </div>
     </section>
@@ -148,26 +141,20 @@
     <!-- Why Choose Us Section -->
     <section id="why-choose-us" class="why-choose-us-section fade-in">
         <div class="school-container">
-            <h2 class="section-title">Why Choose New Holy Cross?</h2>
+            <h2 class="section-title">Why Choose Us?</h2>
             <div class="why-choose-us-grid">
                 <div class="why-choose-us-item">
-                    <div class="why-choose-us-icon-wrapper">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-award"><circle cx="12" cy="8" r="7"/><path d="M8.21 13.89 7 22l5-3 5 3-1.21-8.11"/></svg>
-                    </div>
+                    <div class="why-choose-us-icon-wrapper"><i class="fas fa-award"></i></div>
                     <h3>Excellence in Education</h3>
                     <p>We are committed to providing a high-quality education that fosters intellectual curiosity and critical thinking.</p>
                 </div>
                 <div class="why-choose-us-item">
-                    <div class="why-choose-us-icon-wrapper">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-users"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-                    </div>
+                    <div class="why-choose-us-icon-wrapper"><i class="fas fa-users"></i></div>
                     <h3>Supportive Community</h3>
                     <p>Our school is a warm and inclusive environment where every student feels valued and supported.</p>
                 </div>
                 <div class="why-choose-us-item">
-                    <div class="why-choose-us-icon-wrapper">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-lightbulb"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 6c0 1.3.5 2.6 1.5 3.5.8.8 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/><path d="M12 18v4"/></svg>
-                    </div>
+                    <div class="why-choose-us-icon-wrapper"><i class="fas fa-lightbulb"></i></div>
                     <h3>Innovative Learning</h3>
                     <p>We embrace modern teaching methodologies and technology to provide engaging and effective learning experiences.</p>
                 </div>
@@ -175,29 +162,34 @@
         </div>
     </section>
 
-    <!-- Student Life Section -->
+    <!-- Student Life Section (IMPROVED) -->
     <section id="student-life-section" class="student-life-section fade-in">
         <div class="school-container">
-            <h2 class="section-title">Student Life</h2>
-            <div class="student-life-content">
-                <p>At New Holy Cross, student life extends far beyond the classroom. We offer a diverse range of extracurricular activities, clubs, and events designed to enrich our students' experiences, foster their talents, and build strong character.</p>
-                <p>From competitive sports teams and vibrant arts programs to academic clubs and community service initiatives, there's something for everyone. We encourage students to explore new interests, develop leadership skills, and forge lasting friendships in a supportive and engaging environment.</p>
-                <h3>Clubs & Activities</h3>
-                <ul class="student-life-list">
-                    <li><span class="list-icon">&#10003;</span> Debate Club</li>
-                    <li><span class="list-icon">&#10003;</span> Robotics Team</li>
-                    <li><span class="list-icon">&#10003;</span> Environmental Club</li>
-                    <li><span class="list-icon">&#10003;</span> Drama & Theater Arts</li>
-                    <li><span class="list-icon">&#10003;</span> Music Ensemble</li>
-                    <li><span class="list-icon">&#10003;</span> Sports (Basketball, Football, Volleyball)</li>
-                </ul>
-                <h3>Events & Traditions</h3>
-                <ul class="student-life-list">
-                    <li><span class="list-icon">&#10003;</span> Annual Sports Day</li>
-                    <li><span class="list-icon">&#10003;</span> Science Fair</li>
-                    <li><span class="list-icon">&#10003;</span> Cultural Week</li>
-                    <li><span class="list-icon">&#10003;</span> Graduation Ceremony</li>
-                </ul>
+            <h2 class="section-title">Vibrant Student Life</h2>
+            <p class="section-subtitle">At New Holy Cross, education extends beyond the classroom. We offer a rich tapestry of activities to foster talent, leadership, and camaraderie.</p>
+            <div class="student-life-grid">
+                <div class="student-life-column">
+                    <h3><i class="fas fa-puzzle-piece icon-prefix"></i> Clubs & Activities</h3>
+                    <ul class="student-life-list">
+                        <li>Debate & Public Speaking Club</li>
+                        <li>Robotics & Science Team</li>
+                        <li>Environmental Awareness Club</li>
+                        <li>Drama & Theater Arts</li>
+                        <li>Music Ensemble & Choir</li>
+                        <li>Sports (Basketball, Football, etc.)</li>
+                    </ul>
+                </div>
+                <div class="student-life-column">
+                    <h3><i class="fas fa-calendar-star icon-prefix"></i> Events & Traditions</h3>
+                    <ul class="student-life-list">
+                        <li>Annual Sports Day</li>
+                        <li>Science & Technology Fair</li>
+                        <li>Cultural Week Celebrations</li>
+                        <li>Graduation & Award Ceremonies</li>
+                        <li>National Festivals Celebration</li>
+                        <li>Educational Field Trips</li>
+                    </ul>
+                </div>
             </div>
         </div>
     </section>
@@ -206,8 +198,16 @@
     <section id="gallery-section" class="gallery-section fade-in">
         <div class="school-container">
             <h2 class="section-title">Our Gallery</h2>
-            <div id="gallery-grid" class="gallery-grid">
-                <!-- Gallery items will be injected here by JavaScript -->
+            <div class="gallery-wrapper">
+                <button id="scroll-left" class="gallery-arrow" aria-label="Previous"><</button>
+                <div id="gallery-container" class="gallery-container">
+                    <!-- Placeholder card that matches JS structure. This will be replaced by renderGallery(). -->
+                    <div class="gallery-item">
+                        <img src="https://placehold.co/400x300/cccccc/000000?text=Loading..." alt="Loading gallery image">
+                        <p>Loading moments from our school life...</p>
+                    </div>
+                </div>
+                <button id="scroll-right" class="gallery-arrow" aria-label="Next">></button>
             </div>
         </div>
     </section>
@@ -215,9 +215,18 @@
     <!-- News & Events Section -->
     <section id="news-events" class="news-events-section fade-in">
         <div class="school-container">
-            <h2 class="section-title">News & Events</h2>
+            <h2 class="section-title">News & Notices</h2>
             <div id="news-events-grid" class="news-events-grid">
-                <!-- News & Event cards will be injected here by JavaScript -->
+                <!-- Placeholder card that matches JS structure. This will be replaced by renderNewsEvents(). -->
+                <div class="news-event-card">
+                    <img src="https://placehold.co/400x250/cccccc/000000?text=Loading+News" alt="Loading news" class="news-image">
+                    <div class="news-event-content">
+                        <div class="news-event-icon"><i class="fas fa-spinner fa-spin"></i></div>
+                        <h3>Fetching Latest Updates...</h3>
+                        <p>Please wait while we gather the latest news and events from our school community.</p>
+                        <a href="#" class="read-more">Read More <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
@@ -227,7 +236,12 @@
         <div class="school-container">
             <h2 class="section-title">What Our Community Says</h2>
             <div id="testimonials-container" class="testimonials-grid">
-                <!-- Testimonial cards will be injected here by JavaScript -->
+                <!-- Placeholder card that matches JS structure. This will be replaced by renderTestimonials(). -->
+                <div class="testimonial-card">
+                    <div class="quote-icon"><i class="fas fa-quote-left"></i></div>
+                    <p class="quote">"Loading testimonials from our proud students, parents, and alumni..."</p>
+                    <p class="author">- The School Community</p>
+                </div>
             </div>
         </div>
     </section>
@@ -235,10 +249,20 @@
     <!-- Faculty Section -->
     <section id="faculty" class="faculty-section fade-in">
         <div class="school-container">
-            <h2 class="section-title">Meet Our Faculty</h2>
-            <div id="faculty-grid" class="faculty-grid">
-                <!-- Faculty cards will be injected here by JavaScript -->
+            <h2 class="section-title">Meet Our Dedicated Faculty</h2>
+            <div id="faculty-display-container" class="faculty-display-container">
+                <div id="faculty-grid" class="faculty-grid">
+                    <!-- Placeholder card that matches JS structure. This will be replaced by renderFaculty(). -->
+                    <div class="faculty-card">
+                        <img src="https://placehold.co/150x150/cccccc/000000?text=..."/>
+                        <h3>Loading Faculty...</h3>
+                        <p class="role">Educator</p>
+                        <p class="description">Compiling our list of experienced and passionate teachers.</p>
+                    </div>
+                </div>
+                <div id="faculty-overlay" class="faculty-overlay"></div>
             </div>
+            <button id="showMoreFacultyBtn" class="show-more-button">Show More Faculty</button>
         </div>
     </section>
 
@@ -247,31 +271,38 @@
         <div class="school-container">
             <h2 class="section-title">Quick Links & Resources</h2>
             <div id="quick-links-grid" class="quick-links-grid">
-                <!-- Quick links will be injected here by JavaScript -->
+                 <!-- Placeholder card that matches JS structure. This will be replaced by renderQuickLinks(). -->
+                <a href="#" class="quick-link-card">
+                    <div class="quick-link-icon"><i class="fas fa-link"></i></div>
+                    <h3>Loading Links...</h3>
+                    <p>Finding helpful resources for our community.</p>
+                </a>
             </div>
         </div>
     </section>
-          <section id="counter-section" class="counter-section">
+
+    <!-- Counter Section -->
+    <section id="counter-section" class="counter-section fade-in">
         <div class="school-container counter-grid-container">
-            <div class="counter-item fade-in-up" data-target="100" data-suffix="%">
-                <div class="icon-holder"><i class="fa fa-male"></i></div>
-                <div class="counter-value"><span class="count-up">0</span><span class="suffix">%</span></div>
-                <div class="counter-text"><span>Leadership</span></div>
+            <div class="counter-item" data-target="25">
+                <div class="icon-holder"><i class="fa fa-calendar-check"></i></div>
+                <div class="counter-value"><span class="count-up">0</span><span class="suffix">+</span></div>
+                <div class="counter-text"><span>Years of Excellence</span></div>
             </div>
-            <div class="counter-item fade-in-up" data-target="100" data-suffix="%">
-                <div class="icon-holder"><i class="fa fa-handshake-o"></i></div>
-                <div class="counter-value"><span class="count-up">0</span><span class="suffix">%</span></div>
-                <div class="counter-text"><span>Excellence</span></div>
+            <div class="counter-item" data-target="5000">
+                <div class="icon-holder"><i class="fa fa-user-graduate"></i></div>
+                <div class="counter-value"><span class="count-up">0</span><span class="suffix">+</span></div>
+                <div class="counter-text"><span>Successful Alumni</span></div>
             </div>
-            <div class="counter-item fade-in-up" data-target="100" data-suffix="%">
-                <div class="icon-holder"><i class="fa fa-cogs"></i></div>
-                <div class="counter-value"><span class="count-up">0</span><span class="suffix">%</span></div>
-                <div class="counter-text"><span>Service</span></div>
+            <div class="counter-item" data-target="50">
+                <div class="icon-holder"><i class="fa fa-chalkboard-teacher"></i></div>
+                <div class="counter-value"><span class="count-up">0</span><span class="suffix">+</span></div>
+                <div class="counter-text"><span>Dedicated Faculty</span></div>
             </div>
-            <div class="counter-item fade-in-up" data-target="100" data-suffix="%">
-                <div class="icon-holder"><i class="fa fa-smile-o"></i></div>
+            <div class="counter-item" data-target="100">
+                <div class="icon-holder"><i class="fa fa-award"></i></div>
                 <div class="counter-value"><span class="count-up">0</span><span class="suffix">%</span></div>
-                <div class="counter-text"><span>Smiles</span></div>
+                <div class="counter-text"><span>Growth</span></div>
             </div>
         </div>
     </section>
@@ -283,23 +314,11 @@
             <div class="contact-grid">
                 <div class="contact-info">
                     <h3 class="contact-subtitle">Get in Touch</h3>
-                    <p class="contact-description">
-                        Have questions? We'd love to hear from you. Reach out to us through the form below or
-                        using our contact details.
-                    </p>
+                    <p class="contact-description">We'd love to hear from you! Please use the form to send us a message, or connect with us through our social channels.</p>
                     <ul class="contact-list">
-                        <li class="contact-list-item">
-                            <span class="contact-icon contact-icon-mail"></span>
-                            bhugol.gautam1@gmail.com
-                        </li>
-                        <li class="contact-list-item">
-                            <span class="contact-icon contact-icon-address"></span>
-                            Kadaghari, Kageshowri Manohara 9
-                        </li>
-                        <li class="contact-list-item">
-                            <span class="contact-icon contact-icon-phone"></span>
-                            9745609613
-                        </li>
+                        <li class="contact-list-item"><i class="fas fa-map-marker-alt contact-icon"></i> Kageshwori Manohara-09, Kathmandu, Nepal</li>
+                        <li class="contact-list-item"><i class="fas fa-envelope contact-icon"></i> Contact via Form or Facebook</li>
+                        <li class="contact-list-item"><i class="fas fa-phone contact-icon"></i> Not Publicly Listed</li>
                     </ul>
                 </div>
                 <div class="contact-form-container">
@@ -307,51 +326,50 @@
                     <form id="contactForm" class="contact-form">
                         <div class="form-group">
                             <label for="contactName">Name</label>
-                            <input
-                                type="text"
-                                id="contactName"
-                                placeholder="Your Name"
-                                required
-                            />
+                            <input type="text" id="contactName" placeholder="Your Name" required/>
                         </div>
                         <div class="form-group">
                             <label for="contactEmail">Email</label>
-                            <input
-                                type="email"
-                                id="contactEmail"
-                                placeholder="Your Email"
-                                required
-                            />
+                            <input type="email" id="contactEmail" placeholder="Your Email" required/>
                         </div>
                         <div class="form-group">
                             <label for="contactMessage">Message</label>
-                            <textarea
-                                id="contactMessage"
-                                rows="5"
-                                placeholder="Your Message"
-                                required
-                            ></textarea>
+                            <textarea id="contactMessage" rows="5" placeholder="Your Message" required></textarea>
                         </div>
-                        <button type="submit" class="submit-button">
-                            Send Message
-                        </button>
+                        <button type="submit" class="submit-button">Send Message</button>
                     </form>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Footer -->
+    <!-- Footer (IMPROVED) -->
     <footer class="school-footer">
         <div class="school-container">
-            <p class="footer-copyright">&copy; <span id="currentYear"></span> New Holy Cross School. All rights reserved.</p>
-            <div class="footer-links">
-                <a href="#" class="footer-link">Privacy Policy</a>
-                <a href="#" class="footer-link">Terms of Service</a>
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <img src="/Images/Logo.svg" alt="New Holy Cross School Logo">
+                    <h4>New Holy Cross School</h4>
+                    <p>Kageshwori Manohara-09, Kathmandu</p>
+                </div>
+                <div class="footer-social-links">
+                    <a href="https://www.facebook.com/nhcschool" class="social-icon-link" aria-label="Facebook" target="_blank" rel="noopener noreferrer"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" class="social-icon-link" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                    <a href="https://www.instagram.com/nhcschool" class="social-icon-link" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                    <a href="https://www.youtube.com/@nhcschool" class="social-icon-link" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>© <span id="currentYear">2024</span> New Holy Cross School. All Rights Reserved.</p>
+                <div class="footer-links">
+                    <a href="#" class="footer-link">Privacy Policy</a>
+                    <a href="#" class="footer-link">Terms of Service</a>
+                </div>
             </div>
         </div>
     </footer>
-    <!-- Link to external JavaScript file -->
+
+    <button id="scrollToTopBtn">↑</button>
     <script src="js/script.js" defer></script>
 </body>
 </html>

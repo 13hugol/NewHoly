@@ -1,20 +1,29 @@
-const express= require('express');
-const app= express();
-app.use(express.json());
 const { dbconnect } = require('./dbconnect');
 
-let check = async (req, res, next) => {
-  let db = await dbconnect();
-  let coll = db.collection('students');
-  let name = req.body.name;
-    let number= req.body.contact;
-  // Check if a student with the same name already exists
-  let existing_name = await coll.findOne({ name: name });
-    let existing_number= await coll.findOne({ contact:number});
-  if (existing_name&&existing_number) {
-    return res.redirect('/index.html?status=failed');
+const check = async (req, res, next) => {
+  try {
+    const db = await dbconnect();
+    const coll = db.collection('students');
+
+    const { name, contact } = req.body;
+
+    // Check if either the name or the contact already exists
+    const existingStudent = await coll.findOne({
+      $or: [{ name: name }, { contact: contact }]
+    });
+
+    if (existingStudent) {
+      // Redirect with failure status if duplicate found
+      return res.redirect('/index.html?status=failed');
+    }
+
+    // No duplicates, proceed to next middleware/route handler
+    next();
+  } catch (error) {
+    console.error('Middleware error:', error);
+    // On error, block the request gracefully
+    return res.status(500).send('Internal Server Error');
   }
-  next();
 };
 
-module.exports={check};
+module.exports = { check };
