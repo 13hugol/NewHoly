@@ -1,4 +1,3 @@
-// --- Navigation Menu Toggle ---
 function toggleMenu() {
     const menu = document.getElementById('menu');
     if (menu) {
@@ -58,31 +57,25 @@ async function loadFrontendData() {
     programsData = await fetchData('/api/programs');
     newsEventsData = await fetchData('/api/newsEvents');
     testimonialsData = await fetchData('/api/testimonials');
-    // Corrected API endpoint for faculty to match server.js
     facultyData = await fetchData('/api/facultys');
-    console.log('[loadFrontendData] Fetched facultyData:', facultyData.length, 'items'); // Debugging log
-    galleryData = await fetchData('/api/gallerys'); // Corrected API endpoint for gallery
+    galleryData = await fetchData('/api/gallerys'); // This fetches our gallery data
     quickLinksData = await fetchData('/api/quickLinks');
 }
 
 // Render functions
 function renderPrograms() {
-    const container = document.getElementById('programs-grid'); // Updated ID
+    const container = document.getElementById('programs-grid');
     if (!container) return;
-    container.innerHTML = ''; // Clear existing content
-
+    container.innerHTML = '';
     if (programsData.length === 0) {
         container.innerHTML = '<p class="no-data-message">No academic programs available yet.</p>';
         return;
     }
-
     programsData.forEach(program => {
         const programCard = document.createElement('div');
         programCard.classList.add('program-card');
         programCard.innerHTML = `
-            <div class="program-icon">
-                ${program.iconSvg || '<i class="fas fa-book"></i>'}
-            </div>
+            <div class="program-icon">${program.iconSvg || '<i class="fas fa-book"></i>'}</div>
             <h3>${program.title}</h3>
             <p>${program.description}</p>
         `;
@@ -91,24 +84,20 @@ function renderPrograms() {
 }
 
 function renderNewsEvents() {
-    const container = document.getElementById('news-events-grid'); // Updated ID
+    const container = document.getElementById('news-events-grid');
     if (!container) return;
-    container.innerHTML = ''; // Clear existing content
-
+    container.innerHTML = '';
     if (newsEventsData.length === 0) {
         container.innerHTML = '<p class="no-data-message">No news or events available yet.</p>';
         return;
     }
-
     newsEventsData.forEach(item => {
         const newsEventCard = document.createElement('div');
         newsEventCard.classList.add('news-event-card');
         newsEventCard.innerHTML = `
             ${item.imageUrl ? `<img src="${item.imageUrl}" alt="${item.title}" class="news-image" onerror="this.onerror=null;this.src='https://placehold.co/400x250/cccccc/000000?text=No+Image';" />` : ''}
             <div class="news-event-content">
-                <div class="news-event-icon">
-                    ${item.iconSvg || '<i class="fas fa-calendar-alt"></i>'}
-                </div>
+                <div class="news-event-icon">${item.iconSvg || '<i class="fas fa-calendar-alt"></i>'}</div>
                 <h3>${item.title} (${item.date})</h3>
                 <p>${item.description}</p>
                 ${item.link ? `<a href="${item.link}" class="read-more">Read More <i class="fas fa-arrow-right"></i></a>` : ''}
@@ -119,22 +108,18 @@ function renderNewsEvents() {
 }
 
 function renderTestimonials() {
-    const container = document.getElementById('testimonials-container'); // ID remains the same
+    const container = document.getElementById('testimonials-container');
     if (!container) return;
-    container.innerHTML = ''; // Clear existing content
-
+    container.innerHTML = '';
     if (testimonialsData.length === 0) {
         container.innerHTML = '<p class="no-data-message">No testimonials available yet.</p>';
         return;
     }
-
     testimonialsData.forEach(testimonial => {
         const testimonialCard = document.createElement('div');
         testimonialCard.classList.add('testimonial-card');
         testimonialCard.innerHTML = `
-            <div class="quote-icon">
-                ${testimonial.iconSvg || '<i class="fas fa-quote-left"></i>'}
-            </div>
+            <div class="quote-icon">${testimonial.iconSvg || '<i class="fas fa-quote-left"></i>'}</div>
             <p class="quote">"${testimonial.quote}"</p>
             <p class="author">- ${testimonial.author}, ${testimonial.role}</p>
         `;
@@ -150,30 +135,17 @@ function renderFaculty() {
     const showMoreBtn = document.getElementById('showMoreFacultyBtn');
     const facultyDisplayContainer = document.getElementById('faculty-display-container');
     const facultyOverlay = document.getElementById('faculty-overlay');
-
-    if (!container || !showMoreBtn || !facultyDisplayContainer || !facultyOverlay) {
-        console.error('One or more faculty section DOM elements not found.'); // Debugging log
-        return;
-    }
-
-    container.innerHTML = ''; // Clear existing content
-    console.log('[renderFaculty] Current facultyData length:', facultyData.length); // Debugging log
-    console.log('[renderFaculty] Current facultyVisibleCount:', facultyVisibleCount); // Debugging log
-
+    if (!container || !showMoreBtn || !facultyDisplayContainer || !facultyOverlay) return;
+    container.innerHTML = '';
     if (facultyData.length === 0) {
         container.innerHTML = '<p class="no-data-message">No faculty members available yet.</p>';
-        showMoreBtn.style.display = 'none'; // Hide button if no faculty
-        facultyOverlay.style.opacity = '0'; // Hide overlay
-        facultyDisplayContainer.classList.remove('expanded'); // Ensure not expanded
-        console.log('[renderFaculty] No faculty data, button hidden, overlay hidden.'); // Debugging log
+        showMoreBtn.style.display = 'none';
+        facultyOverlay.style.opacity = '0';
+        facultyDisplayContainer.classList.remove('expanded');
         return;
     }
-
-    // Sort facultyData alphabetically by name
     facultyData.sort((a, b) => a.name.localeCompare(b.name));
-
     const facultyToDisplay = facultyData.slice(0, facultyVisibleCount);
-
     facultyToDisplay.forEach(member => {
         const facultyCard = document.createElement('div');
         facultyCard.classList.add('faculty-card');
@@ -185,51 +157,44 @@ function renderFaculty() {
         `;
         container.appendChild(facultyCard);
     });
-
-    // Update button text and visibility of button/overlay
     if (facultyData.length > FACULTY_DISPLAY_LIMIT) {
         showMoreBtn.style.display = 'block';
         if (facultyVisibleCount >= facultyData.length) {
             showMoreBtn.textContent = 'Show Less Faculty';
             facultyDisplayContainer.classList.add('expanded');
-            facultyOverlay.style.opacity = '0'; // Hide overlay when expanded
-            console.log('[renderFaculty] All faculty visible, "Show Less" button shown, overlay hidden.'); // Debugging log
+            facultyOverlay.style.opacity = '0';
         } else {
             showMoreBtn.textContent = 'Show More Faculty';
             facultyDisplayContainer.classList.remove('expanded');
-            facultyOverlay.style.opacity = '1'; // Show overlay when not expanded
-            console.log('[renderFaculty] Limited faculty visible, "Show More" button shown, overlay visible.'); // Debugging log
+            facultyOverlay.style.opacity = '1';
         }
     } else {
-        showMoreBtn.style.display = 'none'; // Hide button if all are displayed or less than limit
-        facultyDisplayContainer.classList.add('expanded'); // Ensure container is expanded if all fit
-        facultyOverlay.style.opacity = '0'; // Hide overlay if all fit
-        console.log('[renderFaculty] Fewer than limit faculty, button hidden, overlay hidden, container expanded.'); // Debugging log
+        showMoreBtn.style.display = 'none';
+        facultyDisplayContainer.classList.add('expanded');
+        facultyOverlay.style.opacity = '0';
     }
-    console.log('[renderFaculty] showMoreBtn display style:', showMoreBtn.style.display); // Debugging log
 }
 
 function toggleFacultyVisibility() {
-    const facultyDisplayContainer = document.getElementById('faculty-display-container');
-    const facultyOverlay = document.getElementById('faculty-overlay');
-
     if (facultyVisibleCount >= facultyData.length) {
-        facultyVisibleCount = FACULTY_DISPLAY_LIMIT; // Reset to initial limit
+        facultyVisibleCount = FACULTY_DISPLAY_LIMIT;
     } else {
-        facultyVisibleCount = facultyData.length; // Show all
+        facultyVisibleCount = facultyData.length;
     }
-    console.log('[toggleFacultyVisibility] New facultyVisibleCount:', facultyVisibleCount); // Debugging log
-    renderFaculty(); // Re-render faculty cards
+    renderFaculty();
 }
 
-
+// --- [MODIFIED] Gallery Rendering for New Slider ---
 function renderGallery() {
-    const container = document.getElementById('gallery-grid'); // Updated ID
+    // Note the ID change to 'gallery-container'
+    const container = document.getElementById('gallery-container'); 
     if (!container) return;
     container.innerHTML = ''; // Clear existing content
 
     if (galleryData.length === 0) {
-        container.innerHTML = '<p class="no-data-message">No gallery items available yet.</p>';
+        // To prevent breaking the layout, we'll hide the whole section or show a message inside the wrapper
+        const gallerySection = document.getElementById('gallery-section');
+        if(gallerySection) gallerySection.style.display = 'none';
         return;
     }
 
@@ -244,13 +209,47 @@ function renderGallery() {
     });
 }
 
+// --- [NEW] Logic for Gallery Slider Arrow Controls ---
+function setupGallerySlider() {
+    const container = document.getElementById('gallery-container');
+    const leftBtn = document.getElementById('scroll-left');
+    const rightBtn = document.getElementById('scroll-right');
+
+    if (!container || !leftBtn || !rightBtn) return;
+
+    const checkScroll = () => {
+        if (!container) return;
+        // Disable left arrow if at the beginning
+        leftBtn.disabled = container.scrollLeft <= 0;
+        // Disable right arrow if at the end
+        const maxScrollLeft = container.scrollWidth - container.clientWidth;
+        rightBtn.disabled = container.scrollLeft >= maxScrollLeft - 1; // -1 for precision
+    };
+
+    rightBtn.addEventListener('click', () => {
+        const scrollAmount = container.clientWidth;
+        container.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+    });
+
+    leftBtn.addEventListener('click', () => {
+        const scrollAmount = container.clientWidth;
+        container.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
+    });
+
+    // Update buttons on scroll (for touch/manual scroll) and resize
+    container.addEventListener('scroll', checkScroll);
+    window.addEventListener('resize', checkScroll);
+
+    // Initial check in case there are few items and no scrolling is needed
+    // Use a small timeout to ensure layout is complete after rendering
+    setTimeout(checkScroll, 100); 
+}
+
+
 function renderQuickLinks() {
-    const container = document.getElementById('quick-links-grid'); // Updated ID
-    // const footerContainer = document.getElementById('footer-quick-links'); // This ID is not in new index.html
-
-    if (!container) return; // Only check the main container now
-
-    container.innerHTML = ''; // Clear existing content
+    const container = document.getElementById('quick-links-grid');
+    if (!container) return;
+    container.innerHTML = '';
     if (quickLinksData.length === 0) {
         container.innerHTML = '<p class="no-data-message">No quick links available yet.</p>';
     } else {
@@ -259,32 +258,14 @@ function renderQuickLinks() {
             quickLinkCard.href = link.url;
             quickLinkCard.classList.add('quick-link-card');
             quickLinkCard.innerHTML = `
-                <div class="quick-link-icon">
-                    ${link.iconSvg || '<i class="fas fa-link"></i>'}
-                </div>
+                <div class="quick-link-icon">${link.iconSvg || '<i class="fas fa-link"></i>'}</div>
                 <h3>${link.title}</h3>
                 <p>${link.description}</p>
             `;
             container.appendChild(quickLinkCard);
         });
     }
-
-    // The footer quick links are no longer dynamic in the provided index.html,
-    // so this part is commented out or removed if not needed.
-    // if (footerContainer) {
-    //     footerContainer.innerHTML = '';
-    //     if (quickLinksData.length === 0) {
-    //         footerContainer.innerHTML = '<li><a href="#">Student Portal</a></li><li><a href="#">Parent Resources</a></li>';
-    //     } else {
-    //         quickLinksData.forEach(link => {
-    //             const listItem = document.createElement('li');
-    //             listItem.innerHTML = `<a href="${link.url}">${link.title}</a>`;
-    //             footerContainer.appendChild(listItem);
-    //         });
-    //     }
-    // }
 }
-
 
 // --- Smooth Scrolling for Navigation Links ---
 function setupSmoothScrolling() {
@@ -312,8 +293,6 @@ function animateCounter(entry) {
             item.classList.add('animated');
             const countUpSpan = item.querySelector('.count-up');
             const target = parseInt(item.dataset.target);
-            // Removed suffix from data-target, it's now in a separate span
-            // const suffix = item.dataset.suffix || ''; // This is no longer needed here
             let current = 0;
             const duration = 2000;
             const startTimestamp = performance.now();
@@ -325,11 +304,7 @@ function animateCounter(entry) {
                 if (progress < 1) {
                     requestAnimationFrame(updateCount);
                 } else {
-                    countUpSpan.textContent = target; // Ensure final value is exact
-                    // Removed the suffix appending here because it's already in the HTML
-                    // if (suffix) {
-                    //     countUpSpan.textContent += suffix;
-                    // }
+                    countUpSpan.textContent = target;
                 }
             };
             requestAnimationFrame(updateCount);
@@ -339,117 +314,74 @@ function animateCounter(entry) {
 }
 
 const counterObserver = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-        animateCounter(entry);
-    });
-}, {
-    threshold: 0.5
-});
+    entries.forEach(entry => animateCounter(entry));
+}, { threshold: 0.5 });
 
 // --- DOM Content Loaded ---
 document.addEventListener('DOMContentLoaded', async () => {
-    // Show page loader
-    const pageLoader = document.getElementById('page-loader'); // Assuming index.html has a page-loader
-    if (pageLoader) {
-        pageLoader.style.display = 'flex'; // Show loader
-    }
+    const pageLoader = document.getElementById('page-loader');
+    if (pageLoader) pageLoader.style.display = 'flex';
 
-    await loadFrontendData(); // Load data from backend first
-    requestAnimationFrame(animateSlider); // Start slider animation
+    await loadFrontendData();
+    requestAnimationFrame(animateSlider);
 
-    // Render all sections after data is loaded
+    // Render all sections
     renderPrograms();
     renderNewsEvents();
     renderTestimonials();
-    renderFaculty(); // This is where faculty is rendered
-    renderGallery();
+    renderFaculty();
+    renderGallery(); // Render the new gallery
     renderQuickLinks();
+    
+    // Setup interactive elements
     setupSmoothScrolling();
+    setupGallerySlider(); // Setup the new gallery slider controls
 
-    // Show more/less faculty button logic
     const showMoreFacultyBtn = document.getElementById('showMoreFacultyBtn');
     if (showMoreFacultyBtn) {
         showMoreFacultyBtn.addEventListener('click', toggleFacultyVisibility);
-        console.log('[DOMContentLoaded] Event listener added to showMoreFacultyBtn.'); // Debugging log
-    } else {
-        console.error('[DOMContentLoaded] showMoreFacultyBtn not found.'); // Debugging log
     }
-
-    // Counter section observer
     const counterSection = document.getElementById('counter-section');
     if (counterSection) {
         counterObserver.observe(counterSection);
     }
-
-    // Year in footer
     const currentYearSpan = document.getElementById('currentYear');
     if (currentYearSpan) {
         currentYearSpan.textContent = new Date().getFullYear();
     }
 
-    // --- Contact Form Submission Using Fetch ---
+    // --- Contact Form Submission ---
     const contactForm = document.getElementById('contactForm');
     if (contactForm) {
         contactForm.addEventListener('submit', async function (event) {
             event.preventDefault();
-
             const name = document.getElementById('contactName').value.trim();
             const email = document.getElementById('contactEmail').value.trim();
             const message = document.getElementById('contactMessage').value.trim();
-
             if (!name || !email || !message) {
-                // Replace alert with a custom modal or message box
-                console.warn('Please fill in all fields.');
-                // Example of a simple message box (you'd style this properly)
-                const msgBox = document.createElement('div');
-                msgBox.textContent = 'Please fill in all fields.';
-                msgBox.style.cssText = 'position: fixed; top: 20px; right: 20px; background-color: #ffdddd; border: 1px solid #ffaaaa; padding: 10px; border-radius: 5px; z-index: 1000;';
-                document.body.appendChild(msgBox);
-                setTimeout(() => msgBox.remove(), 3000);
+                alert('Please fill in all fields.');
                 return;
             }
-
             try {
                 const response = await fetch('/submit-contact', {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ name, email, message })
                 });
-
                 if (response.ok) {
-                    // Replace alert with a custom modal or message box
-                    console.log('Thank you! Your message has been submitted successfully.');
-                    const msgBox = document.createElement('div');
-                    msgBox.textContent = 'Thank you! Your message has been submitted successfully.';
-                    msgBox.style.cssText = 'position: fixed; top: 20px; right: 20px; background-color: #ddffdd; border: 1px solid #aaffaa; padding: 10px; border-radius: 5px; z-index: 1000;';
-                    document.body.appendChild(msgBox);
-                    setTimeout(() => msgBox.remove(), 3000);
+                    alert('Thank you! Your message has been submitted successfully.');
                     contactForm.reset();
                 } else {
                     const errorData = await response.json();
-                    // Replace alert with a custom modal or message box
-                    console.error('Submission failed:', errorData.error || 'Please try again later.');
-                    const msgBox = document.createElement('div');
-                    msgBox.textContent = 'Submission failed: ' + (errorData.error || 'Please try again later.');
-                    msgBox.style.cssText = 'position: fixed; top: 20px; right: 20px; background-color: #ffdddd; border: 1px solid #ffaaaa; padding: 10px; border-radius: 5px; z-index: 1000;';
-                    document.body.appendChild(msgBox);
-                    setTimeout(() => msgBox.remove(), 3000);
+                    alert('Submission failed: ' + (errorData.error || 'Please try again later.'));
                 }
             } catch (error) {
-                console.error('Submission error:', error);
-                // Replace alert with a custom modal or message box
-                const msgBox = document.createElement('div');
-                msgBox.textContent = 'An error occurred while submitting the form. Please try again.';
-                msgBox.style.cssText = 'position: fixed; top: 20px; right: 20px; background-color: #ffdddd; border: 1px solid #ffaaaa; padding: 10px; border-radius: 5px; z-index: 1000;';
-                document.body.appendChild(msgBox);
-                setTimeout(() => msgBox.remove(), 3000);
+                alert('An error occurred. Please try again.');
             }
         });
     }
 
-    // Fade-in animation
+    // Fade-in animation observer
     const fadeEls = document.querySelectorAll('.fade-in');
     const observer = new IntersectionObserver(
         entries => {
@@ -464,18 +396,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     );
     fadeEls.forEach(el => observer.observe(el));
 
-    // Hide page loader after all content is loaded and rendered
-    if (pageLoader) {
-        pageLoader.style.display = 'none'; // Hide loader
-    }
+    if (pageLoader) pageLoader.style.display = 'none';
 });
 
-
-// --- Principal card visibility animation ---
+// --- Other existing functions (Principal card, scroll to top) ---
 const principalCard = document.querySelector('.principal-message-card');
 if (principalCard) {
-    // There is no expand/collapse logic for the principal card in this index.html
-    // So, we'll just ensure it becomes visible.
     const observer = new IntersectionObserver(
         entries => {
             entries.forEach(entry => {
@@ -489,21 +415,17 @@ if (principalCard) {
     );
     observer.observe(principalCard);
 }
-   const scrollToTopBtn = document.getElementById("scrollToTopBtn");
 
-    // Show the button when the user scrolls down 100px
+const scrollToTopBtn = document.getElementById("scrollToTopBtn");
+if (scrollToTopBtn) {
     window.addEventListener("scroll", () => {
-      if (window.scrollY > 100) {
-        scrollToTopBtn.style.display = "flex";
-      } else {
-        scrollToTopBtn.style.display = "none";
-      }
+        if (window.scrollY > 100) {
+            scrollToTopBtn.style.display = "flex";
+        } else {
+            scrollToTopBtn.style.display = "none";
+        }
     });
-
-    // Scroll to top smoothly
     scrollToTopBtn.addEventListener("click", () => {
-      window.scrollTo({
-        top: 0,
-        behavior: "smooth"
-      });
+        window.scrollTo({ top: 0, behavior: "smooth" });
     });
+}

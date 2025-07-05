@@ -37,7 +37,7 @@
                 </div>
 
                 <div class="menu" id="menu">
-                    <div class="dropdown"><a href="#hero-section">Home</a></div>
+                    <div class="dropdown"><a href="#hero-section"><img src="/Images/Logo.svg" alt="New Holy Cross School Logo" class="logo" loading="lazy"></a></div>
                     <div class="dropdown">
                         <a href="#about-us-section" class="lnk">About Us ▾</a>
                         <div class="dropdown-content">
@@ -233,36 +233,20 @@
     </section>
 
     <!-- Gallery Section -->
-    <section id="gallery-section" class="gallery-section fade-in">
+ <section id="gallery-section" class="gallery-section fade-in">
         <div class="school-container">
             <h2 class="section-title">Our Gallery</h2>
-            <div id="gallery-grid" class="gallery-grid">
-                <!-- Gallery items will be injected here by JavaScript -->
-                <div class="gallery-item">
-                    <img src="https://placehold.co/400x300/e2e8f0/1e3a8a?text=Paddy+Day" alt="National Paddy Day Celebration" loading="lazy">
-                    <p class="gallery-item-caption">National Paddy Day Celebration</p>
+
+            <!-- New Gallery Slider Structure -->
+            <div class="gallery-wrapper">
+                <button id="scroll-left" class="gallery-arrow" aria-label="Previous"><</button>
+                <div id="gallery-container" class="gallery-container">
+                    <!-- Gallery items will be injected here by JavaScript from the backend -->
                 </div>
-                <div class="gallery-item">
-                    <img src="https://placehold.co/400x300/e2e8f0/1e3a8a?text=Election+Visit" alt="Election Commission Visit" loading="lazy">
-                    <p class="gallery-item-caption">Visit to Election Commission</p>
-                </div>
-                <div class="gallery-item">
-                    <img src="https://placehold.co/400x300/e2e8f0/1e3a8a?text=Parliament+Visit" alt="Federal Parliament Visit" loading="lazy">
-                    <p class="gallery-item-caption">Visit to Federal Parliament</p>
-                </div>
-                <div class="gallery-item">
-                    <img src="https://placehold.co/400x300/e2e8f0/1e3a8a?text=Handwriting+Comp" alt="Handwriting Competition" loading="lazy">
-                    <p class="gallery-item-caption">Handwriting Competition Winner</p>
-                </div>
-                <div class="gallery-item">
-                    <img src="https://placehold.co/400x300/e2e8f0/1e3a8a?text=Class+Decor" alt="Class Decoration" loading="lazy">
-                    <p class="gallery-item-caption">Class 9 Creative Decoration</p>
-                </div>
-                <div class="gallery-item">
-                    <img src="https://placehold.co/400x300/e2e8f0/1e3a8a?text=School+Life" alt="School Life Activity" loading="lazy">
-                    <p class="gallery-item-caption">Vibrant School Life</p>
-                </div>
+                <button id="scroll-right" class="gallery-arrow" aria-label="Next">></button>
             </div>
+            <!-- End of New Gallery Slider Structure -->
+
         </div>
     </section>
 

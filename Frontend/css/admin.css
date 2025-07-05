@@ -666,6 +666,151 @@ body {
     color: var(--color-danger);
 }
 
+/* --- File Input Styling --- */
+.file-input-wrapper {
+    display: flex;
+    align-items: center;
+    border: 1px solid var(--color-border);
+    border-radius: 0.5rem; /* rounded-lg */
+    background-color: white;
+    cursor: pointer;
+    overflow: hidden;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); /* shadow-sm */
+    transition: border-color 0.2s ease;
+}
+
+.file-input-wrapper:hover {
+    border-color: var(--color-primary);
+}
+
+.file-input-button {
+    background-color: var(--color-primary);
+    color: white;
+    padding: var(--spacing-3) var(--spacing-5); /* py-3 px-5 */
+    font-weight: 500; /* font-medium */
+    border-top-left-radius: 0.5rem; /* rounded-l-lg */
+    border-bottom-left-radius: 0.5rem; /* rounded-l-lg */
+    transition: background-color 0.2s ease;
+    border: none;
+    cursor: pointer;
+}
+
+.file-input-button:hover {
+    background-color: var(--color-primary-dark);
+}
+
+.file-name-display {
+    flex-grow: 1; /* flex-grow */
+    padding: var(--spacing-3) var(--spacing-4); /* py-3 px-4 */
+    color: var(--color-dark);
+    font-size: 1rem; /* text-base */
+    white-space: nowrap; /* truncate */
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.current-image-info {
+    font-size: 0.875rem; /* text-sm */
+    color: var(--color-secondary);
+    margin-top: var(--spacing-2); /* mt-2 */
+}
+
+/* --- Login Section --- */
+.login-section {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%); /* Dark gradient background */
+}
+
+.login-container {
+    background-color: #fff;
+    padding: 40px;
+    border-radius: 10px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+}
+
+.login-container h2 {
+    color: #2c3e50;
+    margin-bottom: 30px;
+    font-size: 2rem;
+}
+
+.login-form .form-group {
+    text-align: left;
+}
+
+.login-form input {
+    width: calc(100% - 20px);
+    padding: 12px;
+    margin-bottom: 15px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 1rem;
+}
+
+.login-form button {
+    width: 100%;
+    padding: 12px;
+    background-color: #3498db;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.login-form button:hover {
+    background-color: #2188b0;
+}
+
+.login-error {
+    color: #e74c3c;
+    margin-top: 15px;
+    font-size: 0.9rem;
+}
+
+/* --- Utility Classes --- */
+.hidden {
+    display: none !important;
+}
+
+/* --- Reply Button Specific Styling (Enhanced) --- */
+.btn-reply {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-2); /* gap-2 */
+    background-color: var(--color-info); /* Use the info color for a distinct look */
+    color: white;
+    padding: var(--spacing-2) var(--spacing-4); /* py-2 px-4 */
+    border: none;
+    border-radius: 0.375rem; /* rounded-md */
+    font-size: 0.875rem; /* text-sm */
+    font-weight: 500; /* font-medium */
+    text-decoration: none; /* Remove underline for links */
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    transform: translateY(0);
+    cursor: pointer;
+}
+
+.btn-reply:hover {
+    background-color: #0d8a9e; /* Darker info color on hover */
+    transform: translateY(-2px); /* Slight lift on hover */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15); /* More pronounced shadow on hover */
+}
+
+.btn-reply i {
+    font-size: 1rem; /* Adjust icon size if needed */
+}
+
+
 /* --- Responsive Adjustments --- */
 @media (max-width: 768px) { /* md breakpoint */
     #admin-panel {

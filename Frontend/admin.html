@@ -14,7 +14,7 @@
 <body>
 
     <!-- Login Section -->
-    <div id="login-section">
+    <div id="login-section" class="login-section"> <!-- Removed 'hidden' class here -->
         <div class="login-container">
             <h2>Admin Login</h2>
             <form id="login-form">
@@ -392,15 +392,29 @@
             <!-- Contact Messages Section -->
             <section id="contacts-section-content" class="admin-section hidden">
                 <h1>Contact Messages</h1>
-                <div id="contact-messages-list" class="data-list">
+                <div id="contacts-list" class="data-list"> <!-- Added id="contacts-list" here -->
                     <!-- Contact messages will be loaded here by JavaScript -->
-                    <p class="no-data-message">No contact messages received yet.</p>
+                    <!-- Example structure for a contact message with reply button -->
+                    <!--
+                    <li class="contact-message-item">
+                        <div>
+                            <strong>From:</strong> John Doe (john.doe@example.com)<br>
+                            <strong>Message:</strong> This is a test message from a user.<br>
+                            <small>Received: 2023-10-26, 10:00 AM</small>
+                        </div>
+                        <div class="actions">
+                            <a href="mailto:john.doe@example.com?subject=Re: Your Inquiry&body=Dear John," class="btn btn-reply"><i class="fas fa-reply"></i> Reply</a>
+                            <button class="btn btn-delete" data-id="someContactId123" data-type="contact">Delete</button>
+                        </div>
+                    </li>
+                    -->
                 </div>
             </section>
         </main>
     </div>
 
+    <!-- The reply modal is no longer needed for direct mailto links, so it's removed -->
     <!-- Admin JavaScript -->
-    <script src="js/admin.js" defer type="module"></script>
+    <script src="js/admin.js"></script>
 </body>
 </html>
