@@ -5,35 +5,11 @@ const multer = require('multer'); // For handling multipart/form-data (file uplo
 const jwt = require('jsonwebtoken'); // For JSON Web Tokens
 const fs = require('fs'); // For file system operations (checking/creating upload directory)
 
-// Assuming dbconnect is correctly set up in your project
-// You would need a file named dbconnect.js in the same directory as server.js
-// Example dbconnect.js content:
-/*
-const { MongoClient } = require('mongodb');
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/holycrossschool'; // Replace with your MongoDB URI
-
-async function dbconnect() {
-    try {
-        const client = new MongoClient(MONGODB_URI);
-        await client.connect();
-        console.log('Successfully connected to MongoDB!');
-        return client.db(); // Return the database instance
-    } catch (error) {
-        console.error('MongoDB connection error:', error);
-        throw error;
-    }
-}
-
-module.exports = { dbconnect };
-*/
 const { dbconnect } = require('./dbconnect'); // This file is crucial for DB connection
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// --- Configuration ---
-// **IMPORTANT: In production, set JWT_SECRET as a strong environment variable.**
-// For development, using a more unique default string to avoid common mismatches.
 const JWT_SECRET = process.env.JWT_SECRET || 'super_secret_dev_key_for_holy_cross_school_2025!';
 const UPLOADS_DIR = path.join(__dirname, '../Frontend/Images'); // Directory to store uploaded images
 
@@ -209,8 +185,8 @@ const generateCRUD = (collectionName, apiRoutePrefix) => {
 // Admin Login Route
 app.post('/api/login', async (req, res) => {
     const { username, password } = req.body;
-    const ADMIN_USERNAME = 'admin';
-    const ADMIN_PASSWORD = 'password123'; // In a real app, hash this password!
+    const ADMIN_USERNAME = process.env.user;
+    const ADMIN_PASSWORD = process.env.pass; // In a real app, hash this password!
 
     if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
         const user = { username: ADMIN_USERNAME, role: 'admin' };
