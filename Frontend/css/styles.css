@@ -73,6 +73,8 @@ body {
 /* Hero Section Styles */
 .hero {
     background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('../Images/holly4.jpg') no-repeat center center/cover;
+    background-position: bottom;
+    background-attachment: fixed;
     height: 60vh; /* Responsive height */
     display: flex;
     align-items: center;
@@ -1863,7 +1865,6 @@ nav {
 
     #scrollToTopBtn:hover {
       background-color:#4A90E2; /* Secondary Vibrant Blue on hover */
-      animation: sizer 0.3s forwards;
     }
 .section-subtitle {
     text-align: center;
