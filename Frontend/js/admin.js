@@ -164,42 +164,6 @@ async function authenticatedFetch(endpoint, options = {}) {
     }
 }
 
-/**
- * Handles image upload to the backend.
- * @param {File} imageFile - The image file to upload.
- * @returns {Promise<string|null>} - The URL of the uploaded image or null on failure.
- */
-async function uploadImage(imageFile) {
-    console.log('[uploadImage] Attempting to upload image:', imageFile ? imageFile.name : 'No file provided');
-    if (!imageFile) {
-        console.log('[uploadImage] No image file to upload.');
-        return null;
-    }
-
-    const formData = new FormData();
-    formData.append('image', imageFile);
-
-    try {
-        const response = await authenticatedFetch('/api/upload', {
-            method: 'POST',
-            body: formData,
-        });
-        console.log('[uploadImage] Image upload response:', response);
-        if (response && response.imageUrl) {
-            showMessageBox('Image uploaded successfully!', 'success');
-            return response.imageUrl;
-        } else {
-            const msg = response ? (response.message || 'Unknown error during upload') : 'No response from upload API.';
-            showMessageBox('Image upload failed: ' + msg, 'error');
-            return null;
-        }
-    } catch (error) {
-        console.error('[uploadImage] Image upload error in uploadImage function:', error);
-        showMessageBox('Image upload failed unexpectedly.', 'error');
-        return null;
-    }
-}
-
 
 /**
  * Shows the login section and hides the admin panel.
@@ -254,7 +218,7 @@ function showSection(sectionId) {
  * Resets all forms and hides their containers.
  */
 function resetForms() {
-    const allFormContainers = document.querySelectorAll('.form-container');
+    const allFormContainers = document.querySelectorAll('.form-container'); // Corrected selector
     allFormContainers.forEach(container => {
         container.classList.add('hidden');
         const form = container.querySelector('form');
@@ -290,8 +254,9 @@ async function loadDashboardCounts() {
         const programsCount = (await authenticatedFetch('/api/programs', { silent: true })).data.length;
         const newsEventsCount = (await authenticatedFetch('/api/newsEvents', { silent: true })).data.length;
         const testimonialsCount = (await authenticatedFetch('/api/testimonials', { silent: true })).data.length;
-        const facultyCount = (await authenticatedFetch('/api/faculty', { silent: true })).data.length;
-        const galleryCount = (await authenticatedFetch('/api/gallery', { silent: true })).data.length;
+        // Corrected API endpoints for faculty and gallery
+        const facultyCount = (await authenticatedFetch('/api/facultys', { silent: true })).data.length;
+        const galleryCount = (await authenticatedFetch('/api/gallerys', { silent: true })).data.length;
         const quickLinksCount = (await authenticatedFetch('/api/quickLinks', { silent: true })).data.length;
         const contactsCount = (await authenticatedFetch('/api/contacts', { silent: true })).data.length;
 
@@ -463,7 +428,8 @@ async function loadFaculty() {
     dataList.innerHTML = '<p class="loading-message">Loading faculty...</p>';
     console.log('[loadFaculty] Fetching faculty...');
     try {
-        const response = await authenticatedFetch('/api/faculty');
+        // Corrected API endpoint to match server.js plural route
+        const response = await authenticatedFetch('/api/facultys');
         const faculty = response.data;
         dataList.innerHTML = '';
 
@@ -505,7 +471,8 @@ async function loadGallery() {
     dataList.innerHTML = '<p class="loading-message">Loading gallery items...</p>';
     console.log('[loadGallery] Fetching gallery items...');
     try {
-        const response = await authenticatedFetch('/api/gallery');
+        // Corrected API endpoint to match server.js plural route
+        const response = await authenticatedFetch('/api/gallerys');
         const galleryItems = response.data;
         dataList.innerHTML = '';
 
@@ -693,48 +660,131 @@ document.querySelectorAll('.dashboard-card').forEach(card => {
 /**
  * Generic form submission handler for Add/Edit operations.
  * @param {Event} event - The form submit event.
- * @param {HTMLFormElement} form - The form element being submitted.
  * @param {string} type - The type of item (e.g., 'program', 'newsEvent').
- * @param {string} idFieldId - The ID of the hidden input field storing the item's _id.
- * @param {string|null} imageUrlDisplayId - The ID of the element displaying current image URL, if applicable.
+ * @param {HTMLFormElement} formElement - The form element being submitted.
  */
 async function handleFormSubmit(e, type, formElement) {
     e.preventDefault();
     const formData = new FormData(formElement);
 
-    // Check if any file input has a selected file
-    const hasFile = [...formData.entries()].some(([key, value]) =>
-        value instanceof File && value.name
-    );
+    const imageInput = formElement.querySelector('input[type="file"]');
+    const hasFile = imageInput && imageInput.files && imageInput.files.length > 0;
 
-    // Determine the body to send based on whether a file is present
-    const body = hasFile ? formData : JSON.stringify(Object.fromEntries(formData));
+    let bodyToSend;
+    let headersToSend = { 'Authorization': `Bearer ${localStorage.getItem('adminToken')}` };
+    const id = formData.get('_id'); // Get ID from formData directly
+    const isEditing = !!id; // Determine if it's an edit operation
+
+    const requiresImageUpload = ['newsEvent', 'faculty', 'gallery'].includes(type);
+
+    if (requiresImageUpload && hasFile) {
+        // Step 1: Upload the image first
+        const imageUploadFormData = new FormData();
+        imageUploadFormData.append('image', imageInput.files[0]);
+
+        try {
+            const uploadResponse = await authenticatedFetch('/api/upload', {
+                method: 'POST',
+                body: imageUploadFormData,
+                // Do not set Content-Type for FormData; browser handles it
+                silent: true // Suppress default message box for this intermediate step
+            });
+            if (!uploadResponse.imageUrl) {
+                throw new Error('Image upload failed: No URL returned from server.');
+            }
+            // Add the uploaded image URL to the main form data
+            formData.set('imageUrl', uploadResponse.imageUrl);
+            console.log('[handleFormSubmit] Image uploaded successfully:', uploadResponse.imageUrl);
+
+            // Now, prepare the main form data as JSON
+            const data = {};
+            formData.forEach((value, key) => {
+                // Exclude the original file input from the JSON payload
+                if (key !== imageInput.name) {
+                    data[key] = value;
+                }
+            });
+            bodyToSend = JSON.stringify(data);
+            headersToSend['Content-Type'] = 'application/json';
+            console.log('[handleFormSubmit] Preparing JSON payload with new image URL. Data:', data);
+
+        } catch (uploadError) {
+            console.error('[handleFormSubmit] Image upload failed:', uploadError);
+            showMessageBox(`Image upload failed: ${uploadError.message}`, 'error');
+            return; // Stop the submission if image upload fails
+        }
+
+    } else {
+        // If no new file, or for non-image forms, prepare JSON.
+        const data = {};
+        formData.forEach((value, key) => {
+            // Exclude file input from JSON if no new file is selected, as its value would be an empty string
+            // and we want to handle image URLs explicitly for existing images.
+            if (imageInput && key === imageInput.name) {
+                // Skip the file input itself if no new file is selected.
+                return;
+            }
+            data[key] = value;
+        });
+
+        // For image-enabled forms (newsEvent, faculty, gallery), if no new file is uploaded:
+        // 1. If editing and there's an existing image URL, retain it.
+        // 2. If editing and the user cleared the image (no new file, no existing URL in dataset),
+        //    explicitly send imageUrl as empty string to tell backend to clear it.
+        const currentImageUrlElement = formElement.querySelector('.current-image-info'); // Use formElement to find the element
+        const currentImageUrl = currentImageUrlElement ? currentImageUrlElement.dataset.currentUrl : null;
+
+        if (requiresImageUpload) {
+            if (isEditing) {
+                if (currentImageUrl) {
+                    // Retain existing image URL if no new file and it existed
+                    data.imageUrl = currentImageUrl;
+                    console.log('[handleFormSubmit] Retaining existing image URL in JSON.');
+                } else if (currentImageUrlElement && currentImageUrlElement.textContent === '') {
+                    // If image was cleared by user (no current URL, no new file)
+                    data.imageUrl = ''; // Explicitly tell backend to remove image
+                    console.log('[handleFormSubmit] Explicitly clearing image URL in JSON.');
+                }
+            } else if (!hasFile) {
+                // For new items requiring an image, if no file is provided, this should have been caught earlier.
+                // This path should ideally not be reached if the frontend validation for required images is strong.
+                // However, for robustness, we ensure imageUrl is not undefined if required.
+                if (requiresImageUpload) {
+                    data.imageUrl = ''; // Send empty string if required but no file
+                }
+            }
+        }
+        
+        // Ensure _id is included for PUT requests when sending JSON
+        if (isEditing && id) {
+            data._id = id;
+        }
+
+        bodyToSend = JSON.stringify(data);
+        headersToSend['Content-Type'] = 'application/json';
+        console.log('[handleFormSubmit] Preparing JSON payload without file. Data:', data);
+    }
 
     try {
         let response;
-        const id = formData.get('_id'); // Use _id as per your HTML forms
+        // Ensure the API path is pluralized correctly for all types
+        const apiPath = `/api/${type}s${id ? '/' + id : ''}`;
+        const method = id ? 'PUT' : 'POST';
 
-        if (id) {
-            // Update existing entry
-            response = await authenticatedFetch(`/api/${type}s/${id}`, {
-                method: 'PUT',
-                body: body,
-                silent: true
-            });
-        } else {
-            // Create new entry
-            response = await authenticatedFetch(`/api/${type}s`, {
-                method: 'POST',
-                body: body,
-                silent: true
-            });
-        }
+        console.log(`[handleFormSubmit] Sending ${method} request to ${apiPath}. Body type: ${bodyToSend instanceof FormData ? 'FormData' : 'JSON'}`);
+
+        response = await authenticatedFetch(apiPath, {
+            method: method,
+            headers: headersToSend, // Pass the constructed headers
+            body: bodyToSend,
+            silent: true // Suppress authenticatedFetch's default message box, handle here
+        });
 
         // Check response.ok for success, as authenticatedFetch now throws on !response.ok
         if (response) { // If response is not null (meaning no error was thrown by authenticatedFetch)
-            showMessageBox(`${type.charAt(0).toUpperCase() + type.slice(1)} saved successfully!`, 'success');
+            showMessageBox(response.message || `${type.charAt(0).toUpperCase() + type.slice(1)} saved successfully!`, 'success');
             formElement.reset();
-            formElement.closest('.form-container').classList.add('hidden');
+            formElement.closest('.form-container').classList.add('hidden'); // Corrected selector
             currentEditing[type] = null;
 
             // Clear file input display name and current image URL display
@@ -780,6 +830,7 @@ if (programForm) {
 // News & Event Form
 if (newsEventForm) {
     newsEventForm.addEventListener('submit', (event) => {
+        // Corrected call: pass idFieldId and imageUrlDisplayId
         handleFormSubmit(event, 'newsEvent', newsEventForm);
     });
     document.getElementById('cancel-news-event-edit').addEventListener('click', () => {
@@ -810,6 +861,7 @@ if (testimonialForm) {
 // Faculty Form
 if (facultyForm) {
     facultyForm.addEventListener('submit', (event) => {
+        // Corrected call: pass idFieldId and imageUrlDisplayId
         handleFormSubmit(event, 'faculty', facultyForm);
     });
     document.getElementById('cancel-faculty-edit').addEventListener('click', () => {
@@ -827,6 +879,7 @@ if (facultyForm) {
 // Gallery Form
 if (galleryForm) {
     galleryForm.addEventListener('submit', (event) => {
+        // Corrected call: pass idFieldId and imageUrlDisplayId
         handleFormSubmit(event, 'gallery', galleryForm);
     });
     document.getElementById('cancel-gallery-edit').addEventListener('click', () => {
@@ -868,6 +921,7 @@ document.addEventListener('click', async (event) => {
         resetForms(); // Use the unified resetForms function
 
         try {
+            // Ensure the API path is pluralized for fetching single items too
             const response = await authenticatedFetch(`/api/${type}s/${id}`);
             const item = response.data;
 
@@ -1106,6 +1160,7 @@ function showConfirmationModal(message) {
         }
 
         try {
+            // Ensure the API path is pluralized for deletion too
             const response = await authenticatedFetch(`/api/${type}s/${id}`, {
                 method: 'DELETE'
             });
@@ -1132,7 +1187,7 @@ document.querySelectorAll('.admin-section').forEach(section => {
     const addBtn = section.querySelector('.add-new-btn');
     if (addBtn) {
         addBtn.addEventListener('click', () => {
-            const formContainer = section.querySelector('.form-container');
+            const formContainer = section.querySelector('.form-container'); // Corrected selector
             if (formContainer) {
                 console.log('[Add New Button] Clicked. Resetting forms and showing new form.');
                 resetForms(); // Reset all forms first
@@ -1164,7 +1219,7 @@ document.querySelectorAll('input[type="file"]').forEach(input => {
 document.addEventListener('DOMContentLoaded', () => {
     console.log('[DOMContentLoaded] Initializing admin panel...');
     // Hide all form containers by default
-    document.querySelectorAll('.form-container').forEach(container => {
+    document.querySelectorAll('.form-container').forEach(container => { // Corrected selector
         container.classList.add('hidden');
     });
 

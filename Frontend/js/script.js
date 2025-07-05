@@ -58,8 +58,9 @@ async function loadFrontendData() {
     programsData = await fetchData('/api/programs');
     newsEventsData = await fetchData('/api/newsEvents');
     testimonialsData = await fetchData('/api/testimonials');
-    facultyData = await fetchData('/api/faculty');
-    galleryData = await fetchData('/api/gallery');
+    // Corrected API endpoint for faculty to match server.js
+    facultyData = await fetchData('/api/facultys');
+    galleryData = await fetchData('/api/gallerys'); // Corrected API endpoint for gallery
     quickLinksData = await fetchData('/api/quickLinks');
 }
 

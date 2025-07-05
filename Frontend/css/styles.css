@@ -1128,6 +1128,12 @@ nav {
     padding: 1.5rem;
     text-align: center;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: 1px solid #e0e0e0;
+    /* Ensure cards have a consistent height for grid alignment if needed,
+       but usually better to let content define height or use flex/grid alignment. */
+    display: flex; /* Use flexbox for internal alignment */
+    flex-direction: column;
+    align-items: center;
 }
 
 .faculty-card:hover {
@@ -1135,13 +1141,14 @@ nav {
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
 }
 
-.faculty-photo {
-    width: 100px;
-    height: 100px;
+.faculty-card img { /* Targeting the image directly within the card */
+    width: 100px; /* Fixed width for circular image */
+    height: 100px; /* Fixed height for circular image */
     border-radius: 50%;
     object-fit: cover;
-    margin: 0 auto 1rem auto;
+    margin: 0 auto 1rem auto; /* Center and add bottom margin */
     border: 3px solid #2563eb; /* Blue border */
+    flex-shrink: 0; /* Prevent image from shrinking */
 }
 
 .faculty-card h3 {
@@ -1162,6 +1169,7 @@ nav {
     font-size: 0.95rem;
     color: #4a5568;
     line-height: 1.5;
+    flex-grow: 1; /* Allow description to take up available space */
 }
 
 .faculty-overlay {
@@ -1427,6 +1435,9 @@ nav {
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
     overflow: hidden;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
+    /* Added aspect ratio for consistent card height based on image */
+    display: flex;
+    flex-direction: column;
 }
 
 .gallery-item:hover {
@@ -1436,7 +1447,9 @@ nav {
 
 .gallery-item img {
     width: 100%;
-    height: 200px; /* Fixed height for gallery images */
+    /* Removed fixed height, using aspect-ratio on the image itself */
+    height: auto; /* Allow height to adjust based on aspect ratio */
+    aspect-ratio: 4/3; /* Common aspect ratio for photos (width / height) */
     object-fit: cover;
     display: block;
     transition: transform 0.3s ease;
@@ -1452,6 +1465,10 @@ nav {
     font-weight: 600;
     color: #1a202c;
     text-align: center;
+    flex-grow: 1; /* Allow caption to take available space */
+    display: flex; /* Use flex to center text vertically if needed */
+    align-items: center;
+    justify-content: center;
 }
 
 /* Quick Links & Resources Section Styles */
@@ -1592,6 +1609,8 @@ nav {
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     border: 1px solid #e0e0e0;
     text-align: center;
+    display: flex; /* Use flexbox */
+    flex-direction: column; /* Stack image and caption */
 }
 
 .gallery-item:hover {
@@ -1601,7 +1620,8 @@ nav {
 
 .gallery-item img {
     width: 100%;
-    height: 200px; /* Fixed height for gallery images */
+    height: auto; /* Changed to auto */
+    aspect-ratio: 4/3; /* Added aspect ratio for consistent image sizing */
     object-fit: cover;
     display: block;
     border-top-left-radius: 15px; /* Match card radius for top corners */
@@ -1624,7 +1644,8 @@ nav {
 
 .news-event-card .news-image {
     width: 100%;
-    height: 220px; /* Fixed height for news images */
+    height: auto; /* Changed to auto */
+    aspect-ratio: 16/9; /* Added aspect ratio for consistent image sizing */
     object-fit: cover;
     display: block;
     border-top-left-radius: 15px;
@@ -1657,6 +1678,9 @@ nav {
     text-align: center;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     border: 1px solid #e0e0e0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .faculty-card:hover {
