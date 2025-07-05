@@ -60,6 +60,7 @@ async function loadFrontendData() {
     testimonialsData = await fetchData('/api/testimonials');
     // Corrected API endpoint for faculty to match server.js
     facultyData = await fetchData('/api/facultys');
+    console.log('[loadFrontendData] Fetched facultyData:', facultyData.length, 'items'); // Debugging log
     galleryData = await fetchData('/api/gallerys'); // Corrected API endpoint for gallery
     quickLinksData = await fetchData('/api/quickLinks');
 }
@@ -108,8 +109,7 @@ function renderNewsEvents() {
                 <div class="news-event-icon">
                     ${item.iconSvg || '<i class="fas fa-calendar-alt"></i>'}
                 </div>
-                <h3>${item.title}</h3>
-                <p class="date">${item.date}</p>
+                <h3>${item.title} (${item.date})</h3>
                 <p>${item.description}</p>
                 ${item.link ? `<a href="${item.link}" class="read-more">Read More <i class="fas fa-arrow-right"></i></a>` : ''}
             </div>
@@ -142,19 +142,30 @@ function renderTestimonials() {
     });
 }
 
-const FACULTY_DISPLAY_LIMIT = 6; // Number of faculty members to show initially
+const FACULTY_DISPLAY_LIMIT = 3; 
 let facultyVisibleCount = FACULTY_DISPLAY_LIMIT;
 
 function renderFaculty() {
-    const container = document.getElementById('faculty-grid'); // Updated ID
+    const container = document.getElementById('faculty-grid');
     const showMoreBtn = document.getElementById('showMoreFacultyBtn');
-    if (!container || !showMoreBtn) return;
+    const facultyDisplayContainer = document.getElementById('faculty-display-container');
+    const facultyOverlay = document.getElementById('faculty-overlay');
+
+    if (!container || !showMoreBtn || !facultyDisplayContainer || !facultyOverlay) {
+        console.error('One or more faculty section DOM elements not found.'); // Debugging log
+        return;
+    }
 
     container.innerHTML = ''; // Clear existing content
+    console.log('[renderFaculty] Current facultyData length:', facultyData.length); // Debugging log
+    console.log('[renderFaculty] Current facultyVisibleCount:', facultyVisibleCount); // Debugging log
 
     if (facultyData.length === 0) {
         container.innerHTML = '<p class="no-data-message">No faculty members available yet.</p>';
         showMoreBtn.style.display = 'none'; // Hide button if no faculty
+        facultyOverlay.style.opacity = '0'; // Hide overlay
+        facultyDisplayContainer.classList.remove('expanded'); // Ensure not expanded
+        console.log('[renderFaculty] No faculty data, button hidden, overlay hidden.'); // Debugging log
         return;
     }
 
@@ -175,20 +186,39 @@ function renderFaculty() {
         container.appendChild(facultyCard);
     });
 
+    // Update button text and visibility of button/overlay
     if (facultyData.length > FACULTY_DISPLAY_LIMIT) {
         showMoreBtn.style.display = 'block';
-        showMoreBtn.textContent = facultyVisibleCount >= facultyData.length ? 'Show Less Faculty' : 'Show More Faculty';
+        if (facultyVisibleCount >= facultyData.length) {
+            showMoreBtn.textContent = 'Show Less Faculty';
+            facultyDisplayContainer.classList.add('expanded');
+            facultyOverlay.style.opacity = '0'; // Hide overlay when expanded
+            console.log('[renderFaculty] All faculty visible, "Show Less" button shown, overlay hidden.'); // Debugging log
+        } else {
+            showMoreBtn.textContent = 'Show More Faculty';
+            facultyDisplayContainer.classList.remove('expanded');
+            facultyOverlay.style.opacity = '1'; // Show overlay when not expanded
+            console.log('[renderFaculty] Limited faculty visible, "Show More" button shown, overlay visible.'); // Debugging log
+        }
     } else {
-        showMoreBtn.style.display = 'none';
+        showMoreBtn.style.display = 'none'; // Hide button if all are displayed or less than limit
+        facultyDisplayContainer.classList.add('expanded'); // Ensure container is expanded if all fit
+        facultyOverlay.style.opacity = '0'; // Hide overlay if all fit
+        console.log('[renderFaculty] Fewer than limit faculty, button hidden, overlay hidden, container expanded.'); // Debugging log
     }
+    console.log('[renderFaculty] showMoreBtn display style:', showMoreBtn.style.display); // Debugging log
 }
 
 function toggleFacultyVisibility() {
+    const facultyDisplayContainer = document.getElementById('faculty-display-container');
+    const facultyOverlay = document.getElementById('faculty-overlay');
+
     if (facultyVisibleCount >= facultyData.length) {
         facultyVisibleCount = FACULTY_DISPLAY_LIMIT; // Reset to initial limit
     } else {
         facultyVisibleCount = facultyData.length; // Show all
     }
+    console.log('[toggleFacultyVisibility] New facultyVisibleCount:', facultyVisibleCount); // Debugging log
     renderFaculty(); // Re-render faculty cards
 }
 
@@ -331,7 +361,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     renderPrograms();
     renderNewsEvents();
     renderTestimonials();
-    renderFaculty();
+    renderFaculty(); // This is where faculty is rendered
     renderGallery();
     renderQuickLinks();
     setupSmoothScrolling();
@@ -340,6 +370,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     const showMoreFacultyBtn = document.getElementById('showMoreFacultyBtn');
     if (showMoreFacultyBtn) {
         showMoreFacultyBtn.addEventListener('click', toggleFacultyVisibility);
+        console.log('[DOMContentLoaded] Event listener added to showMoreFacultyBtn.'); // Debugging log
+    } else {
+        console.error('[DOMContentLoaded] showMoreFacultyBtn not found.'); // Debugging log
     }
 
     // Counter section observer

@@ -149,12 +149,21 @@ async function authenticatedFetch(endpoint, options = {}) {
             showLogin();
             throw new Error('Unauthorized or expired token.');
         }
-        const responseData = await response.json();
-        console.log(`[authenticatedFetch] Response data for ${endpoint}:`, responseData);
-        if (!response.ok) {
-            throw new Error(responseData.message || `HTTP error! status: ${response.status}`);
+        // Attempt to parse JSON only if the response is not HTML
+        const contentType = response.headers.get('content-type');
+        if (contentType && contentType.includes('application/json')) {
+            const responseData = await response.json();
+            console.log(`[authenticatedFetch] Response data for ${endpoint}:`, responseData);
+            if (!response.ok) {
+                throw new Error(responseData.message || `HTTP error! status: ${response.status}`);
+            }
+            return responseData;
+        } else {
+            // If not JSON, it's likely an HTML page (e.g., 404 or redirect)
+            const errorText = await response.text();
+            console.error(`[authenticatedFetch] Non-JSON response from ${endpoint}:`, errorText);
+            throw new Error(`Unexpected response from server. Expected JSON, got ${contentType || 'unknown'}.`);
         }
-        return responseData;
     } catch (error) {
         console.error(`[authenticatedFetch] Error during fetch to ${endpoint}:`, error);
         if (!silent) { // Use silent option here
@@ -756,6 +765,8 @@ async function handleFormSubmit(e, type, formElement) {
         }
         
         // Ensure _id is included for PUT requests when sending JSON
+        // For new items, _id should NOT be set, so the `id` variable being empty string is fine.
+        // MongoDB will generate a new _id automatically.
         if (isEditing && id) {
             data._id = id;
         }
@@ -1061,6 +1072,16 @@ document.addEventListener('click', async (event) => {
         const type = btn.dataset.type;
         console.log(`[Delete Button] Clicked delete for ${type} with ID: ${id}`);
 
+        // --- Client-side validation for MongoDB ObjectId format ---
+        // A valid MongoDB ObjectId is a 24-character hexadecimal string.
+        const objectIdRegex = /^[0-9a-fA-F]{24}$/;
+        if (!id || !objectIdRegex.test(id)) {
+            console.error(`[Delete Button] Invalid ID format for deletion: ${id}`);
+            showMessageBox('Error: Invalid item ID for deletion. Please refresh the page.', 'error');
+            return; // Stop the deletion process
+        }
+        // --- End client-side validation ---
+
         // Show a real confirmation modal and wait for user input
         const userConfirmed = await showConfirmationModal(`Are you sure you want to delete this ${type}? This action cannot be undone.`);
 // --- Confirmation Modal Implementation ---
@@ -1171,6 +1192,7 @@ function showConfirmationModal(message) {
                 await loadDashboardCounts();
                 console.log(`[Delete Button] Data reloaded after ${type} deletion.`);
             } else {
+                // This block might not be reached if authenticatedFetch throws on !response.ok
                 const errorData = await response.json(); // Try to parse error message
                 showMessageBox('Deletion failed: ' + (errorData.message || 'Unknown error'), 'error');
                 console.error(`[Delete Button] ${type} deletion failed:`, errorData.message);

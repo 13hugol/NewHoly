@@ -152,7 +152,11 @@ const generateCRUD = (collectionName, apiRoutePrefix) => {
     app.post(`/api/${apiRoutePrefix}`, authenticateToken, checkDbReady, async (req, res) => {
         try {
             const collection = db.collection(collectionName);
-            const result = await collection.insertOne(req.body);
+            // Ensure _id is not passed for new inserts, let MongoDB generate it
+            const dataToInsert = { ...req.body };
+            delete dataToInsert._id; // Remove _id if it exists in the body for POST requests
+
+            const result = await collection.insertOne(dataToInsert);
             res.status(201).json({ success: true, insertedId: result.insertedId, message: `${apiRoutePrefix.slice(0, -1)} added successfully!` });
         } catch (err) {
             console.error(`Failed to add ${apiRoutePrefix}:`, err);
@@ -164,9 +168,13 @@ const generateCRUD = (collectionName, apiRoutePrefix) => {
     app.put(`/api/${apiRoutePrefix}/:id`, authenticateToken, checkDbReady, async (req, res) => {
         try {
             const collection = db.collection(collectionName);
+            // For updates, the _id from params is used, and _id in body should be ignored or removed
+            const dataToUpdate = { ...req.body };
+            delete dataToUpdate._id; // Remove _id from the $set payload to prevent _id modification
+
             const result = await collection.updateOne(
                 { _id: new ObjectId(req.params.id) },
-                { $set: req.body }
+                { $set: dataToUpdate }
             );
             if (result.modifiedCount === 0 && result.matchedCount === 0) {
                 return res.status(404).json({ message: `${apiRoutePrefix.slice(0, -1)} not found or no changes made.` });

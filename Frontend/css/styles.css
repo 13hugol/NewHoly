@@ -325,6 +325,7 @@ nav {
     width: 100%;
     overflow: hidden;
     margin: 2rem auto;
+    margin-top: 0px;
     border-radius: 1rem;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
 }
@@ -337,7 +338,7 @@ nav {
 .pics img {
     width: 100%;
     flex-shrink: 0;
-    height: 400px; /* Fixed height for slider images */
+    height: 60vh; /* Fixed height for slider images */
     object-fit: cover; /* Ensure images cover the area */
     border-radius: 1rem;
 }
@@ -1087,13 +1088,17 @@ nav {
 .faculty-display-container {
     position: relative; /* Needed for absolute positioning of overlay */
     overflow: hidden; /* Hide overflow when blurred */
-    max-height: 500px; /* Adjust as needed to show 3 rows initially */
-    transition: max-height 0.7s ease-out; /* Smooth transition for expansion */
+    /* Adjusted max-height to ensure only two rows are visible initially, forcing overflow */
+    max-height: 450px; /* Estimated height for 2 rows of cards + gap */
+    transition: max-height 0.7s ease-in-out; /* Smooth transition for expansion */
+    /* Added a temporary border for debugging to see the container's boundary */
+    /* border: 2px dashed red; */
 }
 
 .faculty-display-container.expanded {
     max-height: 2000px; /* Large enough to show all content */
-    transition: max-height 0.7s ease-in;
+    transition: max-height 0.7s ease-in-out;
+
 }
 
 .faculty-grid {
@@ -1103,11 +1108,6 @@ nav {
     /* Removed filter: blur(5px); from here */
     transition: filter 0.7s ease-in-out; /* Smooth blur transition */
 }
-
-/* Removed this rule as it's no longer needed for full blur */
-/* .faculty-display-container:not(.expanded) .faculty-grid {
-    filter: blur(5px);
-} */
 
 @media (min-width: 640px) {
     .faculty-grid {
@@ -1129,8 +1129,6 @@ nav {
     text-align: center;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     border: 1px solid #e0e0e0;
-    /* Ensure cards have a consistent height for grid alignment if needed,
-       but usually better to let content define height or use flex/grid alignment. */
     display: flex; /* Use flexbox for internal alignment */
     flex-direction: column;
     align-items: center;
@@ -1177,11 +1175,13 @@ nav {
     bottom: 0;
     left: 0;
     width: 100%;
-    height: 250px; /* Increased height for a larger blur area */
+    /* Adjusted height for a more noticeable blur area */
+    height: 150px;
     /* Adjusted gradient for a more pronounced blur effect at the bottom */
     background: linear-gradient(to top, rgba(226, 232, 240, 0.98) 0%, rgba(226, 232, 240, 0.8) 50%, rgba(226, 232, 240, 0) 100%);
     pointer-events: none; /* Allows clicks to pass through to the button */
     transition: opacity 0.7s ease-in-out;
+    z-index: 5; /* Ensure overlay is above grid but below button */
 }
 
 .faculty-display-container.expanded .faculty-overlay {
@@ -1189,7 +1189,8 @@ nav {
 }
 
 .show-more-button {
-    display: block;
+    /* Set display to none by default in CSS, let JS override */
+    display: none; /* Hidden by default */
     margin: 1.5rem auto 0; /* Center button below content */
     background-color: #2563eb;
     color: white;
@@ -1210,11 +1211,6 @@ nav {
     transform: translateY(-2px);
 }
 
-/* The JS handles hiding tzhis button when expanded, so this CSS rule is not strictly needed but can act as a fallback */
-/* .faculty-display-container.expanded .show-more-button {
-    display: none;
-} */
-
 /* New Counter Section Styles */
 .counter-section {
     padding: 5rem 0;
@@ -1233,22 +1229,23 @@ nav {
 }
 
 .counter-item {
+    background-color: #2d3748; /* Slightly lighter dark blue for items */
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25); /* More pronounced shadow for counters */
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 1.5rem;
-    border-radius: 1.5rem; /* More rounded corners */
-    background-color: rgba(255, 255, 255, 0.1); /* Slightly transparent white for items */
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3); /* Stronger shadow */
-    transition: transform 0.4s ease-out, background-color 0.3s ease, opacity 0.6s ease-out; /* Added opacity to transition */
-    opacity: 0; /* Initially hidden for animation */
-    transform: translateY(50px); /* Start slightly below for fade-in-up */
+    justify-content: center;
+    opacity: 0; /* Hidden by default for animation */
+    transform: translateY(20px);
+    transition: opacity 0.6s ease-out, transform 0.6s ease-out, box-shadow 0.3s ease; /* Added box-shadow to transition */
+    border: 1px solid rgba(255, 255, 255, 0.1); /* Added subtle white border */
 }
 
 .counter-item.animated {
     opacity: 1;
     transform: translateY(0);
-    /* No need for animation property here if using transition and adding 'animated' class */
 }
 
 /* Staggered animation delay using CSS variables and nth-child */
