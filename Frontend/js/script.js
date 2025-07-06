@@ -52,6 +52,8 @@ let facultyData = [];
 let galleryData = [];
 let quickLinksData = [];
 
+
+
 // Function to load all frontend data from the backend
 async function loadFrontendData() {
     programsData = await fetchData('/api/programs');
@@ -190,6 +192,9 @@ function renderGallery() {
     if (!container) return;
     container.innerHTML = ''; // Clear existing content
 
+    // Limit to only 5 images for homepage
+    const limitedData = galleryData.slice(0, 5);
+
     if (galleryData.length === 0) {
         // Show a message for empty gallery
         container.innerHTML = `
@@ -200,13 +205,13 @@ function renderGallery() {
         return;
     }
 
-    galleryData.forEach((item, index) => {
+    limitedData.forEach((item, index) => {
         const galleryItem = document.createElement('div');
         galleryItem.classList.add('gallery-item');
         galleryItem.style.animationDelay = `${(index + 1) * 0.1}s`;
         galleryItem.innerHTML = `
+            <div class="caption">${item.caption}</div>
             <img src="${item.imageUrl}" alt="${item.caption}" onerror="this.onerror=null;this.src='https://placehold.co/400x300/cccccc/000000?text=No+Image';" />
-            <p>${item.caption}</p>
         `;
         container.appendChild(galleryItem);
     });

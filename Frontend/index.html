@@ -223,6 +223,7 @@
     <section id="gallery-section" class="gallery-section fade-in">
         <div class="school-container">
             <h2 class="section-title">Our Gallery</h2>
+            <p class="section-subtitle">A glimpse into our school life and activities</p>
             <div class="gallery-wrapper">
                 <button id="scroll-left" class="gallery-arrow" aria-label="Previous">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -232,8 +233,8 @@
                 <div id="gallery-container" class="gallery-container">
                     <!-- Placeholder card that matches JS structure. This will be replaced by renderGallery(). -->
                     <div class="gallery-item">
+                        <div class="caption">Loading moments from our school life...</div>
                         <img src="https://placehold.co/400x300/cccccc/000000?text=Loading..." alt="Loading gallery image">
-                        <p>Loading moments from our school life...</p>
                     </div>
                 </div>
                 <button id="scroll-right" class="gallery-arrow" aria-label="Next">
@@ -241,6 +242,12 @@
                         <path d="m9 18 6-6-6-6"/>
                     </svg>
                 </button>
+            </div>
+            <div class="gallery-view-all">
+                <a href="gallery.html" class="view-all-btn">
+                    <i class="fas fa-images"></i>
+                    View All Gallery Images
+                </a>
             </div>
         </div>
     </section>

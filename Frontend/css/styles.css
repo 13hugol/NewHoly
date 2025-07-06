@@ -1946,7 +1946,7 @@ nav {
     }
 }
 
-/* Gallery Section - Clean Horizontal Scrolling Layout */
+/* Gallery Section - Pinterest Style Layout */
 .gallery-section {
     padding: 6rem 0;
     background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
@@ -1991,18 +1991,19 @@ nav {
     display: none;
 }
 
-/* Individual gallery items */
+/* Individual gallery items - Pinterest Style */
 .gallery-item {
-    flex: 0 0 350px;
+    flex: 0 0 280px;
     background: #ffffff;
-    border-radius: 1.5rem;
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    border-radius: 1rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
     overflow: hidden;
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     position: relative;
     transform: translateY(0);
     opacity: 0;
     animation: slideInUp 0.6s ease-out forwards;
+    cursor: pointer;
 }
 
 .gallery-item:nth-child(1) { animation-delay: 0.1s; }
@@ -2024,11 +2025,46 @@ nav {
 }
 
 .gallery-item:hover {
-    transform: translateY(-10px) scale(1.02);
-    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2);
+    transform: translateY(-8px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
     z-index: 10;
 }
 
+/* Caption styling - Above the image */
+.gallery-item .caption {
+    padding: 1rem 1.2rem;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #1e293b;
+    text-align: center;
+    margin: 0;
+    background: #ffffff;
+    position: relative;
+    z-index: 3;
+    line-height: 1.4;
+    border-bottom: 1px solid #f1f5f9;
+    min-height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Image styling - Below caption */
+.gallery-item img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.3s ease;
+    position: relative;
+    z-index: 2;
+}
+
+.gallery-item:hover img {
+    transform: scale(1.02);
+}
+
+/* Pinterest-style overlay on hover */
 .gallery-item::before {
     content: '';
     position: absolute;
@@ -2036,7 +2072,7 @@ nav {
     left: 0;
     right: 0;
     bottom: 0;
-    background: linear-gradient(135deg, rgba(30, 58, 138, 0.1), rgba(59, 130, 246, 0.1));
+    background: linear-gradient(135deg, rgba(30, 58, 138, 0.05), rgba(59, 130, 246, 0.05));
     opacity: 0;
     transition: opacity 0.3s ease;
     z-index: 1;
@@ -2045,39 +2081,6 @@ nav {
 
 .gallery-item:hover::before {
     opacity: 1;
-}
-
-/* Image styling with aspect ratio */
-.gallery-item img {
-    width: 100%;
-    height: 250px;
-    object-fit: cover;
-    display: block;
-    transition: transform 0.4s ease;
-    position: relative;
-    z-index: 2;
-}
-
-.gallery-item:hover img {
-    transform: scale(1.05);
-}
-
-/* Caption styling */
-.gallery-item p {
-    padding: 1.5rem;
-    font-size: 1rem;
-    font-weight: 600;
-    color: #1e293b;
-    text-align: center;
-    margin: 0;
-    background: #ffffff;
-    position: relative;
-    z-index: 2;
-    line-height: 1.5;
-    min-height: 80px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
 }
 
 /* Clean arrow buttons */
@@ -2165,14 +2168,100 @@ nav {
     color: #94a3b8;
 }
 
-/* Responsive adjustments */
+/* Gallery View All Button */
+.gallery-view-all {
+    text-align: center;
+    margin-top: 3rem;
+}
+
+.view-all-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+    color: white;
+    text-decoration: none;
+    padding: 1.2rem 2.5rem;
+    border-radius: 50px;
+    font-weight: 600;
+    font-size: 1.1rem;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 8px 25px rgba(30, 58, 138, 0.3);
+    position: relative;
+    overflow: hidden;
+    border: 2px solid transparent;
+}
+
+.view-all-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.6s ease;
+}
+
+.view-all-btn:hover {
+    transform: translateY(-4px) scale(1.05);
+    box-shadow: 0 15px 40px rgba(30, 58, 138, 0.5);
+    color: white;
+    text-decoration: none;
+    border-color: rgba(255, 255, 255, 0.3);
+    background: linear-gradient(135deg, #1e40af, #2563eb);
+}
+
+.view-all-btn:hover::before {
+    left: 100%;
+}
+
+.view-all-btn:active {
+    transform: translateY(-2px) scale(1.02);
+    transition: all 0.1s ease;
+}
+
+.view-all-btn i {
+    font-size: 1.2rem;
+    transition: transform 0.3s ease;
+}
+
+.view-all-btn:hover i {
+    transform: translateX(3px) rotate(5deg);
+}
+
+/* Add a subtle pulse animation for attention */
+@keyframes gentlePulse {
+    0%, 100% {
+        box-shadow: 0 8px 25px rgba(30, 58, 138, 0.3);
+    }
+    50% {
+        box-shadow: 0 8px 25px rgba(30, 58, 138, 0.4);
+    }
+}
+
+.view-all-btn {
+    animation: gentlePulse 3s ease-in-out infinite;
+}
+
+.view-all-btn:hover {
+    animation: none;
+}
+
+/* Responsive adjustments for Pinterest-style gallery */
 @media (max-width: 1024px) {
     .gallery-item {
-        flex: 0 0 300px;
+        flex: 0 0 260px;
     }
     
     .gallery-item img {
-        height: 200px;
+        height: 180px;
+    }
+    
+    .gallery-item .caption {
+        padding: 0.8rem 1rem;
+        font-size: 0.9rem;
+        min-height: 50px;
     }
     
     #scroll-left {
@@ -2186,11 +2275,17 @@ nav {
 
 @media (max-width: 768px) {
     .gallery-item {
-        flex: 0 0 280px;
+        flex: 0 0 240px;
     }
     
     .gallery-item img {
-        height: 180px;
+        height: 160px;
+    }
+    
+    .gallery-item .caption {
+        padding: 0.7rem 0.9rem;
+        font-size: 0.85rem;
+        min-height: 45px;
     }
     
     .gallery-arrow {
@@ -2218,11 +2313,17 @@ nav {
     }
     
     .gallery-item {
-        flex: 0 0 260px;
+        flex: 0 0 220px;
     }
     
     .gallery-item img {
-        height: 160px;
+        height: 140px;
+    }
+    
+    .gallery-item .caption {
+        padding: 0.6rem 0.8rem;
+        font-size: 0.8rem;
+        min-height: 40px;
     }
     
     .gallery-arrow {
