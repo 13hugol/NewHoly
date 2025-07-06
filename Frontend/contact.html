@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us - School Name</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <style>
+    body { font-family: 'Inter', sans-serif; margin: 0; background: #f8fafc; color: #1e293b; }
+    .contact-hero { text-align: center; padding: 3rem 1rem 1.5rem 1rem; background: #fff; }
+    .contact-hero h1 { font-size: 2.5rem; font-weight: 800; margin-bottom: 0.7rem; }
+    .contact-info, .contact-form-section, .contact-map { background: #fff; border-radius: 14px; box-shadow: 0 4px 24px rgba(30,58,138,0.07); padding: 1.5rem 1.2rem; margin: 1.5rem auto; max-width: 700px; border: 1.5px solid #e0e7ff; }
+    .contact-info p { color: #334155; font-size: 1.05rem; margin-bottom: 0.2rem; }
+    .contact-form-section form { display: flex; flex-direction: column; gap: 1rem; }
+    .contact-form-section input, .contact-form-section textarea { padding: 0.7rem; border-radius: 6px; border: 1.5px solid #cbd5e1; font-size: 1rem; }
+    .contact-form-section button { background: #2563eb; color: #fff; padding: 0.7rem 1.5rem; border-radius: 6px; font-weight: 600; border: none; cursor: pointer; transition: background 0.18s; }
+    .contact-form-section button:hover { background: #1d4ed8; }
+    .map-placeholder { background: #f1f5f9; color: #64748b; text-align: center; font-size: 1.1rem; font-style: italic; padding: 2rem; border-radius: 8px; }
+    .fade-in { opacity: 0; transform: translateY(30px); transition: opacity 0.5s, transform 0.5s; }
+    .fade-in.visible { opacity: 1; transform: translateY(0); }
+    @media (max-width: 900px) { .contact-info, .contact-form-section, .contact-map { max-width: 98vw; padding: 1.1rem 0.7rem; } }
+    </style>
+</head>
+<body>
+    <header>
+        <!-- Navbar (reuse from index.html) -->
+    </header>
+    <main>
+        <section class="contact-hero">
+            <h1>Contact Us</h1>
+            <p class="contact-intro">We'd love to hear from you!</p>
+        </section>
+        <section class="contact-info">
+            <!-- Dynamic: School contact info from backend -->
+            <p><strong>Address:</strong> [School Address]</p>
+            <p><strong>Phone:</strong> [School Phone]</p>
+            <p><strong>Email:</strong> [School Email]</p>
+        </section>
+        <section class="contact-form-section">
+            <h2>Send Us a Message</h2>
+            <form id="contact-form">
+                <input type="text" name="name" placeholder="Your Name" required>
+                <input type="email" name="email" placeholder="Your Email" required>
+                <textarea name="message" placeholder="Your Message" required></textarea>
+                <button type="submit">Send</button>
+            </form>
+        </section>
+        <section class="contact-map">
+            <h2>Find Us</h2>
+            <div class="map-placeholder">[Map will be embedded here]</div>
+        </section>
+    </main>
+    <footer>
+        <!-- Footer (reuse from index.html) -->
+    </footer>
+    <script src="js/script.js"></script>
+    <script>
+    function fadeInSections() {
+        document.querySelectorAll('.fade-in').forEach(el => {
+            el.classList.add('visible');
+        });
+    }
+    document.addEventListener('DOMContentLoaded', async function() {
+        fadeInSections();
+        // Fetch contact info
+        try {
+            const res = await fetch('/api/client-config?clientId=default');
+            if (!res.ok) throw new Error();
+            const data = (await res.json()).data || {};
+            document.querySelector('.contact-info').innerHTML = `
+                <p><strong>Address:</strong> ${data.address || '[School Address]'}</p>
+                <p><strong>Phone:</strong> ${data.phone || '[School Phone]'}</p>
+                <p><strong>Email:</strong> ${data.email || '[School Email]'}</p>
+            `;
+        } catch {
+            document.querySelector('.contact-info').innerHTML = `
+                <p><strong>Address:</strong> [School Address]</p>
+                <p><strong>Phone:</strong> [School Phone]</p>
+                <p><strong>Email:</strong> [School Email]</p>
+            `;
+        }
+        // Handle contact form
+        document.getElementById('contact-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const form = e.target;
+            const formData = {
+                name: form.name.value,
+                email: form.email.value,
+                message: form.message.value
+            };
+            try {
+                const res = await fetch('/api/contact-messages?clientId=default', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(formData)
+                });
+                if (!res.ok) throw new Error();
+                form.reset();
+                alert('Message sent successfully!');
+            } catch {
+                alert('Failed to send message. Please try again later.');
+            }
+        });
+    });
+    </script>
+</body>
+</html> 

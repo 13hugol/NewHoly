@@ -17,6 +17,11 @@ let facultyForm;
 let galleryForm;
 let quickLinkForm;
 let facilityForm;
+let studentColumnForm;
+let downloadForm;
+let faqForm;
+let teamForm;
+let contactInfoForm;
 
 // Lists
 let programsList;
@@ -27,6 +32,11 @@ let galleryList;
 let quickLinksList;
 let contactMessagesList;
 let facilitiesList;
+let studentColumnsList;
+let downloadsList;
+let faqList;
+let teamList;
+let contactInfoList;
 
 // Dashboard counts
 let dashboardCounts = {};
@@ -40,7 +50,12 @@ let currentEditing = {
     testimonial: null,
     quickLink: null,
     contact: null,
-    facility: null
+    facility: null,
+    studentColumn: null,
+    download: null,
+    faq: null,
+    team: null,
+    contactInfo: null
 };
 
 // Reply Modal Elements (removed as they are no longer needed for direct mailto links)
@@ -91,8 +106,8 @@ function showMessageBox(message, type = 'info') {
         msgBox.style.border = '1px solid #ffc107';
         msgBox.style.color = '#333'; // Darker text for warning
     } else {
-        msgBox.style.backgroundColor = '#2196F3'; // Blue
-        msgBox.style.border = '19px solid #2196F3';
+        msgBox.style.backgroundColor = '#2563eb'; // Blue
+        msgBox.style.border = '1px solid #2563eb';
     }
 
     document.body.appendChild(msgBox);
@@ -283,6 +298,11 @@ document.addEventListener('DOMContentLoaded', () => {
         quickLinks: document.getElementById('quick-links-section-content'),
         contacts: document.getElementById('contacts-section-content'),
         facilities: document.getElementById('facilities-section-content'),
+        studentColumns: document.getElementById('student-columns-section-content'),
+        downloads: document.getElementById('downloads-section-content'),
+        faq: document.getElementById('faq-section-content'),
+        team: document.getElementById('team-section-content'),
+        contactInfo: document.getElementById('contact-info-section-content'),
     };
 
     programForm = document.getElementById('program-form');
@@ -292,6 +312,11 @@ document.addEventListener('DOMContentLoaded', () => {
     galleryForm = document.getElementById('gallery-form');
     quickLinkForm = document.getElementById('quick-link-form');
     facilityForm = document.getElementById('facility-form');
+    studentColumnForm = document.getElementById('student-column-form');
+    downloadForm = document.getElementById('download-form');
+    faqForm = document.getElementById('faq-form');
+    teamForm = document.getElementById('team-form');
+    contactInfoForm = document.getElementById('contact-info-form');
 
     programsList = document.getElementById('programs-list');
     newsEventsList = document.getElementById('news-events-list');
@@ -302,6 +327,11 @@ document.addEventListener('DOMContentLoaded', () => {
     // Ensure this ID is present in admin.html for contacts list
     contactMessagesList = document.getElementById('contacts-list');
     facilitiesList = document.getElementById('facilities-list');
+    studentColumnsList = document.getElementById('student-columns-list');
+    downloadsList = document.getElementById('downloads-list');
+    faqList = document.getElementById('faq-list');
+    teamList = document.getElementById('team-list');
+    contactInfoList = document.getElementById('contact-info-list');
 
 
     dashboardCounts = {
@@ -313,6 +343,11 @@ document.addEventListener('DOMContentLoaded', () => {
         quickLinks: document.getElementById('dashboard-quick-links-count'),
         contacts: document.getElementById('dashboard-contacts-count'),
         facilities: document.getElementById('dashboard-facilities-count'),
+        studentColumns: document.getElementById('dashboard-student-columns-count'),
+        downloads: document.getElementById('dashboard-downloads-count'),
+        faq: document.getElementById('dashboard-faq-count'),
+        team: document.getElementById('dashboard-team-count'),
+        contactInfo: document.getElementById('dashboard-contact-info-count'),
     };
 
 
@@ -343,28 +378,30 @@ document.addEventListener('DOMContentLoaded', () => {
     function showSection(sectionId) {
         // Remove 'active' class from all nav links
         document.querySelectorAll('.sidebar-nav .nav-link').forEach(link => {
-            link.classList.remove('active-nav-item'); // Assuming 'active-nav-item' is the class from admin.css
+            link.classList.remove('active-nav-item');
         });
-
         // Add 'active' class to the clicked nav link
         const activeNavLink = document.querySelector(`.sidebar-nav .nav-link[data-section="${sectionId}"]`);
         if (activeNavLink) {
             activeNavLink.classList.add('active-nav-item');
         }
-
         // Hide all content sections
         Object.values(sections).forEach(section => {
-            if (section) section.classList.add('hidden');
+            if (section) {
+                section.classList.add('hidden');
+                section.classList.remove('fade-in', 'visible');
+            }
         });
         // Show the target section
         const targetSection = sections[sectionId];
         if (targetSection) {
             targetSection.classList.remove('hidden');
+            targetSection.classList.add('fade-in');
+            setTimeout(() => targetSection.classList.add('visible'), 10);
         }
-
         // Reset forms and lists when changing sections
         resetForms();
-        loadAllData(); // Reload data for the active section
+        loadAllData();
     }
 
     /**
@@ -401,37 +438,38 @@ document.addEventListener('DOMContentLoaded', () => {
      * Loads dashboard counts from the backend.
      */
     async function loadDashboardCounts() {
-        console.log('[loadDashboardCounts] Loading dashboard counts...');
         try {
-            // Fetch counts for each collection
-            const programsCount = (await authenticatedFetch('/api/programs', { silent: true })).data.length;
-            const newsEventsCount = (await authenticatedFetch('/api/newsEvents', { silent: true })).data.length;
-            const testimonialsCount = (await authenticatedFetch('/api/testimonials', { silent: true })).data.length;
-            // Corrected API endpoints for faculty and gallery
-            const facultyCount = (await authenticatedFetch('/api/facultys', { silent: true })).data.length;
-            const galleryCount = (await authenticatedFetch('/api/gallerys', { silent: true })).data.length;
-            const quickLinksCount = (await authenticatedFetch('/api/quickLinks', { silent: true })).data.length;
-            const contactsCount = (await authenticatedFetch('/api/contacts', { silent: true })).data.length;
-            const facilitiesCount = (await authenticatedFetch('/api/facilities', { silent: true })).data.length;
-
-            // Update dashboard UI elements
-            if (dashboardCounts.programs) dashboardCounts.programs.textContent = programsCount;
-            if (dashboardCounts.newsEvents) dashboardCounts.newsEvents.textContent = newsEventsCount;
-            if (dashboardCounts.testimonials) dashboardCounts.testimonials.textContent = testimonialsCount;
-            if (dashboardCounts.faculty) dashboardCounts.faculty.textContent = facultyCount;
-            if (dashboardCounts.gallery) dashboardCounts.gallery.textContent = galleryCount;
-            if (dashboardCounts.quickLinks) dashboardCounts.quickLinks.textContent = quickLinksCount;
-            if (dashboardCounts.contacts) dashboardCounts.contacts.textContent = contactsCount;
-            if (dashboardCounts.facilities) dashboardCounts.facilities.textContent = facilitiesCount;
-
+            const [programs, newsEvents, testimonials, faculty, gallery, quickLinks, contacts, facilities, studentColumns, downloads, faq, team, contactInfo] = await Promise.all([
+                authenticatedFetch('/api/programs'),
+                authenticatedFetch('/api/newsEvents'),
+                authenticatedFetch('/api/testimonials'),
+                authenticatedFetch('/api/facultys'),
+                authenticatedFetch('/api/gallerys'),
+                authenticatedFetch('/api/quickLinks'),
+                authenticatedFetch('/api/contacts'),
+                authenticatedFetch('/api/facilities'),
+                authenticatedFetch('/api/studentColumns'),
+                authenticatedFetch('/api/downloads'),
+                authenticatedFetch('/api/faq'),
+                authenticatedFetch('/api/team'),
+                authenticatedFetch('/api/contactInfo'),
+            ]);
+            dashboardCounts.programs.textContent = programs.data.length;
+            dashboardCounts.newsEvents.textContent = newsEvents.data.length;
+            dashboardCounts.testimonials.textContent = testimonials.data.length;
+            dashboardCounts.faculty.textContent = faculty.data.length;
+            dashboardCounts.gallery.textContent = gallery.data.length;
+            dashboardCounts.quickLinks.textContent = quickLinks.data.length;
+            dashboardCounts.contacts.textContent = contacts.data.length;
+            dashboardCounts.facilities.textContent = facilities.data.length;
+            dashboardCounts.studentColumns.textContent = studentColumns.data.length;
+            dashboardCounts.downloads.textContent = downloads.data.length;
+            dashboardCounts.faq.textContent = faq.data.length;
+            dashboardCounts.team.textContent = team.data.length;
+            dashboardCounts.contactInfo.textContent = Array.isArray(contactInfo.data) ? contactInfo.data.length : (contactInfo.data ? 1 : 0);
             console.log('[loadDashboardCounts] Dashboard counts loaded successfully.');
-
         } catch (error) {
             console.error('[loadDashboardCounts] Failed to load dashboard counts:', error);
-            // Display 0 or N/A if counts fail to load
-            for (const key in dashboardCounts) {
-                if (dashboardCounts[key]) dashboardCounts[key].textContent = 'N/A';
-            }
         }
     }
 
@@ -449,7 +487,12 @@ document.addEventListener('DOMContentLoaded', () => {
             loadGallery(),
             loadQuickLinks(),
             loadContactMessages(),
-            loadFacilities()
+            loadFacilities(),
+            loadStudentColumns(),
+            loadDownloads(),
+            loadFAQ(),
+            loadTeam(),
+            loadContactInfo()
         ]);
         console.log('[loadAllData] All section data loading initiated.');
     }
@@ -794,6 +837,155 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    async function loadStudentColumns() {
+        try {
+            const response = await authenticatedFetch('/api/studentColumns');
+            const data = response.data || [];
+            if (studentColumnsList) {
+                if (data.length === 0) {
+                    studentColumnsList.innerHTML = `<div class="data-item no-data-card">
+                        <h3>No Student Columns Yet</h3>
+                        <p>Student stories and creative works will appear here soon.</p>
+                    </div>`;
+                } else {
+                    studentColumnsList.innerHTML = '';
+                    data.forEach(item => {
+                        const itemDiv = document.createElement('div');
+                        itemDiv.classList.add('data-item');
+                        itemDiv.innerHTML = `
+                            <h3>${item.title}</h3>
+                            <p>${item.content?.slice(0, 120) || ''}${item.content && item.content.length > 120 ? '...' : ''}</p>
+                            <div class="student-column-meta">By <strong>${item.author || 'Anonymous'}</strong></div>
+                            <button class="edit-btn" data-id="${item._id}" data-type="studentColumn"><i class="fas fa-edit"></i> Edit</button>
+                            <button class="delete-btn" data-id="${item._id}" data-type="studentColumn"><i class="fas fa-trash"></i> Delete</button>
+                        `;
+                        studentColumnsList.appendChild(itemDiv);
+                    });
+                }
+            }
+        } catch (error) {
+            studentColumnsList.innerHTML = `<div class="data-item no-data-card">
+                <h3>Failed to load student columns</h3>
+                <p>Please try again later.</p>
+            </div>`;
+        }
+    }
+
+    async function loadDownloads() {
+        try {
+            const response = await authenticatedFetch('/api/downloads');
+            const data = response.data || [];
+            if (downloadsList) {
+                if (data.length === 0) {
+                    downloadsList.innerHTML = '<p class="no-data-message">No downloads added yet.</p>';
+                } else {
+                    downloadsList.innerHTML = '';
+                    data.forEach(item => {
+                        const itemDiv = document.createElement('div');
+                        itemDiv.classList.add('data-item');
+                        itemDiv.innerHTML = `
+                            <h3>${item.title}</h3>
+                            <a href="${item.url}" download>${item.linkText || 'Download'}</a>
+                            <button class="edit-btn" data-id="${item._id}" data-type="download"><i class="fas fa-edit"></i> Edit</button>
+                            <button class="delete-btn" data-id="${item._id}" data-type="download"><i class="fas fa-trash"></i> Delete</button>
+                        `;
+                        downloadsList.appendChild(itemDiv);
+                    });
+                }
+            }
+        } catch (error) {
+            downloadsList.innerHTML = '<p class="no-data-message">Failed to load downloads.</p>';
+        }
+    }
+
+    async function loadFAQ() {
+        try {
+            const response = await authenticatedFetch('/api/faq');
+            const data = response.data || [];
+            if (faqList) {
+                if (data.length === 0) {
+                    faqList.innerHTML = '<p class="no-data-message">No FAQs added yet.</p>';
+                } else {
+                    faqList.innerHTML = '';
+                    data.forEach(item => {
+                        const itemDiv = document.createElement('div');
+                        itemDiv.classList.add('data-item');
+                        itemDiv.innerHTML = `
+                            <h3>${item.question}</h3>
+                            <p>${item.answer}</p>
+                            <button class="edit-btn" data-id="${item._id}" data-type="faq"><i class="fas fa-edit"></i> Edit</button>
+                            <button class="delete-btn" data-id="${item._id}" data-type="faq"><i class="fas fa-trash"></i> Delete</button>
+                        `;
+                        faqList.appendChild(itemDiv);
+                    });
+                }
+            }
+        } catch (error) {
+            faqList.innerHTML = '<p class="no-data-message">Failed to load FAQs.</p>';
+        }
+    }
+
+    async function loadTeam() {
+        try {
+            const response = await authenticatedFetch('/api/team');
+            const data = response.data || [];
+            if (teamList) {
+                if (data.length === 0) {
+                    teamList.innerHTML = '<p class="no-data-message">No team members added yet.</p>';
+                } else {
+                    teamList.innerHTML = '';
+                    data.forEach(item => {
+                        const itemDiv = document.createElement('div');
+                        itemDiv.classList.add('data-item');
+                        itemDiv.innerHTML = `
+                            <h3>${item.name}</h3>
+                            <p>${item.position}</p>
+                            <p>${item.bio}</p>
+                            <button class="edit-btn" data-id="${item._id}" data-type="team"><i class="fas fa-edit"></i> Edit</button>
+                            <button class="delete-btn" data-id="${item._id}" data-type="team"><i class="fas fa-trash"></i> Delete</button>
+                        `;
+                        teamList.appendChild(itemDiv);
+                    });
+                }
+            }
+        } catch (error) {
+            teamList.innerHTML = '<p class="no-data-message">Failed to load team members.</p>';
+        }
+    }
+
+    async function loadContactInfo() {
+        try {
+            const response = await authenticatedFetch('/api/contactInfo');
+            const data = response.data || [];
+            if (contactInfoList) {
+                if (!data || (Array.isArray(data) && data.length === 0)) {
+                    contactInfoList.innerHTML = '<p class="no-data-message">No contact info added yet.</p>';
+                } else {
+                    contactInfoList.innerHTML = '';
+                    // Only one contact info expected, but handle array for safety
+                    const items = Array.isArray(data) ? data : [data];
+                    items.forEach(item => {
+                        const itemDiv = document.createElement('div');
+                        itemDiv.classList.add('data-item');
+                        itemDiv.innerHTML = `
+                            <h3>${item.schoolName || 'School Name'}</h3>
+                            <img src="${item.logoUrl || 'Images/Logo.svg'}" alt="School Logo" style="max-width:80px;max-height:80px;margin-bottom:0.5rem;" />
+                            <p><strong>Address:</strong> ${item.address}</p>
+                            <p><strong>Phone:</strong> ${item.phone}</p>
+                            <p><strong>Email:</strong> ${item.email}</p>
+                            <p><strong>Messenger:</strong> <a href="${item.messengerLink}" target="_blank">${item.messengerLink}</a></p>
+                            <button class="edit-btn" data-id="${item._id}" data-type="contactInfo"><i class="fas fa-edit"></i> Edit</button>
+                            <button class="delete-btn" data-id="${item._id}" data-type="contactInfo"><i class="fas fa-trash"></i> Delete</button>
+                        `;
+                        contactInfoList.appendChild(itemDiv);
+                    });
+                }
+            }
+        } catch (error) {
+            contactInfoList.innerHTML = '<p class="no-data-message">Failed to load contact info.</p>';
+        }
+    }
+
     // Removed openReplyModal, closeReplyModal, and sendReply functions as they are no longer needed.
 
 
@@ -845,7 +1037,6 @@ document.addEventListener('DOMContentLoaded', () => {
         link.addEventListener('click', (event) => {
             event.preventDefault();
             const sectionId = event.currentTarget.dataset.section;
-            console.log(`[Navigation] Navigating to section: ${sectionId}`);
             showSection(sectionId);
         });
     });
@@ -857,8 +1048,14 @@ document.addEventListener('DOMContentLoaded', () => {
             if (targetCard) {
                 const sectionId = targetCard.dataset.targetSection;
                 if (sectionId) {
-                    console.log(`[Dashboard Card] Navigating to section via card: ${sectionId}`);
                     showSection(sectionId);
+                    // Also activate the corresponding sidebar link
+                    document.querySelectorAll('.sidebar-nav .nav-link').forEach(link => {
+                        link.classList.remove('active-nav-item');
+                        if (link.dataset.section === sectionId) {
+                            link.classList.add('active-nav-item');
+                        }
+                    });
                 }
             }
         });
@@ -1143,6 +1340,66 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // Student Column Form
+    if (studentColumnForm) {
+        studentColumnForm.addEventListener('submit', (event) => {
+            handleFormSubmit(event, 'studentColumn', studentColumnForm);
+        });
+        document.getElementById('cancel-student-column-edit').addEventListener('click', () => {
+            studentColumnForm.reset();
+            studentColumnForm.closest('.form-container').classList.add('hidden');
+            currentEditing.studentColumn = null;
+        });
+    }
+
+    // Download Form
+    if (downloadForm) {
+        downloadForm.addEventListener('submit', (event) => {
+            handleFormSubmit(event, 'download', downloadForm);
+        });
+        document.getElementById('cancel-download-edit').addEventListener('click', () => {
+            downloadForm.reset();
+            downloadForm.closest('.form-container').classList.add('hidden');
+            currentEditing.download = null;
+        });
+    }
+
+    // FAQ Form
+    if (faqForm) {
+        faqForm.addEventListener('submit', (event) => {
+            handleFormSubmit(event, 'faq', faqForm);
+        });
+        document.getElementById('cancel-faq-edit').addEventListener('click', () => {
+            faqForm.reset();
+            faqForm.closest('.form-container').classList.add('hidden');
+            currentEditing.faq = null;
+        });
+    }
+
+    // Team Form
+    if (teamForm) {
+        teamForm.addEventListener('submit', (event) => {
+            handleFormSubmit(event, 'team', teamForm);
+        });
+        document.getElementById('cancel-team-edit').addEventListener('click', () => {
+            teamForm.reset();
+            teamForm.closest('.form-container').classList.add('hidden');
+            currentEditing.team = null;
+        });
+    }
+
+    // Contact Info Form
+    if (contactInfoForm) {
+        contactInfoForm.addEventListener('submit', (event) => {
+            handleFormSubmit(event, 'contactInfo', contactInfoForm);
+        });
+        document.getElementById('cancel-contact-info-edit').addEventListener('click', () => {
+            contactInfoForm.reset();
+            contactInfoForm.closest('.form-container').classList.add('hidden');
+            currentEditing.contactInfo = null;
+        });
+    }
+
 
     // --- Edit and Delete Button Delegation ---
     document.addEventListener('click', async (event) => {
@@ -1300,6 +1557,53 @@ document.addEventListener('DOMContentLoaded', () => {
                             if (fileNameDisplayElement) fileNameDisplayElement.textContent = 'No file chosen';
                         }
                         break;
+                    case 'studentColumn':
+                        formToPopulate = studentColumnForm;
+                        idFieldElement = document.getElementById('student-column-id');
+                        if (formToPopulate) {
+                            formToPopulate.querySelector('#student-column-title').value = item.title || '';
+                            formToPopulate.querySelector('#student-column-content').value = item.content || '';
+                            formToPopulate.querySelector('#student-column-author').value = item.author || '';
+                        }
+                        break;
+                    case 'download':
+                        formToPopulate = downloadForm;
+                        idFieldElement = document.getElementById('download-id');
+                        if (formToPopulate) {
+                            formToPopulate.querySelector('#download-title').value = item.title || '';
+                            formToPopulate.querySelector('#download-link').value = item.url || '';
+                            formToPopulate.querySelector('#download-link-text').value = item.linkText || '';
+                        }
+                        break;
+                    case 'faq':
+                        formToPopulate = faqForm;
+                        idFieldElement = document.getElementById('faq-id');
+                        if (formToPopulate) {
+                            formToPopulate.querySelector('#faq-question').value = item.question || '';
+                            formToPopulate.querySelector('#faq-answer').value = item.answer || '';
+                        }
+                        break;
+                    case 'team':
+                        formToPopulate = teamForm;
+                        idFieldElement = document.getElementById('team-id');
+                        if (formToPopulate) {
+                            formToPopulate.querySelector('#team-name').value = item.name || '';
+                            formToPopulate.querySelector('#team-position').value = item.position || '';
+                            formToPopulate.querySelector('#team-bio').value = item.bio || '';
+                        }
+                        break;
+                    case 'contactInfo':
+                        formToPopulate = contactInfoForm;
+                        idFieldElement = document.getElementById('contact-info-id');
+                        if (formToPopulate) {
+                            formToPopulate.querySelector('#contact-info-school-name').value = item.schoolName || '';
+                            formToPopulate.querySelector('#contact-info-logo-url').value = item.logoUrl || '';
+                            formToPopulate.querySelector('#contact-info-address').value = item.address || '';
+                            formToPopulate.querySelector('#contact-info-phone').value = item.phone || '';
+                            formToPopulate.querySelector('#contact-info-email').value = item.email || '';
+                            formToPopulate.querySelector('#contact-info-messenger').value = item.messengerLink || '';
+                        }
+                        break;
                     default:
                         console.warn('[Edit Button] Unknown item type for edit:', type);
                         return;
@@ -1431,4 +1735,7 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log('[DOMContentLoaded] No admin token found, showing login page.');
         showLogin();
     }
+
+    // Add fade-in to all admin sections
+    document.querySelectorAll('.admin-section').forEach(section => section.classList.add('fade-in'));
 });

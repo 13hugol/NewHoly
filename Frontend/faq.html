@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FAQ - School Name</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <style>
+    body { font-family: 'Inter', sans-serif; margin: 0; background: #f8fafc; color: #1e293b; }
+    .faq-hero { text-align: center; padding: 3rem 1rem 1.5rem 1rem; background: #fff; }
+    .faq-hero h1 { font-size: 2.5rem; font-weight: 800; margin-bottom: 0.7rem; }
+    .faq-list { display: flex; flex-direction: column; gap: 2rem; justify-content: center; margin: 2rem auto; max-width: 900px; }
+    .faq-item { background: #fff; border-radius: 14px; box-shadow: 0 4px 24px rgba(30,58,138,0.07); padding: 1.5rem 1.2rem; border: 1.5px solid #e0e7ff; position: relative; transition: box-shadow 0.18s, transform 0.18s; }
+    .faq-item:hover { box-shadow: 0 8px 32px rgba(37,99,235,0.13); transform: translateY(-4px) scale(1.025); border-color: #2563eb; }
+    .faq-item h2 { font-size: 1.15rem; font-weight: 700; color: #1e293b; margin-bottom: 0.3rem; }
+    .faq-item p { color: #334155; font-size: 1.05rem; margin-bottom: 0.2rem; }
+    .no-data-card { background: #f1f5f9; color: #64748b; text-align: center; font-size: 1.1rem; font-style: italic; box-shadow: none; border: 1.5px dashed #cbd5e1; }
+    .fade-in { opacity: 0; transform: translateY(30px); transition: opacity 0.5s, transform 0.5s; }
+    .fade-in.visible { opacity: 1; transform: translateY(0); }
+    @media (max-width: 900px) { .faq-list { gap: 1.1rem; } .faq-item { min-width: 90vw; max-width: 98vw; padding: 1.1rem 0.7rem; } }
+    </style>
+</head>
+<body>
+    <header>
+        <!-- Navbar (reuse from index.html) -->
+    </header>
+    <main>
+        <section class="faq-hero">
+            <h1>Frequently Asked Questions</h1>
+            <p class="faq-intro">Find answers to common questions about our school.</p>
+        </section>
+        <section class="faq-list">
+            <!-- Dynamic: List of FAQs from backend -->
+            <div class="faq-item">
+                <h2>[Question]</h2>
+                <p>[Answer]</p>
+            </div>
+        </section>
+    </main>
+    <footer>
+        <!-- Footer (reuse from index.html) -->
+    </footer>
+    <script src="js/script.js"></script>
+    <script>
+    function fadeInSections() {
+        document.querySelectorAll('.fade-in').forEach(el => {
+            el.classList.add('visible');
+        });
+    }
+    document.addEventListener('DOMContentLoaded', async function() {
+        fadeInSections();
+        try {
+            const res = await fetch('/api/faq?clientId=default');
+            if (!res.ok) throw new Error();
+            const data = (await res.json()).data || [];
+            const container = document.querySelector('.faq-list');
+            if (data.length === 0) {
+                container.innerHTML = `<div class='faq-item no-data-card'><h3>No FAQs Yet</h3><p>FAQs will appear here soon.</p></div>`;
+                return;
+            }
+            container.innerHTML = data.map(faq => `
+                <div class='faq-item'>
+                    <h2>${faq.question}</h2>
+                    <p>${faq.answer}</p>
+                </div>
+            `).join('');
+        } catch {
+            document.querySelector('.faq-list').innerHTML = `<div class='faq-item no-data-card'><h3>No FAQs Yet</h3><p>FAQs will appear here soon.</p></div>`;
+        }
+    });
+    </script>
+</body>
+</html> 

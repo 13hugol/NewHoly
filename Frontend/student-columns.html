@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Columns - New Holy Cross School</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="shortcut icon" href="Images/Logo.svg" type="image/x-icon">
+    <style>
+    body { font-family: 'Inter', sans-serif; margin: 0; background: #f8fafc; color: #1e293b; }
+    .fade-in { opacity: 0; transform: translateY(30px); transition: opacity 0.5s, transform 0.5s; }
+    .fade-in.visible { opacity: 1; transform: translateY(0); }
+    .student-columns-hero, .student-columns-list { background: #fff; border-radius: 14px; box-shadow: 0 4px 24px rgba(30,58,138,0.07); padding: 1.5rem 1.2rem; margin: 1.5rem auto; max-width: 900px; border: 1.5px solid #e0e7ff; }
+    .student-columns-hero h1 { font-size: 2.5rem; font-weight: 800; margin-bottom: 0.7rem; }
+    .student-columns-intro { color: #64748b; font-size: 1.15rem; margin-bottom: 1.2rem; text-align: center; }
+    .student-columns-list { display: flex; flex-wrap: wrap; gap: 2rem; justify-content: center; }
+    .student-column-card { background: #fff; border-radius: 14px; box-shadow: 0 4px 24px rgba(30,58,138,0.07); padding: 1.5rem 1.2rem; min-width: 260px; max-width: 340px; flex: 1 1 300px; display: flex; flex-direction: column; gap: 0.7rem; border: 1.5px solid #e0e7ff; position: relative; transition: box-shadow 0.18s, transform 0.18s; margin: 1rem auto; }
+    .student-column-card:hover { box-shadow: 0 8px 32px rgba(37,99,235,0.13); transform: translateY(-4px) scale(1.025); border-color: #2563eb; }
+    .student-column-card h3 { font-size: 1.25rem; font-weight: 700; color: #1e293b; margin-bottom: 0.3rem; }
+    .student-column-card p { color: #334155; font-size: 1.05rem; margin-bottom: 0.2rem; }
+    .no-data-card { background: #f1f5f9; color: #64748b; text-align: center; font-size: 1.1rem; font-style: italic; box-shadow: none; border: 1.5px dashed #cbd5e1; }
+    @media (max-width: 900px) { .student-columns-hero, .student-columns-list { max-width: 98vw; padding: 1.1rem 0.7rem; } .student-column-card { min-width: 90vw; max-width: 98vw; padding: 1.1rem 0.7rem; } }
+    </style>
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="nav-container">
+                <div class="hamburger" onclick="toggleMenu()">
+                    <div></div><div></div><div></div>
+                </div>
+                <div class="menu" id="menu">
+                    <div class="dropdown"><a href="index.html"><img src="Images/Logo.svg" class="logo" alt="School Logo"></a></div>
+                    <div class="dropdown"><a href="about.html" class="lnk">About</a></div>
+                    <div class="dropdown"><a href="programs.html" class="lnk">Programs</a></div>
+                    <div class="dropdown"><a href="student-columns.html" class="lnk active">Student Columns</a></div>
+                    <div class="dropdown"><a href="events.html" class="lnk">Events</a></div>
+                    <div class="dropdown"><a href="downloads.html" class="lnk">Downloads</a></div>
+                    <div class="dropdown"><a href="team.html" class="lnk">Team</a></div>
+                    <div class="dropdown"><a href="faq.html" class="lnk">FAQ</a></div>
+                    <div class="dropdown"><a href="contact.html" class="lnk">Contact</a></div>
+                    <div class="dropdown"><a href="gallery.html" class="lnk">Gallery</a></div>
+                </div>
+                <div class="login-btn">
+                    <a href="admin.html" title="Admin Login">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-user"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                    </a>
+                </div>
+            </div>
+        </nav>
+    </header>
+    <main>
+        <section class="student-columns-hero fade-in">
+            <h1>Student Columns</h1>
+            <p class="student-columns-intro">Voices and stories from our students.</p>
+        </section>
+        <section class="student-columns-list fade-in">
+            <!-- Dynamic: List of student columns from backend -->
+        </section>
+    </main>
+    <footer>
+        <div class="school-footer">
+            <div class="footer-content">
+                <div class="footer-logo"><img src="Images/Logo.svg" alt="School Logo"><h4>New Holy Cross School</h4></div>
+                <div class="footer-links">
+                    <a href="about.html">About</a>
+                    <a href="programs.html">Programs</a>
+                    <a href="student-columns.html">Student Columns</a>
+                    <a href="events.html">Events</a>
+                    <a href="downloads.html">Downloads</a>
+                    <a href="team.html">Team</a>
+                    <a href="faq.html">FAQ</a>
+                    <a href="contact.html">Contact</a>
+                    <a href="gallery.html">Gallery</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <span class="footer-copyright">&copy; 2024 New Holy Cross School, Kathmandu. All rights reserved.</span>
+            </div>
+        </div>
+    </footer>
+    <script src="js/script.js"></script>
+    <script>
+    function fadeInSections() {
+        document.querySelectorAll('.fade-in').forEach(el => {
+            el.classList.add('visible');
+        });
+    }
+    document.addEventListener('DOMContentLoaded', async function() {
+        fadeInSections();
+        try {
+            const res = await fetch('/api/student-columns?clientId=default');
+            if (!res.ok) throw new Error();
+            const data = (await res.json()).data || [];
+            const container = document.querySelector('.student-columns-list');
+            if (data.length === 0) {
+                container.innerHTML = `<div class='student-column-card no-data-card'><h3>No Student Columns Yet</h3><p>Student columns will appear here soon.</p></div>`;
+                return;
+            }
+            container.innerHTML = data.map(col => `
+                <div class='student-column-card'>
+                    <h3>${col.title}</h3>
+                    <p>${col.content}</p>
+                    <p style='font-size:0.95em;color:#64748b;'>By ${col.author || 'Anonymous'}</p>
+                </div>
+            `).join('');
+        } catch {
+            document.querySelector('.student-columns-list').innerHTML = `<div class='student-column-card no-data-card'><h3>No Student Columns Yet</h3><p>Student columns will appear here soon.</p></div>`;
+        }
+    });
+    </script>
+</body>
+</html> 

@@ -745,5 +745,256 @@ document.addEventListener('DOMContentLoaded', function() {
     initializeSmoothScrolling();
     initializeFadeInAnimations();
     
+    renderStudentColumnsPreview();
+    
     console.log('Website initialization complete');
+});
+
+// --- Floating Messenger Button ---
+function createMessengerButton(messengerLink) {
+    if (!messengerLink) return;
+    const btn = document.createElement('button');
+    btn.className = 'messenger-btn';
+    btn.title = 'Message us on Facebook Messenger';
+    btn.innerHTML = '<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="16" cy="16" r="16" fill="#0084FF"/><path d="M8.5 21.5L13.5 16.5L16.5 19.5L21.5 14.5L18.5 17.5L15.5 14.5L10.5 19.5L8.5 21.5Z" fill="white"/></svg>';
+    btn.onclick = function() {
+        const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+        if (isMobile) {
+            // Try to open Messenger app, fallback to web
+            window.location.href = `fb-messenger://user-thread/${messengerLink}`;
+            setTimeout(() => {
+                window.open(`https://m.me/${messengerLink}`, '_blank');
+            }, 500);
+        } else {
+            window.open(`https://m.me/${messengerLink}`, '_blank');
+        }
+    };
+    document.body.appendChild(btn);
+}
+
+async function injectMessengerButton() {
+    try {
+        const res = await fetch('/api/client-config');
+        if (!res.ok) return;
+        const config = (await res.json()).data;
+        if (config && config.messengerLink) {
+            createMessengerButton(config.messengerLink);
+        }
+    } catch (e) { /* fail silently */ }
+}
+
+window.addEventListener('DOMContentLoaded', injectMessengerButton);
+
+// --- Dynamic Content Loaders for New Pages ---
+async function loadDynamicContent(page) {
+    const clientId = window.CLIENT_ID || 'default';
+    let url, targetSelector, renderFn;
+    switch(page) {
+        case 'about':
+            url = `/api/client-config?clientId=${clientId}`;
+            targetSelector = 'main';
+            renderFn = (data) => {
+                document.querySelector('.about-intro').textContent = data.intro || '';
+                document.querySelector('.mission-vision p').textContent = data.missionVision || '';
+                document.querySelector('.philosophy p').textContent = data.philosophy || '';
+                document.querySelector('.principal-message p').textContent = data.principalMessage || '';
+                const facilities = document.querySelector('.facilities ul');
+                facilities.innerHTML = (data.facilities||[]).map(f=>`<li>${f}</li>`).join('');
+            };
+            break;
+        case 'programs':
+            url = `/api/programs?clientId=${clientId}`;
+            targetSelector = '.programs-list';
+            renderFn = (data) => {
+                const list = document.querySelector(targetSelector);
+                list.innerHTML = data.map(p => `<div class="program-card"><h2>${p.title}</h2><p>${p.description}</p></div>`).join('');
+            };
+            break;
+        case 'student-columns':
+            url = `/api/studentColumns?clientId=${clientId}`;
+            targetSelector = '.student-columns-list';
+            renderFn = (data) => {
+                const list = document.querySelector(targetSelector);
+                list.innerHTML = data.map(col => `<div class="student-column-card"><h2>${col.studentName}</h2><p>${col.title}</p><p>${col.excerpt}</p></div>`).join('');
+            };
+            break;
+        case 'events':
+            url = `/api/newsEvents?clientId=${clientId}`;
+            targetSelector = '.events-list';
+            renderFn = (data) => {
+                const list = document.querySelector(targetSelector);
+                list.innerHTML = data.map(ev => `<div class="event-card"><h2>${ev.title}</h2><p>${ev.date||''}</p><p>${ev.description}</p></div>`).join('');
+            };
+            break;
+        case 'downloads':
+            url = `/api/downloads?clientId=${clientId}`;
+            targetSelector = '.downloads-list';
+            renderFn = (data) => {
+                const list = document.querySelector(targetSelector);
+                list.innerHTML = data.map(dl => `<div class="download-card"><h2>${dl.title}</h2><a href="${dl.url}" download>${dl.linkText||'Download'}</a></div>`).join('');
+            };
+            break;
+        case 'team':
+            url = `/api/team?clientId=${clientId}`;
+            targetSelector = '.team-list';
+            renderFn = (data) => {
+                const list = document.querySelector(targetSelector);
+                list.innerHTML = data.map(tm => `<div class="team-card"><h2>${tm.name}</h2><p>${tm.position}</p><p>${tm.bio}</p></div>`).join('');
+            };
+            break;
+        case 'faq':
+            url = `/api/faq?clientId=${clientId}`;
+            targetSelector = '.faq-list';
+            renderFn = (data) => {
+                const list = document.querySelector(targetSelector);
+                list.innerHTML = data.map(fq => `<div class="faq-item"><h2>${fq.question}</h2><p>${fq.answer}</p></div>`).join('');
+            };
+            break;
+        case 'contact':
+            url = `/api/contactInfo?clientId=${clientId}`;
+            targetSelector = '.contact-info';
+            renderFn = (data) => {
+                const info = document.querySelector(targetSelector);
+                info.innerHTML = `<p><strong>Address:</strong> ${data.address||''}</p><p><strong>Phone:</strong> ${data.phone||''}</p><p><strong>Email:</strong> ${data.email||''}</p>`;
+            };
+            break;
+        default: return;
+    }
+    try {
+        const res = await fetch(url);
+        if (!res.ok) return;
+        const json = await res.json();
+        if (Array.isArray(json.data)) {
+            renderFn(json.data);
+        } else {
+            renderFn(json.data);
+        }
+    } catch (e) { /* fail silently */ }
+}
+
+// --- Page-specific loader triggers ---
+const pageMap = {
+    'about.html': 'about',
+    'programs.html': 'programs',
+    'student-columns.html': 'student-columns',
+    'events.html': 'events',
+    'downloads.html': 'downloads',
+    'team.html': 'team',
+    'faq.html': 'faq',
+    'contact.html': 'contact',
+};
+window.addEventListener('DOMContentLoaded', () => {
+    const page = pageMap[location.pathname.split('/').pop()];
+    if (page) loadDynamicContent(page);
+});
+
+// --- Student Columns Preview for Homepage ---
+async function renderStudentColumnsPreview() {
+    try {
+        const res = await fetch('/api/studentColumns?clientId=default');
+        if (!res.ok) return;
+        const data = (await res.json()).data || [];
+        const container = document.querySelector('.student-columns-cards');
+        if (!container) return;
+        if (data.length === 0) {
+            container.innerHTML = `<div class="student-column-card no-data-card">
+                <h3>No Student Columns Yet</h3>
+                <p class="student-column-excerpt">Student stories and creative works will appear here soon.</p>
+            </div>`;
+            return;
+        }
+        // Show up to 4 latest columns
+        const preview = data.slice(0, 4);
+        container.innerHTML = preview.map(col => `
+            <div class="student-column-card">
+                <h3>${col.title}</h3>
+                <p class="student-column-excerpt">${col.content?.slice(0, 120) || ''}${col.content && col.content.length > 120 ? '...' : ''}</p>
+                <div class="student-column-meta">By <strong>${col.author || 'Anonymous'}</strong></div>
+            </div>
+        `).join('');
+    } catch (e) {
+        // fail silently
+    }
+}
+
+// Fade-in transitions for all major sections
+function initializeFadeInAnimations() {
+    const fadeEls = document.querySelectorAll('.fade-in');
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+                observer.unobserve(entry.target);
+            }
+        });
+    }, { threshold: 0.15 });
+    fadeEls.forEach(el => observer.observe(el));
+}
+
+// Smooth scrolling for anchor links
+function initializeSmoothScrolling() {
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) {
+                e.preventDefault();
+                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        });
+    });
+}
+
+// Polish forms for usability and style
+function polishForms() {
+    document.querySelectorAll('form').forEach(form => {
+        form.setAttribute('autocomplete', 'off');
+        form.querySelectorAll('input, textarea').forEach(input => {
+            input.style.borderRadius = '6px';
+            input.style.border = '1.5px solid #cbd5e1';
+            input.style.padding = '0.6rem';
+            input.style.fontSize = '1rem';
+        });
+    });
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    // ... existing code ...
+    polishForms();
+    // ... existing code ...
+});
+
+// --- Full Student Columns Page ---
+async function renderAllStudentColumns() {
+    if (!document.querySelector('.student-columns-list')) return;
+    try {
+        const res = await fetch('/api/studentColumns?clientId=default');
+        if (!res.ok) return;
+        const data = (await res.json()).data || [];
+        const container = document.querySelector('.student-columns-list');
+        if (!container) return;
+        if (data.length === 0) {
+            container.innerHTML = `<div class="student-column-card no-data-card">
+                <h3>No Student Columns Yet</h3>
+                <p class="student-column-excerpt">Student stories and creative works will appear here soon.</p>
+            </div>`;
+            return;
+        }
+        container.innerHTML = data.map(col => `
+            <div class="student-column-card fade-in">
+                <h3>${col.title}</h3>
+                <p class="student-column-excerpt">${col.content?.slice(0, 350) || ''}${col.content && col.content.length > 350 ? '...' : ''}</p>
+                <div class="student-column-meta">By <strong>${col.author || 'Anonymous'}</strong></div>
+            </div>
+        `).join('');
+    } catch (e) {
+        // fail silently
+    }
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+    // ... existing code ...
+    if (location.pathname.endsWith('student-columns.html')) {
+        renderAllStudentColumns();
+    }
+    // ... existing code ...
 });

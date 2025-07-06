@@ -60,7 +60,7 @@ app.use((req, res, next) => {
 
 
 // DB Collections (initialized after connection)
-let db, studentsCollection, programsCollection, contactsCollection, newsEventsCollection, testimonialsCollection, facultyCollection, quickLinksCollection, galleryCollection, facilitiesCollection;
+let db, studentsCollection, programsCollection, contactsCollection, newsEventsCollection, testimonialsCollection, facultyCollection, quickLinksCollection, galleryCollection, facilitiesCollection, clientsCollection;
 
 // --- Custom Authentication Middleware for Admin Panel ---
 const authenticateToken = (req, res, next) => {
@@ -85,6 +85,12 @@ const authenticateToken = (req, res, next) => {
     });
 };
 
+// Add: Middleware to extract clientId from request (query, header, or fallback to default)
+function getClientId(req) {
+    // Priority: query param > header > default
+    return req.query.clientId || req.headers['x-client-id'] || 'default';
+}
+
 // Reusable CRUD function generator
 // This function now expects collectionName (the actual DB collection name) and apiRoutePrefix (the URL part)
 const generateCRUD = (collectionName, apiRoutePrefix) => {
@@ -97,11 +103,12 @@ const generateCRUD = (collectionName, apiRoutePrefix) => {
         next();
     };
 
-    // GET all items (PUBLICLY ACCESSIBLE, but admin panel uses authenticatedFetch)
+    // GET all items (filtered by clientId)
     app.get(`/api/${apiRoutePrefix}`, checkDbReady, async (req, res) => {
         try {
             const collection = db.collection(collectionName);
-            const data = await collection.find().toArray();
+            const clientId = getClientId(req);
+            const data = await collection.find({ clientId }).toArray();
             res.json({ data: data });
         } catch (err) {
             console.error(`Failed to fetch ${apiRoutePrefix}:`, err);
@@ -109,11 +116,12 @@ const generateCRUD = (collectionName, apiRoutePrefix) => {
         }
     });
 
-    // GET single item by ID (PUBLICLY ACCESSIBLE, but admin panel uses authenticatedFetch)
+    // GET single item by ID (filtered by clientId)
     app.get(`/api/${apiRoutePrefix}/:id`, checkDbReady, async (req, res) => {
         try {
             const collection = db.collection(collectionName);
-            const item = await collection.findOne({ _id: new ObjectId(req.params.id) });
+            const clientId = getClientId(req);
+            const item = await collection.findOne({ _id: new ObjectId(req.params.id), clientId });
             if (!item) {
                 return res.status(404).json({ message: `${apiRoutePrefix.slice(0, -1)} not found.` });
             }
@@ -124,14 +132,13 @@ const generateCRUD = (collectionName, apiRoutePrefix) => {
         }
     });
 
-    // POST new item (PROTECTED)
+    // POST new item (add clientId)
     app.post(`/api/${apiRoutePrefix}`, authenticateToken, checkDbReady, async (req, res) => {
         try {
             const collection = db.collection(collectionName);
-            // Ensure _id is not passed for new inserts, let MongoDB generate it
-            const dataToInsert = { ...req.body };
-            delete dataToInsert._id; // Remove _id if it exists in the body for POST requests
-
+            const clientId = getClientId(req);
+            const dataToInsert = { ...req.body, clientId };
+            delete dataToInsert._id;
             const result = await collection.insertOne(dataToInsert);
             res.status(201).json({ success: true, insertedId: result.insertedId, message: `${apiRoutePrefix.slice(0, -1)} added successfully!` });
         } catch (err) {
@@ -140,16 +147,15 @@ const generateCRUD = (collectionName, apiRoutePrefix) => {
         }
     });
 
-    // PUT update item by ID (PROTECTED)
+    // PUT update item by ID (filtered by clientId)
     app.put(`/api/${apiRoutePrefix}/:id`, authenticateToken, checkDbReady, async (req, res) => {
         try {
             const collection = db.collection(collectionName);
-            // For updates, the _id from params is used, and _id in body should be ignored or removed
+            const clientId = getClientId(req);
             const dataToUpdate = { ...req.body };
-            delete dataToUpdate._id; // Remove _id from the $set payload to prevent _id modification
-
+            delete dataToUpdate._id;
             const result = await collection.updateOne(
-                { _id: new ObjectId(req.params.id) },
+                { _id: new ObjectId(req.params.id), clientId },
                 { $set: dataToUpdate }
             );
             if (result.modifiedCount === 0 && result.matchedCount === 0) {
@@ -162,11 +168,12 @@ const generateCRUD = (collectionName, apiRoutePrefix) => {
         }
     });
 
-    // DELETE item by ID (PROTECTED)
+    // DELETE item by ID (filtered by clientId)
     app.delete(`/api/${apiRoutePrefix}/:id`, authenticateToken, checkDbReady, async (req, res) => {
         try {
             const collection = db.collection(collectionName);
-            const result = await collection.deleteOne({ _id: new ObjectId(req.params.id) });
+            const clientId = getClientId(req);
+            const result = await collection.deleteOne({ _id: new ObjectId(req.params.id), clientId });
             if (result.deletedCount === 0) {
                 return res.status(404).json({ message: `${apiRoutePrefix.slice(0, -1)} not found.` });
             }
@@ -220,28 +227,23 @@ app.post('/api/upload', authenticateToken, (req, res) => {
 // Admission Form (No authentication needed for public form)
 app.post('/submit-admission', async (req, res) => {
     if (!studentsCollection) return res.status(503).json({ error: 'Database not ready.' });
-    
     try {
         const { studentName, contact } = req.body;
-        
-        // Check for existing student with same name and contact number
+        const clientId = getClientId(req);
+        // Check for existing student with same name, contact, and clientId
         const existingStudent = await studentsCollection.findOne({
             studentName: studentName,
-            contact: contact
+            contact: contact,
+            clientId: clientId
         });
-        
         if (existingStudent) {
             // Duplicate found - redirect with error status
             return res.redirect('/index.html?status=duplicate&message=Student with this name and contact number already exists');
         }
-        
-        // No duplicate found - insert the new admission
-        await studentsCollection.insertOne(req.body);
+        // No duplicate found - insert the new admission with clientId
+        await studentsCollection.insertOne({ ...req.body, clientId });
         console.log('Admission submitted:', req.body);
-        
-        // Success - redirect with success status
         res.redirect('/index.html?status=success&message=Admission submitted successfully');
-        
     } catch (err) {
         console.error('Admission error:', err);
         res.redirect('/index.html?status=error&message=Failed to submit admission. Please try again.');
@@ -256,11 +258,13 @@ app.post('/submit-contact', async (req, res) => {
         return res.status(400).json({ error: 'All fields are required.' });
     }
     try {
+        const clientId = getClientId(req);
         await contactsCollection.insertOne({
             name,
             email,
             message,
-            submittedAt: new Date()
+            submittedAt: new Date(),
+            clientId
         });
         res.status(200).json({ message: 'Message received successfully.' });
     } catch (error) {
@@ -273,7 +277,8 @@ app.post('/submit-contact', async (req, res) => {
 app.get('/api/contacts', authenticateToken, async (req, res) => {
     if (!contactsCollection) return res.status(503).json({ message: 'Database not ready.' });
     try {
-        const contacts = await contactsCollection.find().toArray();
+        const clientId = getClientId(req);
+        const contacts = await contactsCollection.find({ clientId }).toArray();
         res.json({ data: contacts });
     } catch (err) {
         console.error('Failed to fetch contacts:', err);
@@ -284,7 +289,8 @@ app.get('/api/contacts', authenticateToken, async (req, res) => {
 app.delete('/api/contacts/:id', authenticateToken, async (req, res) => {
     if (!contactsCollection) return res.status(503).json({ message: 'Database not ready.' });
     try {
-        const result = await contactsCollection.deleteOne({ _id: new ObjectId(req.params.id) });
+        const clientId = getClientId(req);
+        const result = await contactsCollection.deleteOne({ _id: new ObjectId(req.params.id), clientId });
         if (result.deletedCount === 0) {
             return res.status(404).json({ message: 'Contact not found.' });
         }
@@ -295,6 +301,19 @@ app.delete('/api/contacts/:id', authenticateToken, async (req, res) => {
     }
 });
 
+// Add: API endpoint to get client config by clientId
+app.get('/api/client-config', async (req, res) => {
+    if (!clientsCollection) return res.status(503).json({ message: 'Database not ready.' });
+    const clientId = getClientId(req);
+    try {
+        const config = await clientsCollection.findOne({ clientId });
+        if (!config) return res.status(404).json({ message: 'Client config not found.' });
+        res.json({ data: config });
+    } catch (err) {
+        console.error('Failed to fetch client config:', err);
+        res.status(500).json({ message: 'Failed to fetch client config' });
+    }
+});
 
 // Database connection and server start
 (async () => {
@@ -310,6 +329,7 @@ app.delete('/api/contacts/:id', authenticateToken, async (req, res) => {
         quickLinksCollection = db.collection('quick_links');
         galleryCollection = db.collection('gallery');
         facilitiesCollection = db.collection('facilities');
+        clientsCollection = db.collection('clients');
         console.log('Connected to MongoDB');
 
         // Generate CRUD routes for all collections after DB is connected
@@ -321,6 +341,12 @@ app.delete('/api/contacts/:id', authenticateToken, async (req, res) => {
         generateCRUD('gallery', 'gallerys');
         generateCRUD('quick_links', 'quickLinks');
         generateCRUD('facilities', 'facilities');
+        // New: Student Columns, Downloads, FAQ, Team, Contact Info
+        generateCRUD('student_columns', 'studentColumns');
+        generateCRUD('downloads', 'downloads');
+        generateCRUD('faq', 'faq');
+        generateCRUD('team', 'team');
+        generateCRUD('contact_info', 'contactInfo');
         // 'contacts' collection is handled by specific routes above, but can also use generateCRUD if desired for consistency
         // generateCRUD('contacts'); // Uncomment if you want to use generic CRUD for contacts too
 
