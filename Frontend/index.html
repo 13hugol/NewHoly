@@ -10,11 +10,20 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <!-- Link to external CSS file -->
     <link rel="stylesheet" href="css/styles.css">
+    <link rel="shortcut icon" href="Images/Logo.svg" type="image/x-icon">
 </head>
 <body>
     <!-- Page Loader - Added for consistency with script.js -->
     <div id="page-loader">
         <div></div>
+    </div>
+
+    <!-- Notification System for Form Submissions -->
+    <div id="notification" class="notification" style="display: none;">
+        <div class="notification-content">
+            <span id="notification-message"></span>
+            <button id="notification-close" class="notification-close">&times;</button>
+        </div>
     </div>
 
     <!-- Hero Section with ID for smooth scrolling -->
@@ -194,14 +203,32 @@
         </div>
     </section>
 
+    <!-- School Facilities Section -->
+    <section id="facilities-section" class="facilities-section fade-in">
+        <div class="school-container">
+            <h2 class="section-title">School Facilities</h2>
+            <p class="section-subtitle">Our modern infrastructure provides students with the best learning environment and resources for their holistic development.</p>
+            <div id="facilities-grid" class="facilities-grid">
+                <!-- Placeholder card that matches JS structure. This will be replaced by renderFacilities(). -->
+                <div class="facility-card">
+                    <div class="facility-icon"><i class="fas fa-spinner fa-spin"></i></div>
+                    <h3>Loading Facilities...</h3>
+                    <p>Discovering our world-class facilities and amenities.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- Gallery Section -->
     <section id="gallery-section" class="gallery-section fade-in">
         <div class="school-container">
             <h2 class="section-title">Our Gallery</h2>
             <div class="gallery-wrapper">
-                <button id="scroll-left" class="gallery-arrow" aria-label="Previous"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-left">
-    <path d="m15 18-6-6 6-6"/>
-</svg></button>
+                <button id="scroll-left" class="gallery-arrow" aria-label="Previous">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="m15 18-6-6 6-6"/>
+                    </svg>
+                </button>
                 <div id="gallery-container" class="gallery-container">
                     <!-- Placeholder card that matches JS structure. This will be replaced by renderGallery(). -->
                     <div class="gallery-item">
@@ -209,9 +236,11 @@
                         <p>Loading moments from our school life...</p>
                     </div>
                 </div>
-                <button id="scroll-right" class="gallery-arrow" aria-label="Next"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-right">
-    <path d="m9 18 6-6-6-6"/>
-</svg></button>
+                <button id="scroll-right" class="gallery-arrow" aria-label="Next">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="m9 18 6-6-6-6"/>
+                    </svg>
+                </button>
             </div>
         </div>
     </section>

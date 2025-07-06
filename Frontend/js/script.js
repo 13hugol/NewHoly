@@ -184,32 +184,40 @@ function toggleFacultyVisibility() {
     renderFaculty();
 }
 
-// --- [MODIFIED] Gallery Rendering for New Slider ---
+// --- Gallery Rendering for Horizontal Scrolling Layout ---
 function renderGallery() {
-    // Note the ID change to 'gallery-container'
     const container = document.getElementById('gallery-container'); 
     if (!container) return;
     container.innerHTML = ''; // Clear existing content
 
     if (galleryData.length === 0) {
-        // To prevent breaking the layout, we'll hide the whole section or show a message inside the wrapper
-        const gallerySection = document.getElementById('gallery-section');
-        if(gallerySection) gallerySection.style.display = 'none';
+        // Show a message for empty gallery
+        container.innerHTML = `
+            <div class="gallery-item" style="flex: 0 0 100%; text-align: center; padding: 3rem;">
+                <p style="font-size: 1.2rem; color: #64748b;">No gallery images available yet.</p>
+            </div>
+        `;
         return;
     }
 
-    galleryData.forEach(item => {
+    galleryData.forEach((item, index) => {
         const galleryItem = document.createElement('div');
         galleryItem.classList.add('gallery-item');
+        galleryItem.style.animationDelay = `${(index + 1) * 0.1}s`;
         galleryItem.innerHTML = `
             <img src="${item.imageUrl}" alt="${item.caption}" onerror="this.onerror=null;this.src='https://placehold.co/400x300/cccccc/000000?text=No+Image';" />
             <p>${item.caption}</p>
         `;
         container.appendChild(galleryItem);
     });
+    
+    // Re-initialize slider after rendering
+    setTimeout(() => {
+        setupGallerySlider();
+    }, 200);
 }
 
-// --- [NEW] Logic for Gallery Slider Arrow Controls ---
+// --- Gallery Horizontal Scrolling with Arrow Controls ---
 function setupGallerySlider() {
     const container = document.getElementById('gallery-container');
     const leftBtn = document.getElementById('scroll-left');
@@ -217,32 +225,85 @@ function setupGallerySlider() {
 
     if (!container || !leftBtn || !rightBtn) return;
 
-    const checkScroll = () => {
-        if (!container) return;
-        // Disable left arrow if at the beginning
-        leftBtn.disabled = container.scrollLeft <= 0;
-        // Disable right arrow if at the end
-        const maxScrollLeft = container.scrollWidth - container.clientWidth;
-        rightBtn.disabled = container.scrollLeft >= maxScrollLeft - 1; // -1 for precision
+    // Calculate scroll amount based on container width
+    const getScrollAmount = () => {
+        const containerWidth = container.clientWidth;
+        const itemWidth = 350; // Base item width
+        const gap = 32; // 2rem gap
+        const itemsPerScroll = Math.floor(containerWidth / (itemWidth + gap));
+        return itemsPerScroll * (itemWidth + gap);
     };
 
+    // Check scroll position and update button states
+    const checkScroll = () => {
+        if (!container) return;
+        
+        // Disable left arrow if at the beginning
+        leftBtn.disabled = container.scrollLeft <= 0;
+        
+        // Disable right arrow if at the end
+        const maxScrollLeft = container.scrollWidth - container.clientWidth;
+        rightBtn.disabled = container.scrollLeft >= maxScrollLeft - 1;
+        
+        // Add visual feedback
+        if (leftBtn.disabled) {
+            leftBtn.style.opacity = '0.3';
+        } else {
+            leftBtn.style.opacity = '1';
+        }
+        
+        if (rightBtn.disabled) {
+            rightBtn.style.opacity = '0.3';
+        } else {
+            rightBtn.style.opacity = '1';
+        }
+    };
+
+    // Smooth scroll right
     rightBtn.addEventListener('click', () => {
-        const scrollAmount = container.clientWidth;
-        container.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+        const scrollAmount = getScrollAmount();
+        container.scrollBy({ 
+            left: scrollAmount, 
+            behavior: 'smooth' 
+        });
+        
+        // Add click animation
+        rightBtn.style.transform = 'translateY(-50%) scale(0.95)';
+        setTimeout(() => {
+            rightBtn.style.transform = 'translateY(-50%) scale(1)';
+        }, 150);
     });
 
+    // Smooth scroll left
     leftBtn.addEventListener('click', () => {
-        const scrollAmount = container.clientWidth;
-        container.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
+        const scrollAmount = getScrollAmount();
+        container.scrollBy({ 
+            left: -scrollAmount, 
+            behavior: 'smooth' 
+        });
+        
+        // Add click animation
+        leftBtn.style.transform = 'translateY(-50%) scale(0.95)';
+        setTimeout(() => {
+            leftBtn.style.transform = 'translateY(-50%) scale(1)';
+        }, 150);
     });
 
-    // Update buttons on scroll (for touch/manual scroll) and resize
+    // Update buttons on scroll and resize
     container.addEventListener('scroll', checkScroll);
     window.addEventListener('resize', checkScroll);
 
-    // Initial check in case there are few items and no scrolling is needed
-    // Use a small timeout to ensure layout is complete after rendering
-    setTimeout(checkScroll, 100); 
+    // Initial check
+    setTimeout(checkScroll, 100);
+    
+    // Add keyboard navigation
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowLeft' && !leftBtn.disabled) {
+            leftBtn.click();
+        } else if (e.key === 'ArrowRight' && !rightBtn.disabled) {
+            rightBtn.click();
+        }
+    });
 }
 
 
@@ -332,10 +393,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     renderFaculty();
     renderGallery(); // Render the new gallery
     renderQuickLinks();
+    renderFacilities();
     
     // Setup interactive elements
     setupSmoothScrolling();
-    setupGallerySlider(); // Setup the new gallery slider controls
+    setupGallerySlider(); // Setup the gallery slider controls
+    setupStudentLifeAnimations(); // Setup enhanced student life animations
 
     const showMoreFacultyBtn = document.getElementById('showMoreFacultyBtn');
     if (showMoreFacultyBtn) {
@@ -429,3 +492,253 @@ if (scrollToTopBtn) {
         window.scrollTo({ top: 0, behavior: "smooth" });
     });
 }
+
+// --- Enhanced Student Life Animations ---
+function setupStudentLifeAnimations() {
+    const studentLifeSection = document.getElementById('student-life-section');
+    if (!studentLifeSection) return;
+
+    // Intersection Observer for triggering animations
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                // Add animation classes to columns
+                const columns = entry.target.querySelectorAll('.student-life-column');
+                columns.forEach((column, index) => {
+                    setTimeout(() => {
+                        column.style.animation = `slideInColumn 0.8s ease-out ${index * 0.2}s forwards`;
+                    }, index * 200);
+                });
+
+                // Add animation classes to list items
+                const listItems = entry.target.querySelectorAll('.student-life-list li');
+                listItems.forEach((item, index) => {
+                    setTimeout(() => {
+                        item.style.animation = `slideInListItem 0.6s ease-out ${0.6 + (index * 0.1)}s forwards`;
+                    }, 600 + (index * 100));
+                });
+
+                observer.unobserve(entry.target);
+            }
+        });
+    }, { threshold: 0.3 });
+
+    observer.observe(studentLifeSection);
+
+    // Add hover effects for list items
+    const listItems = studentLifeSection.querySelectorAll('.student-life-list li');
+    listItems.forEach(item => {
+        item.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateX(8px) scale(1.02)';
+            this.style.background = 'linear-gradient(135deg, rgba(224, 242, 254, 0.9), rgba(186, 230, 253, 0.9))';
+            this.style.borderLeftColor = '#0284c7';
+            this.style.boxShadow = '0 8px 20px rgba(14, 165, 233, 0.2)';
+        });
+
+        item.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateX(0) scale(1)';
+            this.style.background = 'linear-gradient(135deg, rgba(240, 249, 255, 0.8), rgba(224, 242, 254, 0.8))';
+            this.style.borderLeftColor = '#0ea5e9';
+            this.style.boxShadow = 'none';
+        });
+    });
+
+    // Add click effects for columns
+    const columns = studentLifeSection.querySelectorAll('.student-life-column');
+    columns.forEach(column => {
+        column.addEventListener('click', function() {
+            // Add a subtle click animation
+            this.style.transform = 'translateY(-5px) scale(1.01)';
+            setTimeout(() => {
+                this.style.transform = 'translateY(-10px) scale(1.02)';
+            }, 150);
+        });
+    });
+
+    // Add floating animation to icons
+    const icons = studentLifeSection.querySelectorAll('.icon-prefix');
+    icons.forEach(icon => {
+        icon.addEventListener('mouseenter', function() {
+            this.style.animation = 'iconSpin 0.6s ease-out';
+            this.style.color = '#0284c7';
+        });
+
+        icon.addEventListener('mouseleave', function() {
+            this.style.animation = 'iconPulse 2s ease-in-out infinite';
+            this.style.color = '#0ea5e9';
+        });
+    });
+}
+
+// Notification System
+function showNotification(message, type = 'success') {
+    const notification = document.getElementById('notification');
+    const notificationMessage = document.getElementById('notification-message');
+    
+    // Set message and type
+    notificationMessage.textContent = message;
+    notification.className = `notification ${type}`;
+    
+    // Show notification
+    notification.style.display = 'block';
+    
+    // Auto-hide after 5 seconds
+    setTimeout(() => {
+        hideNotification();
+    }, 5000);
+}
+
+function hideNotification() {
+    const notification = document.getElementById('notification');
+    notification.classList.add('hide');
+    
+    // Remove from DOM after animation
+    setTimeout(() => {
+        notification.style.display = 'none';
+        notification.classList.remove('hide');
+    }, 300);
+}
+
+// Check for URL parameters on page load
+function checkUrlParameters() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const status = urlParams.get('status');
+    const message = urlParams.get('message');
+    
+    if (status && message) {
+        showNotification(decodeURIComponent(message), status);
+        
+        // Clean up URL parameters
+        const newUrl = window.location.pathname;
+        window.history.replaceState({}, document.title, newUrl);
+    }
+}
+
+// Initialize notification system
+document.addEventListener('DOMContentLoaded', function() {
+    // Check for URL parameters
+    checkUrlParameters();
+    
+    // Add event listener for notification close button
+    const closeButton = document.getElementById('notification-close');
+    if (closeButton) {
+        closeButton.addEventListener('click', hideNotification);
+    }
+});
+
+// Render Facilities
+async function renderFacilities() {
+    const facilitiesGrid = document.getElementById('facilities-grid');
+    if (!facilitiesGrid) return;
+
+    try {
+        const response = await fetch('/api/facilities');
+        const data = await response.json();
+        const facilities = data.data || [];
+
+        facilitiesGrid.innerHTML = '';
+
+        if (facilities.length === 0) {
+            facilitiesGrid.innerHTML = `
+                <div class="facility-card">
+                    <div class="facility-icon">
+                        <i class="fas fa-building"></i>
+                    </div>
+                    <h3>Modern Classrooms</h3>
+                    <p>Well-equipped classrooms with modern teaching aids and comfortable learning environments.</p>
+                    <ul class="facility-features">
+                        <li>Smart boards and projectors</li>
+                        <li>Comfortable seating arrangements</li>
+                        <li>Proper ventilation and lighting</li>
+                    </ul>
+                </div>
+                <div class="facility-card">
+                    <div class="facility-icon">
+                        <i class="fas fa-flask"></i>
+                    </div>
+                    <h3>Science Laboratories</h3>
+                    <p>State-of-the-art laboratories for practical learning in Physics, Chemistry, and Biology.</p>
+                    <ul class="facility-features">
+                        <li>Modern equipment and apparatus</li>
+                        <li>Safety measures and protocols</li>
+                        <li>Experienced lab assistants</li>
+                    </ul>
+                </div>
+                <div class="facility-card">
+                    <div class="facility-icon">
+                        <i class="fas fa-book"></i>
+                    </div>
+                    <h3>Library & Resource Center</h3>
+                    <p>Extensive collection of books, digital resources, and study spaces for students.</p>
+                    <ul class="facility-features">
+                        <li>Wide range of books and journals</li>
+                        <li>Digital learning resources</li>
+                        <li>Quiet study areas</li>
+                    </ul>
+                </div>
+            `;
+            return;
+        }
+
+        facilities.forEach(facility => {
+            const facilityCard = document.createElement('div');
+            facilityCard.className = 'facility-card';
+            
+            let featuresHTML = '';
+            if (facility.features && facility.features.length > 0) {
+                featuresHTML = `
+                    <ul class="facility-features">
+                        ${facility.features.map(feature => `<li>${feature}</li>`).join('')}
+                    </ul>
+                `;
+            }
+
+            facilityCard.innerHTML = `
+                ${facility.imageUrl ? `<img src="${facility.imageUrl}" alt="${facility.name}" class="facility-image" onerror="this.style.display='none';">` : ''}
+                <div class="facility-icon">
+                    ${facility.iconSvg || '<i class="fas fa-building"></i>'}
+                </div>
+                <h3>${facility.name}</h3>
+                <p>${facility.description}</p>
+                ${featuresHTML}
+            `;
+            
+            facilitiesGrid.appendChild(facilityCard);
+        });
+
+    } catch (error) {
+        console.error('Error loading facilities:', error);
+        facilitiesGrid.innerHTML = `
+            <div class="facility-card">
+                <div class="facility-icon">
+                    <i class="fas fa-exclamation-triangle"></i>
+                </div>
+                <h3>Facilities Loading Error</h3>
+                <p>Unable to load facilities information at the moment. Please try again later.</p>
+            </div>
+        `;
+    }
+}
+
+// Initialize all sections
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('Initializing website...');
+    
+    // Initialize all sections
+    renderPrograms();
+    renderNewsEvents();
+    renderTestimonials();
+    renderFaculty();
+    renderGallery();
+    renderQuickLinks();
+    renderFacilities();
+    
+    // Initialize other features
+    initializeCounters();
+    initializeContactForm();
+    initializeScrollToTop();
+    initializeSmoothScrolling();
+    initializeFadeInAnimations();
+    
+    console.log('Website initialization complete');
+});

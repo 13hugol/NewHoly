@@ -16,6 +16,7 @@ let testimonialForm;
 let facultyForm;
 let galleryForm;
 let quickLinkForm;
+let facilityForm;
 
 // Lists
 let programsList;
@@ -25,6 +26,7 @@ let facultyList;
 let galleryList;
 let quickLinksList;
 let contactMessagesList;
+let facilitiesList;
 
 // Dashboard counts
 let dashboardCounts = {};
@@ -37,7 +39,8 @@ let currentEditing = {
     gallery: null,
     testimonial: null,
     quickLink: null,
-    contact: null
+    contact: null,
+    facility: null
 };
 
 // Reply Modal Elements (removed as they are no longer needed for direct mailto links)
@@ -279,6 +282,7 @@ document.addEventListener('DOMContentLoaded', () => {
         gallery: document.getElementById('gallery-section-content'),
         quickLinks: document.getElementById('quick-links-section-content'),
         contacts: document.getElementById('contacts-section-content'),
+        facilities: document.getElementById('facilities-section-content'),
     };
 
     programForm = document.getElementById('program-form');
@@ -287,6 +291,7 @@ document.addEventListener('DOMContentLoaded', () => {
     facultyForm = document.getElementById('faculty-form');
     galleryForm = document.getElementById('gallery-form');
     quickLinkForm = document.getElementById('quick-link-form');
+    facilityForm = document.getElementById('facility-form');
 
     programsList = document.getElementById('programs-list');
     newsEventsList = document.getElementById('news-events-list');
@@ -296,6 +301,7 @@ document.addEventListener('DOMContentLoaded', () => {
     quickLinksList = document.getElementById('quick-links-list');
     // Ensure this ID is present in admin.html for contacts list
     contactMessagesList = document.getElementById('contacts-list');
+    facilitiesList = document.getElementById('facilities-list');
 
 
     dashboardCounts = {
@@ -306,6 +312,7 @@ document.addEventListener('DOMContentLoaded', () => {
         gallery: document.getElementById('dashboard-gallery-count'),
         quickLinks: document.getElementById('dashboard-quick-links-count'),
         contacts: document.getElementById('dashboard-contacts-count'),
+        facilities: document.getElementById('dashboard-facilities-count'),
     };
 
 
@@ -405,6 +412,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const galleryCount = (await authenticatedFetch('/api/gallerys', { silent: true })).data.length;
             const quickLinksCount = (await authenticatedFetch('/api/quickLinks', { silent: true })).data.length;
             const contactsCount = (await authenticatedFetch('/api/contacts', { silent: true })).data.length;
+            const facilitiesCount = (await authenticatedFetch('/api/facilities', { silent: true })).data.length;
 
             // Update dashboard UI elements
             if (dashboardCounts.programs) dashboardCounts.programs.textContent = programsCount;
@@ -414,6 +422,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (dashboardCounts.gallery) dashboardCounts.gallery.textContent = galleryCount;
             if (dashboardCounts.quickLinks) dashboardCounts.quickLinks.textContent = quickLinksCount;
             if (dashboardCounts.contacts) dashboardCounts.contacts.textContent = contactsCount;
+            if (dashboardCounts.facilities) dashboardCounts.facilities.textContent = facilitiesCount;
 
             console.log('[loadDashboardCounts] Dashboard counts loaded successfully.');
 
@@ -439,7 +448,8 @@ document.addEventListener('DOMContentLoaded', () => {
             loadFaculty(),
             loadGallery(),
             loadQuickLinks(),
-            loadContactMessages()
+            loadContactMessages(),
+            loadFacilities()
         ]);
         console.log('[loadAllData] All section data loading initiated.');
     }
@@ -741,6 +751,49 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    async function loadFacilities() {
+        const dataList = facilitiesList;
+        if (!dataList) {
+            console.error('[loadFacilities] facilitiesList element not found.');
+            return; // Guard clause
+        }
+        dataList.innerHTML = '<p class="loading-message">Loading facilities...</p>';
+        console.log('[loadFacilities] Fetching facilities...');
+        try {
+            const response = await authenticatedFetch('/api/facilities');
+            const facilities = response.data;
+            console.log('[loadFacilities] Received facilities data:', facilities); // Log the received data
+            dataList.innerHTML = '';
+
+            if (facilities.length === 0) {
+                dataList.innerHTML = '<p class="no-data-message">No facilities added yet.</p>';
+                console.log('[loadFacilities] No facilities found.');
+                return;
+            }
+            facilities.forEach(item => {
+                const itemDiv = document.createElement('div');
+                itemDiv.classList.add('data-item');
+                itemDiv.innerHTML = `
+                    <div class="item-details">
+                        <div class="item-text">
+                            <h3>${item.name}</h3>
+                            <p>${item.description}</p>
+                        </div>
+                    </div>
+                    <div class="item-actions">
+                        <button class="edit-btn" data-id="${item._id}" data-type="facility"><i class="fas fa-edit"></i> Edit</button>
+                        <button class="delete-btn" data-id="${item._id}" data-type="facility"><i class="fas fa-trash"></i> Delete</button>
+                    </div>
+                `;
+                dataList.appendChild(itemDiv);
+            });
+            console.log(`[loadFacilities] ${facilities.length} facilities rendered.`);
+        } catch (error) {
+            dataList.innerHTML = '<p class="error-message">Failed to load facilities.</p>';
+            console.error('[loadFacilities] Error loading facilities:', error);
+        }
+    }
+
     // Removed openReplyModal, closeReplyModal, and sendReply functions as they are no longer needed.
 
 
@@ -912,6 +965,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }
             
+            // Special handling for facilities features field
+            if (type === 'facility' && data.features) {
+                // Convert newline-separated text to array
+                data.features = data.features.split('\n').filter(feature => feature.trim() !== '');
+                console.log('[handleFormSubmit] Converted features text to array:', data.features);
+            }
+            
             // Ensure _id is included for PUT requests when sending JSON
             // For new items, _id should NOT be set, so the `id` variable being empty string is fine.
             // MongoDB will generate a new _id automatically.
@@ -1066,6 +1126,23 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // Facility Form
+    if (facilityForm) {
+        facilityForm.addEventListener('submit', (event) => {
+            handleFormSubmit(event, 'facility', facilityForm);
+        });
+        document.getElementById('cancel-facility-edit').addEventListener('click', () => {
+            facilityForm.reset();
+            facilityForm.closest('.form-container').classList.add('hidden');
+            currentEditing.facility = null;
+            document.getElementById('current-facility-image-url').textContent = '';
+            document.getElementById('facility-image').value = ''; // Clear file input
+            const fileNameDisplay = facilityForm.querySelector('.file-name-display');
+            if (fileNameDisplay) fileNameDisplay.textContent = 'No file chosen';
+            console.log('[Facility Form] Edit cancelled.');
+        });
+    }
+
 
     // --- Edit and Delete Button Delegation ---
     document.addEventListener('click', async (event) => {
@@ -1192,6 +1269,35 @@ document.addEventListener('DOMContentLoaded', () => {
                             formToPopulate.querySelector('#quick-link-description').value = item.description || '';
                             formToPopulate.querySelector('#quick-link-url').value = item.url || '';
                             formToPopulate.querySelector('#quick-link-icon-svg').value = item.iconSvg || '';
+                        }
+                        break;
+                    case 'facility':
+                        formToPopulate = facilityForm;
+                        idFieldElement = document.getElementById('facility-id');
+                        imageUrlDisplayElement = document.getElementById('current-facility-image-url');
+                        fileNameDisplayElement = formToPopulate ? formToPopulate.querySelector('.file-name-display') : null;
+
+                        if (formToPopulate) {
+                            formToPopulate.querySelector('#facility-name').value = item.name || '';
+                            formToPopulate.querySelector('#facility-description').value = item.description || '';
+                            formToPopulate.querySelector('#facility-icon-svg').value = item.iconSvg || '';
+                            
+                            // Handle features array - convert to newline-separated text
+                            if (item.features && Array.isArray(item.features)) {
+                                formToPopulate.querySelector('#facility-features').value = item.features.join('\n');
+                            } else {
+                                formToPopulate.querySelector('#facility-features').value = '';
+                            }
+                        }
+
+                        if (item.imageUrl && imageUrlDisplayElement) {
+                            imageUrlDisplayElement.textContent = `Current Image: ${item.imageUrl.split('/').pop().split('?')[0]}`;
+                            imageUrlDisplayElement.dataset.currentUrl = item.imageUrl;
+                            if (fileNameDisplayElement) fileNameDisplayElement.textContent = item.imageUrl.split('/').pop().split('?')[0];
+                        } else if (imageUrlDisplayElement) {
+                            imageUrlDisplayElement.textContent = '';
+                            imageUrlDisplayElement.dataset.currentUrl = '';
+                            if (fileNameDisplayElement) fileNameDisplayElement.textContent = 'No file chosen';
                         }
                         break;
                     default:

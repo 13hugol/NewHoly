@@ -74,6 +74,11 @@
                         </a>
                     </li>
                     <li>
+                        <a href="#" data-section="facilities" class="nav-link">
+                            <i class="fas fa-building"></i> Facilities
+                        </a>
+                    </li>
+                    <li>
                         <a href="#" data-section="quickLinks" class="nav-link">
                             <i class="fas fa-link"></i> Quick Links
                         </a>
@@ -132,6 +137,13 @@
                             <p id="dashboard-gallery-count">0</p>
                         </div>
                         <i class="fas fa-images"></i>
+                    </div>
+                    <div class="dashboard-card" data-target-section="facilities">
+                        <div>
+                            <h3>Total Facilities</h3>
+                            <p id="dashboard-facilities-count">0</p>
+                        </div>
+                        <i class="fas fa-building"></i>
                     </div>
                     <div class="dashboard-card" data-target-section="quickLinks">
                         <div>
@@ -348,6 +360,53 @@
                 <div id="gallery-list" class="data-list">
                     <!-- Gallery items will be loaded here by JavaScript -->
                     <p class="no-data-message">No gallery items added yet.</p>
+                </div>
+            </section>
+
+            <!-- Facilities Section -->
+            <section id="facilities-section-content" class="admin-section hidden">
+                <h1>Manage Facilities</h1>
+                <button class="add-new-btn save-btn"><i class="fas fa-plus-circle"></i> Add New Facility</button>
+                <div class="form-container hidden">
+                    <h2>Add/Edit Facility</h2>
+                    <form id="facility-form">
+                        <input type="hidden" id="facility-id" name="_id">
+                        <div class="form-group">
+                            <label for="facility-name">Facility Name:</label>
+                            <input type="text" id="facility-name" name="name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="facility-description">Description:</label>
+                            <textarea id="facility-description" name="description" rows="3" required></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="facility-features">Features (one per line):</label>
+                            <textarea id="facility-features" name="features" rows="4" placeholder="Smart boards and projectors&#10;Comfortable seating arrangements&#10;Proper ventilation and lighting"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="facility-icon-svg">Icon SVG (Optional):</label>
+                            <textarea id="facility-icon-svg" name="iconSvg" rows="3" placeholder="<i class='fas fa-building'></i>"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="facility-image">Image:</label>
+                            <div class="file-input-wrapper">
+                                <button type="button" class="file-input-button" onclick="document.getElementById('facility-image').click()">Choose File</button>
+                                <input type="file" id="facility-image" name="image" accept="image/*" class="hidden">
+                                <span class="file-name-display" id="facility-image-name">No file chosen</span>
+                            </div>
+                            <p id="current-facility-image-url" class="current-image-info" data-current-url=""></p>
+                        </div>
+                        <div class="form-actions">
+                            <button type="submit" class="save-btn">Save Facility</button>
+                            <button type="button" id="cancel-facility-edit" class="cancel-btn">Cancel</button>
+                        </div>
+                    </form>
+                </div>
+
+                <h2>Existing Facilities</h2>
+                <div id="facilities-list" class="data-list">
+                    <!-- Facilities will be loaded here by JavaScript -->
+                    <p class="no-data-message">No facilities added yet.</p>
                 </div>
             </section>
 
