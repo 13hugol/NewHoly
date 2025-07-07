@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>New Holy Cross School - Admin Panel</title>
+    <title>Admin Panel</title>
     <!-- Google Font: Inter -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <!-- Font Awesome for Icons -->
@@ -14,9 +14,9 @@
 <body>
 
     <!-- Login Section -->
-    <div id="login-section" class="login-section"> <!-- Removed 'hidden' class here -->
+ <div id="login-section" class="login-section"> <!-- Removed 'hidden' class here -->
         <div class="login-container">
-            <h2>Admin Login</h2>
+            <h2><i class="fas fa-rocket"></i> TechDai Admin Portal</h2>
             <form id="login-form">
                 <div class="form-group">
                     <label for="username">Username:</label>
@@ -28,7 +28,7 @@
                 </div>
                 <div class="form-actions">
                     <button type="submit" class="save-btn">
-                        Login
+                        <i class="fas fa-sign-in-alt"></i> Login
                     </button>
                 </div>
                 <p id="login-error" class="error-message"></p>
@@ -40,7 +40,12 @@
     <div id="admin-panel">
         <!-- Sidebar -->
         <aside class="sidebar">
-            <div class="sidebar-header">NHCS Admin</div>
+            <div class="sidebar-header">
+                <img src="Images/Logo.svg" alt="TechDai Logo">
+                <div style="margin-top: 10px; font-size: 0.9rem; color: var(--tech-primary); font-weight: 600;">
+                    Powered by TechDai
+                </div>
+            </div>
             <nav class="sidebar-nav">
                 <ul>
                     <li><a href="#" data-section="dashboard" class="nav-link"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
@@ -233,6 +238,13 @@
                 <div id="testimonials-list" class="data-list">
                     <!-- Testimonials will be loaded here by JavaScript -->
                     <p class="no-data-message">No testimonials added yet.</p>
+                    <!-- Begin Elfsight Widget Embed for Google & Facebook Reviews -->
+                    <div class="elfsight-widget-container" style="margin: 2rem 0;">
+                        <!-- Replace the following div class and widget ID with your actual Elfsight widget code -->
+                        <div class="elfsight-app-12345678-aaaa-bbbb-cccc-1234567890ab"></div>
+                        <script src="https://apps.elfsight.com/p/platform.js" defer></script>
+                    </div>
+                    <!-- End Elfsight Widget Embed -->
                 </div>
             </section>
 

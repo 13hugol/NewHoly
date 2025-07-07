@@ -1,3 +1,21 @@
+// Smooth scroll for nav links
+document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('.nav-scroll').forEach(function(link) {
+        link.addEventListener('click', function(e) {
+            const href = link.getAttribute('href');
+            if (href && href.startsWith('#')) {
+                e.preventDefault();
+                const target = document.querySelector(href);
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    // Optionally close mobile menu
+                    const menu = document.getElementById('menu');
+                    if (menu && menu.classList.contains('active')) menu.classList.remove('active');
+                }
+            }
+        });
+    });
+});
 function toggleMenu() {
     const menu = document.getElementById('menu');
     if (menu) {
@@ -29,6 +47,35 @@ function animateSlider(currentTime) {
 }
 
 // --- Data Loading from Backend API ---
+
+// --- Downloads Section Rendering (for homepage, styled) ---
+async function renderDownloadsPreview() {
+    const container = document.getElementById('downloads-preview');
+    if (!container) return;
+    try {
+        const res = await fetch('/api/downloads');
+        if (!res.ok) throw new Error('Failed to fetch downloads');
+        const data = (await res.json()).data || [];
+        let html = `<h2 class="downloads-title">Downloads</h2>`;
+        if (data.length === 0) {
+            html += `<div class="download-card no-data-card"><h3>No Downloads Yet</h3><p>Important documents and resources will appear here soon.</p></div>`;
+        } else {
+            // Show up to 4 latest downloads
+            const preview = data.slice(0, 4);
+            html += `<div class="downloads-cards">` + preview.map(dl => `
+                <div class="download-card">
+                    <h3>${dl.title}</h3>
+                    <a href="${dl.url}" download class="download-link">${dl.linkText||'Download'}</a>
+                </div>
+            `).join('') + `</div>`;
+        }
+        // Add View All Downloads button
+        html += `<div class="downloads-view-more"><a href="downloads.html" class="view-more-btn">View All Downloads</a></div>`;
+        container.innerHTML = html;
+    } catch (e) {
+        container.innerHTML = `<div class="download-card no-data-card"><h3>Downloads Loading Error</h3><p>Unable to load downloads at the moment. Please try again later.</p></div>`;
+    }
+}
 
 // Helper function to fetch data from API
 async function fetchData(endpoint) {
@@ -83,6 +130,12 @@ function renderPrograms() {
         `;
         container.appendChild(programCard);
     });
+
+    // Add View More button
+    const viewMore = document.createElement('div');
+    viewMore.className = 'section-view-more';
+    viewMore.innerHTML = '<a href="programs.html" class="view-more-btn">View More</a>';
+    container.parentElement.appendChild(viewMore);
 }
 
 function renderNewsEvents() {
@@ -107,6 +160,12 @@ function renderNewsEvents() {
         `;
         container.appendChild(newsEventCard);
     });
+
+    // Add View More button
+    const viewMore = document.createElement('div');
+    viewMore.className = 'section-view-more';
+    viewMore.innerHTML = '<a href="events.html" class="view-more-btn">View More</a>';
+    container.parentElement.appendChild(viewMore);
 }
 
 function renderTestimonials() {
@@ -127,6 +186,12 @@ function renderTestimonials() {
         `;
         container.appendChild(testimonialCard);
     });
+
+    // Add View More button
+    const viewMore = document.createElement('div');
+    viewMore.className = 'section-view-more';
+    viewMore.innerHTML = '<a href="testimonials.html" class="view-more-btn">View More</a>';
+    container.parentElement.appendChild(viewMore);
 }
 
 const FACULTY_DISPLAY_LIMIT = 3; 
@@ -175,6 +240,12 @@ function renderFaculty() {
         facultyDisplayContainer.classList.add('expanded');
         facultyOverlay.style.opacity = '0';
     }
+
+    // Add View More button
+    const viewMore = document.createElement('div');
+    viewMore.className = 'section-view-more';
+    viewMore.innerHTML = '<a href="team.html" class="view-more-btn">View More</a>';
+    container.parentElement.appendChild(viewMore);
 }
 
 function toggleFacultyVisibility() {
@@ -188,15 +259,11 @@ function toggleFacultyVisibility() {
 
 // --- Gallery Rendering for Horizontal Scrolling Layout ---
 function renderGallery() {
-    const container = document.getElementById('gallery-container'); 
+    const container = document.getElementById('gallery-container');
     if (!container) return;
-    container.innerHTML = ''; // Clear existing content
-
-    // Limit to only 5 images for homepage
-    const limitedData = galleryData.slice(0, 5);
+    container.innerHTML = '';
 
     if (galleryData.length === 0) {
-        // Show a message for empty gallery
         container.innerHTML = `
             <div class="gallery-item" style="flex: 0 0 100%; text-align: center; padding: 3rem;">
                 <p style="font-size: 1.2rem; color: #64748b;">No gallery images available yet.</p>
@@ -205,21 +272,54 @@ function renderGallery() {
         return;
     }
 
-    limitedData.forEach((item, index) => {
-        const galleryItem = document.createElement('div');
-        galleryItem.classList.add('gallery-item');
-        galleryItem.style.animationDelay = `${(index + 1) * 0.1}s`;
-        galleryItem.innerHTML = `
-            <div class="caption">${item.caption}</div>
-            <img src="${item.imageUrl}" alt="${item.caption}" onerror="this.onerror=null;this.src='https://placehold.co/400x300/cccccc/000000?text=No+Image';" />
-        `;
-        container.appendChild(galleryItem);
-    });
-    
-    // Re-initialize slider after rendering
-    setTimeout(() => {
-        setupGallerySlider();
-    }, 200);
+    // Cascade style: show 3 images, center one is larger, side arrows to switch
+    let currentIndex = 0;
+    let leftBtn, rightBtn;
+
+    const showCascade = (index) => {
+        container.innerHTML = '';
+
+        // Left arrow
+        leftBtn = document.createElement('button');
+        leftBtn.type = 'button';
+        leftBtn.className = 'gallery-arrow left';
+        leftBtn.innerHTML = '&#8592;';
+        leftBtn.onclick = () => {
+            currentIndex = (currentIndex - 1 + galleryData.length) % galleryData.length;
+            showCascade(currentIndex);
+        };
+        container.appendChild(leftBtn);
+
+        // Images (cascade: prev, current, next)
+        const galleryCascade = document.createElement('div');
+        galleryCascade.className = 'gallery-cascade';
+        for (let i = -1; i <= 1; i++) {
+            let imgIdx = (index + i + galleryData.length) % galleryData.length;
+            const item = galleryData[imgIdx];
+            const galleryItem = document.createElement('div');
+            galleryItem.className = 'gallery-item';
+            if (i === 0) galleryItem.classList.add('center');
+            else galleryItem.classList.add('side');
+            galleryItem.innerHTML = `
+                <img src="${item.imageUrl}" alt="${item.caption || 'Gallery Image'}" loading="lazy" onerror="this.onerror=null;this.src='https://placehold.co/400x300/cccccc/000000?text=No+Image';">
+                <div class="caption">${item.caption || ''}</div>
+            `;
+            galleryCascade.appendChild(galleryItem);
+        }
+        container.appendChild(galleryCascade);
+
+        // Right arrow
+        rightBtn = document.createElement('button');
+        rightBtn.type = 'button';
+        rightBtn.className = 'gallery-arrow right';
+        rightBtn.innerHTML = '&#8594;';
+        rightBtn.onclick = () => {
+            currentIndex = (currentIndex + 1) % galleryData.length;
+            showCascade(currentIndex);
+        };
+        container.appendChild(rightBtn);
+    };
+    showCascade(0);
 }
 
 // --- Gallery Horizontal Scrolling with Arrow Controls ---
@@ -230,38 +330,27 @@ function setupGallerySlider() {
 
     if (!container || !leftBtn || !rightBtn) return;
 
-    // Calculate scroll amount based on container width
+    // Calculate scroll amount based on visible items
     const getScrollAmount = () => {
-        const containerWidth = container.clientWidth;
-        const itemWidth = 350; // Base item width
-        const gap = 32; // 2rem gap
-        const itemsPerScroll = Math.floor(containerWidth / (itemWidth + gap));
-        return itemsPerScroll * (itemWidth + gap);
+        const item = container.querySelector('.gallery-item');
+        if (!item) return 350;
+        const style = window.getComputedStyle(item);
+        const itemWidth = item.offsetWidth + parseInt(style.marginRight || 0);
+        const visibleItems = Math.floor(container.clientWidth / itemWidth) || 1;
+        return visibleItems * itemWidth;
     };
 
     // Check scroll position and update button states
     const checkScroll = () => {
         if (!container) return;
-        
         // Disable left arrow if at the beginning
         leftBtn.disabled = container.scrollLeft <= 0;
-        
         // Disable right arrow if at the end
         const maxScrollLeft = container.scrollWidth - container.clientWidth;
-        rightBtn.disabled = container.scrollLeft >= maxScrollLeft - 1;
-        
+        rightBtn.disabled = container.scrollLeft >= maxScrollLeft - 2;
         // Add visual feedback
-        if (leftBtn.disabled) {
-            leftBtn.style.opacity = '0.3';
-        } else {
-            leftBtn.style.opacity = '1';
-        }
-        
-        if (rightBtn.disabled) {
-            rightBtn.style.opacity = '0.3';
-        } else {
-            rightBtn.style.opacity = '1';
-        }
+        leftBtn.style.opacity = leftBtn.disabled ? '0.3' : '1';
+        rightBtn.style.opacity = rightBtn.disabled ? '0.3' : '1';
     };
 
     // Smooth scroll right
@@ -331,6 +420,12 @@ function renderQuickLinks() {
             container.appendChild(quickLinkCard);
         });
     }
+
+    // Add View More button
+    const viewMore = document.createElement('div');
+    viewMore.className = 'section-view-more';
+    viewMore.innerHTML = '<a href="downloads.html" class="view-more-btn">View More</a>';
+    container.parentElement.appendChild(viewMore);
 }
 
 // --- Smooth Scrolling for Navigation Links ---
@@ -399,6 +494,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     renderGallery(); // Render the new gallery
     renderQuickLinks();
     renderFacilities();
+    renderDownloadsPreview(); // Render the downloads section in place of Explore Our School
     
     // Setup interactive elements
     setupSmoothScrolling();

@@ -85,11 +85,7 @@ const authenticateToken = (req, res, next) => {
     });
 };
 
-// Add: Middleware to extract clientId from request (query, header, or fallback to default)
-function getClientId(req) {
-    // Priority: query param > header > default
-    return req.query.clientId || req.headers['x-client-id'] || 'default';
-}
+// No longer needed: clientId extraction
 
 // Reusable CRUD function generator
 // This function now expects collectionName (the actual DB collection name) and apiRoutePrefix (the URL part)
@@ -103,12 +99,11 @@ const generateCRUD = (collectionName, apiRoutePrefix) => {
         next();
     };
 
-    // GET all items (filtered by clientId)
+    // GET all items (no clientId filter)
     app.get(`/api/${apiRoutePrefix}`, checkDbReady, async (req, res) => {
         try {
             const collection = db.collection(collectionName);
-            const clientId = getClientId(req);
-            const data = await collection.find({ clientId }).toArray();
+            const data = await collection.find({}).toArray();
             res.json({ data: data });
         } catch (err) {
             console.error(`Failed to fetch ${apiRoutePrefix}:`, err);
@@ -116,12 +111,11 @@ const generateCRUD = (collectionName, apiRoutePrefix) => {
         }
     });
 
-    // GET single item by ID (filtered by clientId)
+    // GET single item by ID (no clientId filter)
     app.get(`/api/${apiRoutePrefix}/:id`, checkDbReady, async (req, res) => {
         try {
             const collection = db.collection(collectionName);
-            const clientId = getClientId(req);
-            const item = await collection.findOne({ _id: new ObjectId(req.params.id), clientId });
+            const item = await collection.findOne({ _id: new ObjectId(req.params.id) });
             if (!item) {
                 return res.status(404).json({ message: `${apiRoutePrefix.slice(0, -1)} not found.` });
             }
@@ -132,12 +126,11 @@ const generateCRUD = (collectionName, apiRoutePrefix) => {
         }
     });
 
-    // POST new item (add clientId)
+    // POST new item (no clientId)
     app.post(`/api/${apiRoutePrefix}`, authenticateToken, checkDbReady, async (req, res) => {
         try {
             const collection = db.collection(collectionName);
-            const clientId = getClientId(req);
-            const dataToInsert = { ...req.body, clientId };
+            const dataToInsert = { ...req.body };
             delete dataToInsert._id;
             const result = await collection.insertOne(dataToInsert);
             res.status(201).json({ success: true, insertedId: result.insertedId, message: `${apiRoutePrefix.slice(0, -1)} added successfully!` });
@@ -147,15 +140,14 @@ const generateCRUD = (collectionName, apiRoutePrefix) => {
         }
     });
 
-    // PUT update item by ID (filtered by clientId)
+    // PUT update item by ID (no clientId filter)
     app.put(`/api/${apiRoutePrefix}/:id`, authenticateToken, checkDbReady, async (req, res) => {
         try {
             const collection = db.collection(collectionName);
-            const clientId = getClientId(req);
             const dataToUpdate = { ...req.body };
             delete dataToUpdate._id;
             const result = await collection.updateOne(
-                { _id: new ObjectId(req.params.id), clientId },
+                { _id: new ObjectId(req.params.id) },
                 { $set: dataToUpdate }
             );
             if (result.modifiedCount === 0 && result.matchedCount === 0) {
@@ -168,12 +160,11 @@ const generateCRUD = (collectionName, apiRoutePrefix) => {
         }
     });
 
-    // DELETE item by ID (filtered by clientId)
+    // DELETE item by ID (no clientId filter)
     app.delete(`/api/${apiRoutePrefix}/:id`, authenticateToken, checkDbReady, async (req, res) => {
         try {
             const collection = db.collection(collectionName);
-            const clientId = getClientId(req);
-            const result = await collection.deleteOne({ _id: new ObjectId(req.params.id), clientId });
+            const result = await collection.deleteOne({ _id: new ObjectId(req.params.id) });
             if (result.deletedCount === 0) {
                 return res.status(404).json({ message: `${apiRoutePrefix.slice(0, -1)} not found.` });
             }
@@ -229,19 +220,17 @@ app.post('/submit-admission', async (req, res) => {
     if (!studentsCollection) return res.status(503).json({ error: 'Database not ready.' });
     try {
         const { studentName, contact } = req.body;
-        const clientId = getClientId(req);
-        // Check for existing student with same name, contact, and clientId
+        // Check for existing student with same name and contact (no clientId)
         const existingStudent = await studentsCollection.findOne({
             studentName: studentName,
-            contact: contact,
-            clientId: clientId
+            contact: contact
         });
         if (existingStudent) {
             // Duplicate found - redirect with error status
             return res.redirect('/index.html?status=duplicate&message=Student with this name and contact number already exists');
         }
-        // No duplicate found - insert the new admission with clientId
-        await studentsCollection.insertOne({ ...req.body, clientId });
+        // No duplicate found - insert the new admission (no clientId)
+        await studentsCollection.insertOne({ ...req.body });
         console.log('Admission submitted:', req.body);
         res.redirect('/index.html?status=success&message=Admission submitted successfully');
     } catch (err) {
@@ -258,13 +247,11 @@ app.post('/submit-contact', async (req, res) => {
         return res.status(400).json({ error: 'All fields are required.' });
     }
     try {
-        const clientId = getClientId(req);
         await contactsCollection.insertOne({
             name,
             email,
             message,
-            submittedAt: new Date(),
-            clientId
+            submittedAt: new Date()
         });
         res.status(200).json({ message: 'Message received successfully.' });
     } catch (error) {
@@ -277,8 +264,7 @@ app.post('/submit-contact', async (req, res) => {
 app.get('/api/contacts', authenticateToken, async (req, res) => {
     if (!contactsCollection) return res.status(503).json({ message: 'Database not ready.' });
     try {
-        const clientId = getClientId(req);
-        const contacts = await contactsCollection.find({ clientId }).toArray();
+        const contacts = await contactsCollection.find({}).toArray();
         res.json({ data: contacts });
     } catch (err) {
         console.error('Failed to fetch contacts:', err);
@@ -289,8 +275,7 @@ app.get('/api/contacts', authenticateToken, async (req, res) => {
 app.delete('/api/contacts/:id', authenticateToken, async (req, res) => {
     if (!contactsCollection) return res.status(503).json({ message: 'Database not ready.' });
     try {
-        const clientId = getClientId(req);
-        const result = await contactsCollection.deleteOne({ _id: new ObjectId(req.params.id), clientId });
+        const result = await contactsCollection.deleteOne({ _id: new ObjectId(req.params.id) });
         if (result.deletedCount === 0) {
             return res.status(404).json({ message: 'Contact not found.' });
         }
@@ -301,19 +286,7 @@ app.delete('/api/contacts/:id', authenticateToken, async (req, res) => {
     }
 });
 
-// Add: API endpoint to get client config by clientId
-app.get('/api/client-config', async (req, res) => {
-    if (!clientsCollection) return res.status(503).json({ message: 'Database not ready.' });
-    const clientId = getClientId(req);
-    try {
-        const config = await clientsCollection.findOne({ clientId });
-        if (!config) return res.status(404).json({ message: 'Client config not found.' });
-        res.json({ data: config });
-    } catch (err) {
-        console.error('Failed to fetch client config:', err);
-        res.status(500).json({ message: 'Failed to fetch client config' });
-    }
-});
+// (Removed /api/client-config route as clientId is no longer used)
 
 // Database connection and server start
 (async () => {

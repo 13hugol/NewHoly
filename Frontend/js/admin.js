@@ -1183,8 +1183,23 @@ document.addEventListener('DOMContentLoaded', () => {
 
         try {
             let response;
-            // Ensure the API path is pluralized correctly for all types
-            const apiPath = `/api/${type}s${id ? '/' + id : ''}`;
+            // Use a plural map to handle irregular plurals
+            const pluralMap = {
+                facility: 'facilities',
+                gallery: 'gallerys',
+                faculty: 'facultys',
+                newsEvent: 'newsEvents',
+                quickLink: 'quickLinks',
+                testimonial: 'testimonials',
+                program: 'programs',
+                contact: 'contacts',
+                studentColumn: 'studentColumns',
+                download: 'downloads',
+                faq: 'faq',
+                team: 'team',
+                contactInfo: 'contactInfo'
+            };
+            const apiPath = `/api/${pluralMap[type] || (type + 's')}${id ? '/' + id : ''}`;
             const method = id ? 'PUT' : 'POST';
 
             console.log(`[handleFormSubmit] Sending ${method} request to ${apiPath}. Body type: ${bodyToSend instanceof FormData ? 'FormData' : 'JSON'}`);

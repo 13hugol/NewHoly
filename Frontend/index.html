@@ -43,34 +43,22 @@
                     <div></div>
                 </div>
                 <div class="menu" id="menu">
-                    <div class="dropdown"><a href="index.html"><img src="Images/Logo.svg" class="logo"></a></div>
-                    <div class="dropdown">
-                        <a href="about.html" class="lnk">About</a>
+                    <div class="dropdown"><a href="#hero-section" class="lnk nav-scroll"><img src="Images/Logo.svg" class="logo"></a></div>
+                    <div class="dropdown"><a href="#about-us-section" class="lnk nav-scroll">About</a></div>
+                    <div class="dropdown"><a href="#programs" class="lnk nav-scroll">Programs</a></div>
+                    <div class="dropdown"><a href="#student-columns-section" class="lnk nav-scroll">Student Columns</a></div>
+                    <div class="dropdown"><a href="#news-events" class="lnk nav-scroll">Events</a></div>
+                    <div class="dropdown"><a href="#downloads-section" class="lnk nav-scroll">Downloads</a></div>
+                    <div class="dropdown"><a href="#team-section" class="lnk nav-scroll">Team</a></div>
+                    <div class="dropdown"><a href="#faq-section" class="lnk nav-scroll">FAQ</a></div>
+                    <div class="dropdown dropdown-contact">
+                        <a href="#" class="lnk" onclick="return false;">Contact <i class="fas fa-caret-down"></i></a>
+                        <div class="dropdown-content">
+                            <a href="admission.html">Admission</a>
+                            <a href="contact.html">Contact Us</a>
+                        </div>
                     </div>
-                    <div class="dropdown">
-                        <a href="programs.html" class="lnk">Programs</a>
-                    </div>
-                    <div class="dropdown">
-                        <a href="student-columns.html" class="lnk">Student Columns</a>
-                    </div>
-                    <div class="dropdown">
-                        <a href="events.html" class="lnk">Events</a>
-                    </div>
-                    <div class="dropdown">
-                        <a href="downloads.html" class="lnk">Downloads</a>
-                    </div>
-                    <div class="dropdown">
-                        <a href="team.html" class="lnk">Team</a>
-                    </div>
-                    <div class="dropdown">
-                        <a href="faq.html" class="lnk">FAQ</a>
-                    </div>
-                    <div class="dropdown">
-                        <a href="contact.html" class="lnk">Contact</a>
-                    </div>
-                    <div class="dropdown">
-                        <a href="gallery.html" class="lnk">Gallery</a>
-                    </div>
+                    <div class="dropdown"><a href="#gallery-section" class="lnk nav-scroll">Gallery</a></div>
                 </div>
                 <div class="login-btn">
                     <a href="admin.html" title="Admin Login">
@@ -303,15 +291,13 @@
     <section id="testimonials" class="testimonial-section fade-in">
         <div class="school-container">
             <h2 class="section-title">What Our Community Says</h2>
-            <div id="testimonials-container" class="testimonials-grid">
-                <!-- Placeholder card that matches JS structure. This will be replaced by renderTestimonials(). -->
-                <div class="testimonial-card">
-                    <div class="quote-icon"><i class="fas fa-quote-left"></i></div>
-                    <p class="quote">"Loading testimonials from our proud students, parents, and alumni..."</p>
-                    <p class="author">- The School Community</p>
-                </div>
-            </div>
         </div>
+        <!-- Google Reviews Widget (Elfsight or your preferred provider) -->
+        <div class="elfsight-widget-container" style="margin: 2rem auto; max-width: 900px;">
+            <!-- Replace with your actual Google Reviews widget code -->
+            <div class="elfsight-app-12345678-aaaa-bbbb-cccc-1234567890ab"></div>
+        </div>
+        <script src="https://apps.elfsight.com/p/platform.js" defer></script>
     </section>
 
     <!-- Faculty Section -->
