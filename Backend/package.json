@@ -22,8 +22,12 @@
     "multer": "^2.0.1",
     "multer-storage-cloudinary": "^4.0.0",
     "nodemon": "^3.1.10",
+<<<<<<< Updated upstream
     "path": "^0.12.7",
     "script": "^0.1.4"
+=======
+    "path": "^0.12.7"
+>>>>>>> Stashed changes
   },
   "devDependencies": {
     "@types/node": "^24.0.10"

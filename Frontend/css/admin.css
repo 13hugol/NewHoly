@@ -2,8 +2,8 @@
 
 /* --- Variables --- */
 :root {
-    --color-primary: #007bff;
-    --color-primary-dark: #0056b3;
+    --color-primary: #232733; /* Logo metallic gray */
+    --color-primary-dark: #181a20; /* Slightly darker for hover/active */
     --color-primary-light: #e6f2ff;
     --color-secondary: #6c757d;
     --color-secondary-dark: #5a6268;
@@ -164,8 +164,10 @@ body {
 
 #login-form .save-btn:hover {
     background-color: var(--color-primary-dark);
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1); /* hover:shadow-lg */
-    transform: translateY(-4px); /* hover:-translate-y-1 */
+    box-shadow: 0 0 12px 2px #bfc2c9, 0 0 32px 4px #fff;
+    color: #fff;
+    filter: brightness(1.1);
+    transform: translateY(-4px);
 }
 
 #login-error {
@@ -205,11 +207,20 @@ body {
 }
 
 .sidebar-header {
-    font-size: 1.5rem; /* text-2xl */
-    font-weight: 700; /* font-bold */
-    color: var(--color-primary);
+    display: flex;
+    justify-content: center;
+    align-items: center;
     margin-bottom: var(--spacing-8); /* mb-8 */
     text-align: center;
+}
+
+.sidebar-header img {
+    max-width: 150px;
+    /* width:50vw; */
+    /* max-height: 64px; */
+    object-fit: contain;
+    display: block;
+    margin: 0 auto;
 }
 
 .sidebar-nav {
@@ -237,9 +248,12 @@ body {
     transition: all 0.2s ease;
 }
 
-.sidebar-nav .nav-link:hover {
+.sidebar-nav .nav-link:hover,
+.sidebar-nav .nav-link.active {
     background-color: var(--color-primary-light);
     color: var(--color-primary);
+    box-shadow: 0 0 8px 2px #bfc2c9, 0 0 16px 2px #fff;
+    text-shadow: 0 0 8px #bfc2c9, 0 0 16px #fff;
 }
 
 .sidebar-nav .nav-link i {
@@ -355,8 +369,11 @@ body {
 }
 
 .dashboard-card:hover {
-    transform: scale(1.02); /* hover:scale-[1.02] */
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1); /* hover:shadow-lg */
+    box-shadow: 0 0 12px 2px #bfc2c9, 0 0 32px 4px #fff;
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+    filter: brightness(1.1);
+    transform: scale(1.02);
 }
 
 .dashboard-card i {
@@ -399,8 +416,10 @@ body {
 
 .save-btn:hover, .add-new-btn:hover {
     background-color: var(--color-primary-dark);
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1); /* hover:shadow-lg */
-    transform: translateY(-4px); /* hover:-translate-y-1 */
+    box-shadow: 0 0 12px 2px #bfc2c9, 0 0 32px 4px #fff;
+    color: #fff;
+    filter: brightness(1.1);
+    transform: translateY(-4px);
 }
 
 .save-btn i, .add-new-btn i {
