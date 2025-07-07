@@ -111,14 +111,14 @@ function showMessageBox(message, type = 'info') {
 
 /**
  * Fetches data from a protected API endpoint with authentication token.
- * Automatically handles Content-Type for FormData.
+ * Automatically handles Content-Type for FormData and multi-tenant context.
  * @param {string} endpoint - The API endpoint URL.
  * @param {object} options - Fetch options (method, body, headers, etc.).
  * @returns {Promise<object>} - The JSON response data.
  */
 async function authenticatedFetch(endpoint, options = {}) {
     console.log(`[authenticatedFetch] Attempting to fetch from: ${endpoint}`);
-    const token = localStorage.getItem('adminToken');
+    const token = localStorage.getItem('adminToken') || localStorage.getItem('superAdminToken');
     if (!token) {
         showMessageBox('Authentication required. Please log in.', 'error');
         showLogin();
@@ -127,10 +127,17 @@ async function authenticatedFetch(endpoint, options = {}) {
 
     const { silent, ...fetchOpts } = options;
 
-    // Do not force JSON header if using FormData
+    // Enhanced headers for multi-tenant support
     const headers = fetchOpts.body instanceof FormData
-      ? { 'Authorization': `Bearer ${token}` } // Only Authorization header for FormData
-      : { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` };
+      ? { 
+          'Authorization': `Bearer ${token}`,
+          'X-Organization-Id': 'new_holy_cross_school' // Ensure proper organization context
+        }
+      : { 
+          'Content-Type': 'application/json', 
+          'Authorization': `Bearer ${token}`,
+          'X-Organization-Id': 'new_holy_cross_school' // Ensure proper organization context
+        };
 
 
     try {
@@ -757,14 +764,18 @@ document.addEventListener('DOMContentLoaded', () => {
             const response = await fetch('/api/login', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ username, password })
+                body: JSON.stringify({ 
+                    username, 
+                    email: username, // Support both username and email
+                    password 
+                })
             });
             const data = await response.json();
             console.log('[Login] Login API response:', data);
 
             if (response.ok) {
                 localStorage.setItem('adminToken', data.token);
-                showMessageBox('Login successful!', 'success');
+                showMessageBox('Login successful! Welcome to New Holy Cross School Admin.', 'success');
                 showAdminPanel();
                 console.log('[Login] Login successful, showing admin panel.');
             } else {
