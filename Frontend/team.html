@@ -29,8 +29,11 @@
             <h1>Our Team</h1>
             <p class="team-intro">Meet our dedicated faculty and staff.</p>
         </section>
-        <section class="team-list">
-            <div id="team-loading" style="text-align:center;padding:1.2rem;font-size:1.1rem;">Loading...</div>
+        <!-- Use the same parallax slider as the faculty section -->
+        <section id="team-parallax" class="faculty-parallax-section" style="height: 400vh; position: relative;">
+          <div class="faculty-parallax-sticky">
+            <!-- Faculty/team slides will be injected here by JS -->
+          </div>
         </section>
     </main>
     <footer>
@@ -38,35 +41,17 @@
     </footer>
     <script src="js/script.js"></script>
     <script>
-    function fadeInSections() {
-        document.querySelectorAll('.fade-in').forEach(el => {
-            el.classList.add('visible');
-        });
-    }
+    // On team.html, reuse the facultyData and renderFacultyParallax logic
     document.addEventListener('DOMContentLoaded', async function() {
-        fadeInSections();
-        const container = document.querySelector('.team-list');
-        const loading = document.getElementById('team-loading');
-        try {
-            const res = await fetch('/api/team');
-            if (!res.ok) throw new Error();
-            const data = (await res.json()).data || [];
-            if (data.length === 0) {
-                container.innerHTML = `<div class='team-card no-data-card'><h3>No Team Members Yet</h3><p>Team members will appear here soon.</p></div>`;
-                return;
-            }
-            container.innerHTML = data.map(member => `
-                <div class='team-card'>
-                    <h2>${member.name || 'No Name'}</h2>
-                    <p>${member.position || ''}</p>
-                    <p>${member.bio || ''}</p>
-                </div>
-            `).join('');
-        } catch {
-            container.innerHTML = `<div class='team-card no-data-card'><h3>No Team Members Yet</h3><p>Team members will appear here soon.</p></div>`;
-        } finally {
-            if (loading) loading.style.display = 'none';
-        }
+      // Fetch team data (or use facultyData if unified in backend)
+      let data = [];
+      try {
+        const res = await fetch('/api/facultys'); // Use the same endpoint as faculty
+        if (!res.ok) throw new Error();
+        data = (await res.json()).data || [];
+      } catch {}
+      window.facultyData = data;
+      renderFacultyParallax();
     });
     </script>
 </body>

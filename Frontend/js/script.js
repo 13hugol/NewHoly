@@ -245,12 +245,6 @@ function renderFaculty() {
         facultyDisplayContainer.classList.add('expanded');
         facultyOverlay.style.opacity = '0';
     }
-
-    // Add View More button
-    const viewMore = document.createElement('div');
-    viewMore.className = 'section-view-more';
-    viewMore.innerHTML = '<a href="team.html" class="view-more-btn">View More</a>';
-    container.parentElement.appendChild(viewMore);
 }
 
 function toggleFacultyVisibility() {
