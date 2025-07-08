@@ -241,20 +241,10 @@
         <div class="school-container">
             <h2 class="section-title">Our Gallery</h2>
             <p class="section-subtitle">A glimpse into our school life and activities</p>
-            <div class="gallery" id="homepage-gallery">
-              <figure class="card">
-                  <img src="Images/holly1.png" alt="Students in classroom" loading="lazy">
-              </figure>
-              <figure class="card">
-                  <img src="Images/holly2.jpg" alt="School building exterior" loading="lazy">
-              </figure>
-              <figure class="card">
-                  <img src="Images/holly3.jpg" alt="Students in library" loading="lazy">
-              </figure>
-              <figure class="card">
-                  <img src="Images/holly4.jpg" alt="School event" loading="lazy">
-              </figure>
+            <div class="hero-flex-group group flex max-md:flex-col justify-center gap-2 w-11/12 mx-auto my-10" id="hero-flex-group">
+                <!-- Gallery hero flex cards will be injected here by JS -->
             </div>
+
         </div>
     </section>
 
@@ -264,7 +254,7 @@
             <h2 class="section-title">Downloads</h2>
             <div id="downloads-grid" class="downloads-list"></div>
             <div class="downloads-view-more" style="text-align:right; margin-top:1rem;">
-                <a href="downloads.html" class="view-more-btn" style="display:inline-block; background:#ffc107; color:#232733; font-weight:600; padding:0.5rem 1.5rem; border-radius:2rem; text-decoration:none; box-shadow:0 2px 8px rgba(0,0,0,0.08); transition:background 0.2s;">View More</a>
+                <a href="downloads.html" class="view-more-btn" >View More</a>
             </div>
         </div>
     </section>
@@ -457,118 +447,5 @@
         });
     });
     </script>
-    <style>
-    /* Downloads card fade-in animation */
-    .fade-in-download {
-      opacity: 0;
-      transform: translateY(30px) scale(0.98);
-      animation: fadeInDownload 0.6s cubic-bezier(.33,1.02,.47,.98) forwards;
-    }
-    @keyframes fadeInDownload {
-      to {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-      }
-    }
-
-    /* Download card hover: subtle lift and shadow (no disappear) */
-    .download-card {
-      transition: box-shadow 0.25s cubic-bezier(.4,0,.2,1), transform 0.22s cubic-bezier(.4,0,.2,1);
-    }
-    .download-card:hover, .download-card:focus-visible {
-      transform: translateY(-8px) scale(1.035);
-      box-shadow: 0 8px 32px rgba(2,132,199,0.18), 0 2px 12px rgba(2,132,199,0.08);
-      z-index: 2;
-    }
-
-    /* View More button: pulse and glow on hover/focus */
-    .view-more-btn {
-      position: relative;
-      overflow: hidden;
-      transition: box-shadow 0.2s, background 0.2s, transform 0.15s;
-    }
-    .view-more-btn::after {
-      content: '';
-      position: absolute;
-      left: 50%;
-      top: 50%;
-      width: 200%;
-      height: 200%;
-      background: radial-gradient(circle, #fbbf24 0%, transparent 70%);
-      opacity: 0;
-      pointer-events: none;
-      transform: translate(-50%, -50%) scale(0.7);
-      transition: opacity 0.3s, transform 0.3s;
-      z-index: 0;
-    }
-    .view-more-btn:hover::after, .view-more-btn:focus::after {
-      opacity: 0.18;
-      transform: translate(-50%, -50%) scale(1.1);
-    }
-    .view-more-btn:hover, .view-more-btn:focus {
-      animation: pulseBtn 0.7s cubic-bezier(.4,0,.2,1);
-      box-shadow: 0 0 0 4px #fde68a66, 0 4px 18px rgba(2,132,199,0.18);
-      outline: none;
-    }
-    @keyframes pulseBtn {
-      0% { transform: scale(1); }
-      40% { transform: scale(1.08); }
-      60% { transform: scale(0.97); }
-      100% { transform: scale(1); }
-    }
-
-    /* Homepage Gallery Flex Effect */
-    .gallery {
-      display: flex;
-      justify-content: center;
-      gap: 1rem;
-      width: 100%;
-      max-width: 45rem;
-      margin: 2rem auto 0 auto;
-    }
-    .gallery .card {
-      position: relative;
-      left: 0;
-      width: 3rem;
-      border-radius: 5rem;
-      height: 18rem;
-      overflow: hidden;
-      transition: flex 0.4s ease-in-out, border-radius 0.4s, box-shadow 0.3s, width 0.4s, transform 0.4s;
-      box-shadow: 0 5px 12px rgba(0,0,0,0.13);
-      flex: 0.15;
-      background: #f3f4f6;
-      cursor: pointer;
-    }
-    .gallery .card img {
-      position: relative;
-      height: 100%;
-      width: 100%;
-      object-fit: cover;
-      transition: filter 0.3s;
-    }
-    .gallery .card:hover,
-    .gallery .card:focus-visible {
-      flex: 1 1 0;
-      border-radius: 1rem;
-      z-index: 2;
-      box-shadow: 0 8px 32px rgba(2,132,199,0.18), 0 2px 12px rgba(2,132,199,0.08);
-      transform: scale(1.03);
-    }
-    .gallery .card:hover img,
-    .gallery .card:focus-visible img {
-      filter: brightness(1.08) saturate(1.1);
-    }
-    @media (max-width: 700px) {
-      .gallery {
-        max-width: 98vw;
-        gap: 0.5rem;
-      }
-      .gallery .card {
-        height: 10rem;
-        min-width: 2rem;
-      }
-    }
-    </style>
-    <!-- Removed duplicate downloads script -->
 </body>
 </html>

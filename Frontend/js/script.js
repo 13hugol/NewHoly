@@ -262,30 +262,36 @@ function toggleFacultyVisibility() {
     renderFaculty();
 }
 
-// --- Gallery Netflix-Style Horizontal Scroll Rendering ---
+// --- Hero Flex Gallery Rendering (Expanding Cards) ---
 function renderGallery() {
-    const container = document.getElementById('gallery-container');
+    const container = document.getElementById('hero-flex-group');
     if (!container) return;
     container.innerHTML = '';
 
     if (galleryData.length === 0) {
         container.innerHTML = `
-            <div class="gallery-item" style="flex: 0 0 100%; text-align: center; padding: 3rem;">
-                <p style="font-size: 1.2rem; color: #64748b;">No gallery images available yet.</p>
-            </div>
+            <article class="relative w-full rounded-xl overflow-hidden min-h-[180px] flex items-center justify-center" style="background:#e0e7ef;">
+                <span style="color:#64748b;font-size:1.1rem;">No gallery images available yet.</span>
+            </article>
         `;
         return;
     }
 
-    // Netflix-style: all items in a single horizontal row
     galleryData.forEach(item => {
-        const galleryItem = document.createElement('div');
-        galleryItem.className = 'gallery-item';
-        galleryItem.innerHTML = `
-            <img src="${item.imageUrl}" alt="${item.caption || 'Gallery Image'}" loading="lazy" onerror="this.onerror=null;this.src='https://placehold.co/400x300/cccccc/000000?text=No+Image';">
-            <div class="caption">${item.caption || ''}</div>
+        // Use item.imageUrl or item.url for image, item.caption or item.alt for title, item.link for button
+        const article = document.createElement('article');
+        article.className = 'group/article relative w-full rounded-xl overflow-hidden transition-all duration-300 ease-[cubic-bezier(.5,.85,.25,1.15)]';
+        article.tabIndex = 0;
+        article.innerHTML = `
+            <div class="absolute left-1/2 -translate-x-1/2 bottom-4 text-white z-10 p-3 flex flex-col gap-2 justify-end hero-flex-overlay">
+                <h1 class="text-center md:text-[3vw] text-lg leading-[1.1] tracking-wider font-palker md:whitespace-nowrap md:truncate hero-flex-title">${item.caption || item.alt || ''}</h1>
+                <span class="font-medium md:whitespace-nowrap md:truncate">
+                    <a href="${item.link || 'gallery.html'}"><button class="md:px-8 px-6 py-2 rounded-lg hover:bg-primary-600 ease-in-out duration-300 bg-sky-500 text-white font-semibold md:text-base text-xs w-fit hero-flex-btn">View Gallery</button></a>
+                </span>
+            </div>
+            <img alt="${item.caption || item.alt || 'Gallery Image'}" loading="lazy" decoding="async" class="object-cover h-40 md:h-[420px] w-full" src="${item.imageUrl || item.url}" onerror="this.onerror=null;this.src='https://placehold.co/400x300/cccccc/000000?text=No+Image';" style="color: transparent;">
         `;
-        container.appendChild(galleryItem);
+        container.appendChild(article);
     });
 }
 
@@ -360,6 +366,11 @@ function setupGallerySlider() {
         }
     });
 }
+
+// Call setupGallerySlider after DOMContentLoaded and after renderGallery
+window.addEventListener('DOMContentLoaded', () => {
+    setTimeout(setupGallerySlider, 500); // Delay to ensure gallery is rendered
+});
 
 function renderQuickLinks() {
     const container = document.getElementById('quick-links-grid');
@@ -1052,4 +1063,42 @@ window.addEventListener('DOMContentLoaded', () => {
         renderAllStudentColumns();
     }
     // ... existing code ...
+});
+
+// --- Character-by-character scroll-in animation for section titles ---
+function animateSectionTitles() {
+  document.querySelectorAll('.section-title').forEach(el => {
+    if (el.dataset.charsWrapped) return;
+    el.dataset.charsWrapped = "true";
+    const text = el.textContent;
+    el.innerHTML = '';
+    text.split('').forEach((char, i) => {
+      const span = document.createElement('span');
+      span.className = 'char';
+      if (char === ' ') {
+        span.innerHTML = '&nbsp;';
+        span.style.width = '0.4em';
+      } else {
+        span.textContent = char;
+      }
+      span.style.transitionDelay = (i * 0.04) + 's';
+      el.appendChild(span);
+    });
+  });
+
+  // Intersection Observer
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('in-view');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.2 });
+
+  document.querySelectorAll('.section-title').forEach(el => observer.observe(el));
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  animateSectionTitles();
 });
