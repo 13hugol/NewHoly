@@ -583,8 +583,15 @@
         </main>
     </div>
 
-    <!-- The reply modal is no longer needed for direct mailto links, so it's removed -->
-    <!-- Admin JavaScript -->
+  <footer style="background: #232733; color: #fff; text-align: center; padding: 1.5rem 0; margin-top: 2rem;">
+    <div style="display: flex; flex-direction: column; align-items: center; gap: 0.5rem;">
+      <img src="Images/TechDai.svg" alt="TechDai Logo" style="height: 36px; margin-bottom: 0.5rem;">
+      <div style="font-size: 1rem;">&copy; <span id="adminFooterYear"></span> All rights reserved. TechDai</div>
+    </div>
+    <script>
+      document.getElementById('adminFooterYear').textContent = new Date().getFullYear();
+    </script>
+  </footer>
     <script src="js/admin.js"></script>
 </body>
 </html>

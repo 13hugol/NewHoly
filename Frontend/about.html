@@ -21,7 +21,8 @@
     <header>
         <!-- Navbar (reuse from index.html) -->
     </header>
-    <main>
+    <main id="main-content" style="opacity:0;pointer-events:none;">
+        <div id="about-loading" style="text-align:center;padding:2rem;font-size:1.2rem;">Loading...</div>
         <section class="about-hero fade-in">
             <h1>About New Holy Cross School</h1>
             <p class="about-intro">New Holy Cross School, located in Kageshwori Manohara-09, Kathmandu, Nepal, has been <strong>Educating Young Minds for 25 Years</strong>. Our school is dedicated to fostering practical, experiential learning within a nurturing community environment. We invite you to join us on our journey of excellence and holistic development.</p>
@@ -78,20 +79,7 @@
             <h2>Information Gaps & Transparency</h2>
             <p>We currently do not have a dedicated official website or direct phone/email contact. All public information is shared via our Facebook page. We are committed to transparency and encourage stakeholders to reach out through our social media presence for any inquiries.</p>
         </section>
-        <section class="about-quick-links fade-in">
-            <h2>Quick Links</h2>
-            <div class="quick-links-cards">
-                <a href="about.html" class="quick-link-card"><i class="fas fa-info-circle"></i><span>About</span></a>
-                <a href="programs.html" class="quick-link-card"><i class="fas fa-book"></i><span>Programs</span></a>
-                <a href="student-columns.html" class="quick-link-card"><i class="fas fa-pen-nib"></i><span>Student Columns</span></a>
-                <a href="events.html" class="quick-link-card"><i class="fas fa-calendar-alt"></i><span>Events</span></a>
-                <a href="downloads.html" class="quick-link-card"><i class="fas fa-download"></i><span>Downloads</span></a>
-                <a href="team.html" class="quick-link-card"><i class="fas fa-users"></i><span>Team</span></a>
-                <a href="faq.html" class="quick-link-card"><i class="fas fa-question-circle"></i><span>FAQ</span></a>
-                <a href="contact.html" class="quick-link-card"><i class="fas fa-envelope"></i><span>Contact</span></a>
-                <a href="gallery.html" class="quick-link-card"><i class="fas fa-images"></i><span>Gallery</span></a>
-            </div>
-        </section>
+        <section class="about-quick-links fade-in" style="display:none;"></section>
     </main>
     <footer>
         <!-- Footer (reuse from index.html) -->
@@ -105,19 +93,27 @@
     }
     document.addEventListener('DOMContentLoaded', async function() {
         fadeInSections();
+        const main = document.getElementById('main-content');
+        const loading = document.getElementById('about-loading');
         try {
-            const res = await fetch('/api/client-config?clientId=default');
+            const res = await fetch('/api/client-config');
             if (!res.ok) throw new Error();
             const data = (await res.json()).data || {};
-            document.querySelector('.about-intro').textContent = data.intro || 'No introduction available.';
-            document.querySelector('.about-mission').textContent = data.missionVision || 'No mission/vision available.';
-            document.querySelector('.about-philosophy').textContent = data.philosophy || 'No philosophy available.';
-            document.querySelector('.about-principal').textContent = data.principalMessage || 'No principal message available.';
+            if (data.intro) document.querySelector('.about-intro').textContent = data.intro;
+            if (data.missionVision) document.querySelector('.about-mission').textContent = data.missionVision;
+            if (data.philosophy) document.querySelector('.about-philosophy').textContent = data.philosophy;
+            if (data.principalMessage) {
+                const msg = document.querySelector('.principal-message p');
+                if (msg) msg.textContent = data.principalMessage;
+            }
         } catch {
             document.querySelector('.about-intro').textContent = 'No introduction available.';
             document.querySelector('.about-mission').textContent = 'No mission/vision available.';
             document.querySelector('.about-philosophy').textContent = 'No philosophy available.';
             document.querySelector('.about-principal').textContent = 'No principal message available.';
+        } finally {
+            if (loading) loading.style.display = 'none';
+            if (main) { main.style.opacity = 1; main.style.pointerEvents = 'auto'; }
         }
     });
     </script>

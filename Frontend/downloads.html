@@ -29,7 +29,9 @@
             <h1>Downloads</h1>
             <p class="downloads-intro">Find important documents and resources here.</p>
         </section>
-        <section class="downloads-list fade-in"></section>
+        <section class="downloads-list fade-in">
+            <div id="downloads-loading" style="text-align:center;padding:1.2rem;font-size:1.1rem;">Loading...</div>
+        </section>
     </main>
     <footer>
         <!-- Footer (reuse from index.html) -->
@@ -42,23 +44,26 @@
     }
     document.addEventListener('DOMContentLoaded', async function() {
         fadeInSections();
+        const container = document.querySelector('.downloads-list');
+        const loading = document.getElementById('downloads-loading');
         try {
-            const res = await fetch('/api/downloads?clientId=default');
+            const res = await fetch('/api/downloads');
             if (!res.ok) throw new Error();
             const data = (await res.json()).data || [];
-            const container = document.querySelector('.downloads-list');
             if (data.length === 0) {
                 container.innerHTML = `<div class='download-card no-data-card'><h3>No Downloads Yet</h3><p>Downloads will appear here soon.</p></div>`;
                 return;
             }
             container.innerHTML = data.map(dl => `
                 <div class='download-card'>
-                    <h3>${dl.title}</h3>
+                    <h3>${dl.title || 'Untitled'}</h3>
                     <a href="${dl.url}" download>${dl.linkText || 'Download'}</a>
                 </div>
             `).join('');
         } catch {
-            document.querySelector('.downloads-list').innerHTML = `<div class='download-card no-data-card'><h3>No Downloads Yet</h3><p>Downloads will appear here soon.</p></div>`;
+            container.innerHTML = `<div class='download-card no-data-card'><h3>No Downloads Yet</h3><p>Downloads will appear here soon.</p></div>`;
+        } finally {
+            if (loading) loading.style.display = 'none';
         }
     });
     </script>

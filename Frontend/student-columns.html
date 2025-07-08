@@ -55,7 +55,7 @@
             <p class="student-columns-intro">Voices and stories from our students.</p>
         </section>
         <section class="student-columns-list fade-in">
-            <!-- Dynamic: List of student columns from backend -->
+            <div id="student-columns-loading" style="text-align:center;padding:1.2rem;font-size:1.1rem;">Loading...</div>
         </section>
     </main>
     <footer>
@@ -88,24 +88,27 @@
     }
     document.addEventListener('DOMContentLoaded', async function() {
         fadeInSections();
+        const container = document.querySelector('.student-columns-list');
+        const loading = document.getElementById('student-columns-loading');
         try {
-            const res = await fetch('/api/student-columns?clientId=default');
+            const res = await fetch('/api/studentColumns');
             if (!res.ok) throw new Error();
             const data = (await res.json()).data || [];
-            const container = document.querySelector('.student-columns-list');
             if (data.length === 0) {
                 container.innerHTML = `<div class='student-column-card no-data-card'><h3>No Student Columns Yet</h3><p>Student columns will appear here soon.</p></div>`;
                 return;
             }
             container.innerHTML = data.map(col => `
                 <div class='student-column-card'>
-                    <h3>${col.title}</h3>
-                    <p>${col.content}</p>
+                    <h3>${col.title || 'Untitled'}</h3>
+                    <p>${col.content || ''}</p>
                     <p style='font-size:0.95em;color:#64748b;'>By ${col.author || 'Anonymous'}</p>
                 </div>
             `).join('');
         } catch {
-            document.querySelector('.student-columns-list').innerHTML = `<div class='student-column-card no-data-card'><h3>No Student Columns Yet</h3><p>Student columns will appear here soon.</p></div>`;
+            container.innerHTML = `<div class='student-column-card no-data-card'><h3>No Student Columns Yet</h3><p>Student columns will appear here soon.</p></div>`;
+        } finally {
+            if (loading) loading.style.display = 'none';
         }
     });
     </script>

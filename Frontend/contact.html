@@ -31,10 +31,9 @@
             <p class="contact-intro">We'd love to hear from you!</p>
         </section>
         <section class="contact-info">
+            <div id="contact-loading" style="text-align:center;padding:1.2rem;font-size:1.1rem;">Loading...</div>
             <!-- Dynamic: School contact info from backend -->
-            <p><strong>Address:</strong> [School Address]</p>
-            <p><strong>Phone:</strong> [School Phone]</p>
-            <p><strong>Email:</strong> [School Email]</p>
+            <div id="contact-info-fields" style="display:none;"></div>
         </section>
         <section class="contact-form-section">
             <h2>Send Us a Message</h2>
@@ -63,21 +62,26 @@
     document.addEventListener('DOMContentLoaded', async function() {
         fadeInSections();
         // Fetch contact info
+        const loading = document.getElementById('contact-loading');
+        const infoFields = document.getElementById('contact-info-fields');
         try {
-            const res = await fetch('/api/client-config?clientId=default');
+            const res = await fetch('/api/client-config');
             if (!res.ok) throw new Error();
             const data = (await res.json()).data || {};
-            document.querySelector('.contact-info').innerHTML = `
+            infoFields.innerHTML = `
                 <p><strong>Address:</strong> ${data.address || '[School Address]'}</p>
                 <p><strong>Phone:</strong> ${data.phone || '[School Phone]'}</p>
                 <p><strong>Email:</strong> ${data.email || '[School Email]'}</p>
             `;
         } catch {
-            document.querySelector('.contact-info').innerHTML = `
+            infoFields.innerHTML = `
                 <p><strong>Address:</strong> [School Address]</p>
                 <p><strong>Phone:</strong> [School Phone]</p>
                 <p><strong>Email:</strong> [School Email]</p>
             `;
+        } finally {
+            loading.style.display = 'none';
+            infoFields.style.display = 'block';
         }
         // Handle contact form
         document.getElementById('contact-form').addEventListener('submit', async function(e) {
@@ -89,7 +93,7 @@
                 message: form.message.value
             };
             try {
-                const res = await fetch('/api/contact-messages?clientId=default', {
+                const res = await fetch('/submit-contact', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(formData)

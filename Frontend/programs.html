@@ -54,7 +54,7 @@
             <p class="programs-intro">Explore our diverse academic offerings designed to inspire and challenge every student.</p>
         </section>
         <section class="programs-list fade-in">
-            <!-- Dynamic: List of programs from backend -->
+            <div id="programs-loading" style="text-align:center;padding:1.2rem;font-size:1.1rem;">Loading...</div>
         </section>
     </main>
     <footer>
@@ -87,23 +87,26 @@
     }
     document.addEventListener('DOMContentLoaded', async function() {
         fadeInSections();
+        const container = document.querySelector('.programs-list');
+        const loading = document.getElementById('programs-loading');
         try {
-            const res = await fetch('/api/programs?clientId=default');
+            const res = await fetch('/api/programs');
             if (!res.ok) throw new Error();
             const data = (await res.json()).data || [];
-            const container = document.querySelector('.programs-list');
             if (data.length === 0) {
                 container.innerHTML = `<div class='program-card no-data-card'><h3>No Programs Yet</h3><p>Academic programs will appear here soon.</p></div>`;
                 return;
             }
             container.innerHTML = data.map(p => `
                 <div class='program-card'>
-                    <h3>${p.title}</h3>
-                    <p>${p.description}</p>
+                    <h3>${p.title || 'Untitled'}</h3>
+                    <p>${p.description || ''}</p>
                 </div>
             `).join('');
         } catch {
-            document.querySelector('.programs-list').innerHTML = `<div class='program-card no-data-card'><h3>No Programs Yet</h3><p>Academic programs will appear here soon.</p></div>`;
+            container.innerHTML = `<div class='program-card no-data-card'><h3>No Programs Yet</h3><p>Academic programs will appear here soon.</p></div>`;
+        } finally {
+            if (loading) loading.style.display = 'none';
         }
     });
     </script>

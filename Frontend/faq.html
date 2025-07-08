@@ -30,11 +30,7 @@
             <p class="faq-intro">Find answers to common questions about our school.</p>
         </section>
         <section class="faq-list">
-            <!-- Dynamic: List of FAQs from backend -->
-            <div class="faq-item">
-                <h2>[Question]</h2>
-                <p>[Answer]</p>
-            </div>
+            <div id="faq-loading" style="text-align:center;padding:1.2rem;font-size:1.1rem;">Loading...</div>
         </section>
     </main>
     <footer>
@@ -49,23 +45,26 @@
     }
     document.addEventListener('DOMContentLoaded', async function() {
         fadeInSections();
+        const container = document.querySelector('.faq-list');
+        const loading = document.getElementById('faq-loading');
         try {
-            const res = await fetch('/api/faq?clientId=default');
+            const res = await fetch('/api/faq');
             if (!res.ok) throw new Error();
             const data = (await res.json()).data || [];
-            const container = document.querySelector('.faq-list');
             if (data.length === 0) {
                 container.innerHTML = `<div class='faq-item no-data-card'><h3>No FAQs Yet</h3><p>FAQs will appear here soon.</p></div>`;
                 return;
             }
             container.innerHTML = data.map(faq => `
                 <div class='faq-item'>
-                    <h2>${faq.question}</h2>
-                    <p>${faq.answer}</p>
+                    <h2>${faq.question || 'No Question'}</h2>
+                    <p>${faq.answer || ''}</p>
                 </div>
             `).join('');
         } catch {
-            document.querySelector('.faq-list').innerHTML = `<div class='faq-item no-data-card'><h3>No FAQs Yet</h3><p>FAQs will appear here soon.</p></div>`;
+            container.innerHTML = `<div class='faq-item no-data-card'><h3>No FAQs Yet</h3><p>FAQs will appear here soon.</p></div>`;
+        } finally {
+            if (loading) loading.style.display = 'none';
         }
     });
     </script>

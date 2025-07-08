@@ -107,7 +107,7 @@
                 <div class="about-us-text">
                     <h3>Our History & Philosophy</h3>
                     <p>Founded 25 years ago, New Holy Cross School, located in Kageshwori Manohara-09, Kathmandu, has been a beacon of learning, dedicated to fostering intellectual curiosity, personal growth, and a strong sense of community. Our philosophy centers on providing a holistic education that balances academic rigor with character development.</p>
-                    <p>We believe in nurturing every student's unique potential, encouraging them to explore their interests, challenge themselves, and become responsible global citizens.</p>
+                    <p>We believe in nurturing every student's unique potential, encouraging them to explore their interests, challenge themselves and become responsible global citizens.</p>
                     
                     <h3>Our Mission & Vision</h3>
                     <p><strong><i class="fas fa-bullseye icon-prefix"></i> Mission:</strong> To empower students with knowledge, skills, and values to thrive in a dynamic world.</p>
@@ -181,8 +181,9 @@
             <h2 class="section-title">Student Columns</h2>
             <p class="section-subtitle">Read inspiring stories, essays, and creative works from our talented students.</p>
             <div class="student-columns-cards"></div>
-            <div style="text-align:center;margin-top:1.5rem;">
-                <a href="student-columns.html" class="view-all-btn">View All Student Columns <i class="fas fa-arrow-right"></i></a>
+            <!-- Added "View More" button for Student Columns -->
+            <div class="section-view-more">
+                <a href="student-columns.html" class="view-more-btn">View All Student Columns</a>
             </div>
         </div>
     </section>
@@ -240,30 +241,30 @@
         <div class="school-container">
             <h2 class="section-title">Our Gallery</h2>
             <p class="section-subtitle">A glimpse into our school life and activities</p>
-            <div class="gallery-wrapper">
-                <button id="scroll-left" class="gallery-arrow" aria-label="Previous">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="m15 18-6-6 6-6"/>
-                    </svg>
-                </button>
-                <div id="gallery-container" class="gallery-container">
-                    <!-- Placeholder card that matches JS structure. This will be replaced by renderGallery(). -->
-                    <div class="gallery-item">
-                        <div class="caption">Loading moments from our school life...</div>
-                        <img src="https://placehold.co/400x300/cccccc/000000?text=Loading..." alt="Loading gallery image">
-                    </div>
-                </div>
-                <button id="scroll-right" class="gallery-arrow" aria-label="Next">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="m9 18 6-6-6-6"/>
-                    </svg>
-                </button>
+            <div class="gallery" id="homepage-gallery">
+              <figure class="card">
+                  <img src="Images/holly1.png" alt="Students in classroom" loading="lazy">
+              </figure>
+              <figure class="card">
+                  <img src="Images/holly2.jpg" alt="School building exterior" loading="lazy">
+              </figure>
+              <figure class="card">
+                  <img src="Images/holly3.jpg" alt="Students in library" loading="lazy">
+              </figure>
+              <figure class="card">
+                  <img src="Images/holly4.jpg" alt="School event" loading="lazy">
+              </figure>
             </div>
-            <div class="gallery-view-all">
-                <a href="gallery.html" class="view-all-btn">
-                    <i class="fas fa-images"></i>
-                    View All Gallery Images
-                </a>
+        </div>
+    </section>
+
+    <!-- Downloads Section (Homepage) -->
+    <section id="downloads-section" class="downloads-section fade-in">
+        <div class="school-container">
+            <h2 class="section-title">Downloads</h2>
+            <div id="downloads-grid" class="downloads-list"></div>
+            <div class="downloads-view-more" style="text-align:right; margin-top:1rem;">
+                <a href="downloads.html" class="view-more-btn" style="display:inline-block; background:#ffc107; color:#232733; font-weight:600; padding:0.5rem 1.5rem; border-radius:2rem; text-decoration:none; box-shadow:0 2px 8px rgba(0,0,0,0.08); transition:background 0.2s;">View More</a>
             </div>
         </div>
     </section>
@@ -280,7 +281,6 @@
                         <div class="news-event-icon"><i class="fas fa-spinner fa-spin"></i></div>
                         <h3>Fetching Latest Updates...</h3>
                         <p>Please wait while we gather the latest news and events from our school community.</p>
-                        <a href="#" class="read-more">Read More <i class="fas fa-arrow-right"></i></a>
                     </div>
                 </div>
             </div>
@@ -291,14 +291,13 @@
     <section id="testimonials" class="testimonial-section fade-in">
         <div class="school-container">
             <h2 class="section-title">What Our Community Says</h2>
+            <div id="testimonials-container"></div>
+            <a href="https://www.google.com/search?hl=en-NP&gl=np&q=M9XC%2BGCV+New+Holy+Cross+School,+Unnamed+Road,+Kageshwori+Manohara+44600&ludocid=2265190424130123788&lsig=AB86z5WZq0tRnApaT61eJkTzZwUa#lrd=0x39eb1b9a92d5f1a9:0x1f6f92b072e4780c,3" target="_blank" rel="noopener" class="google-review-btn">
+                <i class="fab fa-google"></i> Review us on Google
+            </a>
         </div>
-        <!-- Google Reviews Widget (Elfsight or your preferred provider) -->
-        <div class="elfsight-widget-container" style="margin: 2rem auto; max-width: 900px;">
-            <!-- Replace with your actual Google Reviews widget code -->
-            <div class="elfsight-app-12345678-aaaa-bbbb-cccc-1234567890ab"></div>
-        </div>
-        <script src="https://apps.elfsight.com/p/platform.js" defer></script>
     </section>
+    <!-- Elfsight Google Reviews | Untitled Google Reviews -->
 
     <!-- Faculty Section -->
     <section id="faculty" class="faculty-section fade-in">
@@ -315,22 +314,7 @@
                     </div>
                 </div>
                 <div id="faculty-overlay" class="faculty-overlay"></div>
-            </div>
-            <button id="showMoreFacultyBtn" class="show-more-button">Show More Faculty</button>
-        </div>
-    </section>
-
-    <!-- Quick Links & Resources Section -->
-    <section id="quick-links-resources" class="quick-links-resources-section fade-in">
-        <div class="school-container">
-            <h2 class="section-title">Quick Links & Resources</h2>
-            <div id="quick-links-grid" class="quick-links-grid">
-                 <!-- Placeholder card that matches JS structure. This will be replaced by renderQuickLinks(). -->
-                <a href="#" class="quick-link-card">
-                    <div class="quick-link-icon"><i class="fas fa-link"></i></div>
-                    <h3>Loading Links...</h3>
-                    <p>Finding helpful resources for our community.</p>
-                </a>
+                <button id="showMoreFacultyBtn" class="show-more-button" style="display:none;">Show More Faculty</button>
             </div>
         </div>
     </section>
@@ -405,6 +389,7 @@
     <!-- Footer (IMPROVED) -->
     <footer class="school-footer">
         <div class="school-container">
+            <div id="footer-downloads"></div>
             <div class="footer-content">
                 <div class="footer-logo">
                     <img src="/Images/Logo.svg" alt="New Holy Cross School Logo">
@@ -428,6 +413,162 @@
     </footer>
 
     <button id="scrollToTopBtn">↑</button>
+
+    <!-- Messenger Customer Chat Plugin -->
+    <div id="fb-root"></div>
+    <div id="fb-customer-chat" class="fb-customerchat"></div>
+    <script>
+      var chatbox = document.getElementById('fb-customer-chat');
+      chatbox.setAttribute("page_id", "100064595137234"); // New Holy Cross School Facebook Page ID
+      chatbox.setAttribute("attribution", "biz_inbox");
+    </script>
+    <script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk/xfbml.customerchat.js"></script>
     <script src="js/script.js" defer></script>
+    <script>
+    // Downloads section: fetch from backend and render (homepage, 3 only, with animation, fix duplicate script)
+    document.addEventListener('DOMContentLoaded', function() {
+      const downloadsGrid = document.getElementById('downloads-grid');
+      if (!downloadsGrid) return;
+      downloadsGrid.innerHTML = '<p class="loading-message">Loading downloads...</p>';
+      fetch('/api/downloads')
+        .then(res => {
+          if (!res.ok) throw new Error('Failed to fetch downloads');
+          return res.json();
+        })
+        .then(data => {
+          const downloads = Array.isArray(data.data) ? data.data : (Array.isArray(data) ? data : []);
+          if (!downloads.length) {
+            downloadsGrid.innerHTML = '<p class="no-data-message">No downloads available at the moment.</p>';
+            return;
+          }
+          // Show up to 3 downloads only, with animation and no logic errors
+          downloadsGrid.innerHTML = downloads.slice(0, 3).map((item, i) => {
+            const safeTitle = typeof item.title === 'string' ? item.title.replace(/</g, '&lt;').replace(/>/g, '&gt;') : 'Download';
+            const safeLink = typeof item.url === 'string' && item.url ? item.url : '#';
+            const linkText = typeof item.linkText === 'string' && item.linkText ? item.linkText : 'Download';
+            return `<div class="download-card fade-in-download" style="animation-delay:${(i*0.12+0.08).toFixed(2)}s">
+              <h3>${safeTitle}</h3>
+              <a href="${safeLink}" target="_blank" rel="noopener" class="download-link">${linkText}</a>
+            </div>`;
+          }).join('');
+        })
+        .catch(() => {
+          downloadsGrid.innerHTML = '<p class="error-message">Failed to load downloads.</p>';
+        });
+    });
+    </script>
+    <style>
+    /* Downloads card fade-in animation */
+    .fade-in-download {
+      opacity: 0;
+      transform: translateY(30px) scale(0.98);
+      animation: fadeInDownload 0.6s cubic-bezier(.33,1.02,.47,.98) forwards;
+    }
+    @keyframes fadeInDownload {
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    /* Download card hover: subtle lift and shadow (no disappear) */
+    .download-card {
+      transition: box-shadow 0.25s cubic-bezier(.4,0,.2,1), transform 0.22s cubic-bezier(.4,0,.2,1);
+    }
+    .download-card:hover, .download-card:focus-visible {
+      transform: translateY(-8px) scale(1.035);
+      box-shadow: 0 8px 32px rgba(2,132,199,0.18), 0 2px 12px rgba(2,132,199,0.08);
+      z-index: 2;
+    }
+
+    /* View More button: pulse and glow on hover/focus */
+    .view-more-btn {
+      position: relative;
+      overflow: hidden;
+      transition: box-shadow 0.2s, background 0.2s, transform 0.15s;
+    }
+    .view-more-btn::after {
+      content: '';
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, #fbbf24 0%, transparent 70%);
+      opacity: 0;
+      pointer-events: none;
+      transform: translate(-50%, -50%) scale(0.7);
+      transition: opacity 0.3s, transform 0.3s;
+      z-index: 0;
+    }
+    .view-more-btn:hover::after, .view-more-btn:focus::after {
+      opacity: 0.18;
+      transform: translate(-50%, -50%) scale(1.1);
+    }
+    .view-more-btn:hover, .view-more-btn:focus {
+      animation: pulseBtn 0.7s cubic-bezier(.4,0,.2,1);
+      box-shadow: 0 0 0 4px #fde68a66, 0 4px 18px rgba(2,132,199,0.18);
+      outline: none;
+    }
+    @keyframes pulseBtn {
+      0% { transform: scale(1); }
+      40% { transform: scale(1.08); }
+      60% { transform: scale(0.97); }
+      100% { transform: scale(1); }
+    }
+
+    /* Homepage Gallery Flex Effect */
+    .gallery {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      width: 100%;
+      max-width: 45rem;
+      margin: 2rem auto 0 auto;
+    }
+    .gallery .card {
+      position: relative;
+      left: 0;
+      width: 3rem;
+      border-radius: 5rem;
+      height: 18rem;
+      overflow: hidden;
+      transition: flex 0.4s ease-in-out, border-radius 0.4s, box-shadow 0.3s, width 0.4s, transform 0.4s;
+      box-shadow: 0 5px 12px rgba(0,0,0,0.13);
+      flex: 0.15;
+      background: #f3f4f6;
+      cursor: pointer;
+    }
+    .gallery .card img {
+      position: relative;
+      height: 100%;
+      width: 100%;
+      object-fit: cover;
+      transition: filter 0.3s;
+    }
+    .gallery .card:hover,
+    .gallery .card:focus-visible {
+      flex: 1 1 0;
+      border-radius: 1rem;
+      z-index: 2;
+      box-shadow: 0 8px 32px rgba(2,132,199,0.18), 0 2px 12px rgba(2,132,199,0.08);
+      transform: scale(1.03);
+    }
+    .gallery .card:hover img,
+    .gallery .card:focus-visible img {
+      filter: brightness(1.08) saturate(1.1);
+    }
+    @media (max-width: 700px) {
+      .gallery {
+        max-width: 98vw;
+        gap: 0.5rem;
+      }
+      .gallery .card {
+        height: 10rem;
+        min-width: 2rem;
+      }
+    }
+    </style>
+    <!-- Removed duplicate downloads script -->
 </body>
 </html>

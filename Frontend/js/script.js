@@ -168,31 +168,36 @@ function renderNewsEvents() {
     container.parentElement.appendChild(viewMore);
 }
 
-function renderTestimonials() {
+// === Testimonials Section: Fetch and Render ===
+async function renderTestimonials() {
     const container = document.getElementById('testimonials-container');
     if (!container) return;
-    container.innerHTML = '';
-    if (testimonialsData.length === 0) {
-        container.innerHTML = '<p class="no-data-message">No testimonials available yet.</p>';
-        return;
+    container.innerHTML = '<div class="testimonial-card loading"><div class="quote">Loading testimonials...</div></div>';
+    try {
+        const res = await fetch('/api/testimonials');
+        const data = await res.json();
+        if (!data.data || !Array.isArray(data.data) || data.data.length === 0) {
+            container.innerHTML = '<div class="testimonial-card"><div class="quote">No testimonials yet.</div></div>';
+            return;
+        }
+        // Render testimonials in a grid
+        let html = '<div class="testimonials-grid">';
+        data.data.slice(0, 6).forEach(t => {
+            html += `
+                <div class="testimonial-card">
+                    <div class="quote-icon"><i class="fas fa-quote-left"></i></div>
+                    <div class="quote">${t.quote ? t.quote : ''}</div>
+                    <div class="author">${t.author || 'Anonymous'}</div>
+                </div>
+            `;
+        });
+        html += '</div>';
+        container.innerHTML = html;
+    } catch (e) {
+        container.innerHTML = '<div class="testimonial-card error"><div class="quote">Failed to load testimonials.</div></div>';
     }
-    testimonialsData.forEach(testimonial => {
-        const testimonialCard = document.createElement('div');
-        testimonialCard.classList.add('testimonial-card');
-        testimonialCard.innerHTML = `
-            <div class="quote-icon">${testimonial.iconSvg || '<i class="fas fa-quote-left"></i>'}</div>
-            <p class="quote">"${testimonial.quote}"</p>
-            <p class="author">- ${testimonial.author}, ${testimonial.role}</p>
-        `;
-        container.appendChild(testimonialCard);
-    });
-
-    // Add View More button
-    const viewMore = document.createElement('div');
-    viewMore.className = 'section-view-more';
-    viewMore.innerHTML = '<a href="testimonials.html" class="view-more-btn">View More</a>';
-    container.parentElement.appendChild(viewMore);
 }
+document.addEventListener('DOMContentLoaded', renderTestimonials);
 
 const FACULTY_DISPLAY_LIMIT = 3; 
 let facultyVisibleCount = FACULTY_DISPLAY_LIMIT;
@@ -257,7 +262,7 @@ function toggleFacultyVisibility() {
     renderFaculty();
 }
 
-// --- Gallery Rendering for Horizontal Scrolling Layout ---
+// --- Gallery Netflix-Style Horizontal Scroll Rendering ---
 function renderGallery() {
     const container = document.getElementById('gallery-container');
     if (!container) return;
@@ -272,54 +277,16 @@ function renderGallery() {
         return;
     }
 
-    // Cascade style: show 3 images, center one is larger, side arrows to switch
-    let currentIndex = 0;
-    let leftBtn, rightBtn;
-
-    const showCascade = (index) => {
-        container.innerHTML = '';
-
-        // Left arrow
-        leftBtn = document.createElement('button');
-        leftBtn.type = 'button';
-        leftBtn.className = 'gallery-arrow left';
-        leftBtn.innerHTML = '&#8592;';
-        leftBtn.onclick = () => {
-            currentIndex = (currentIndex - 1 + galleryData.length) % galleryData.length;
-            showCascade(currentIndex);
-        };
-        container.appendChild(leftBtn);
-
-        // Images (cascade: prev, current, next)
-        const galleryCascade = document.createElement('div');
-        galleryCascade.className = 'gallery-cascade';
-        for (let i = -1; i <= 1; i++) {
-            let imgIdx = (index + i + galleryData.length) % galleryData.length;
-            const item = galleryData[imgIdx];
-            const galleryItem = document.createElement('div');
-            galleryItem.className = 'gallery-item';
-            if (i === 0) galleryItem.classList.add('center');
-            else galleryItem.classList.add('side');
-            galleryItem.innerHTML = `
-                <img src="${item.imageUrl}" alt="${item.caption || 'Gallery Image'}" loading="lazy" onerror="this.onerror=null;this.src='https://placehold.co/400x300/cccccc/000000?text=No+Image';">
-                <div class="caption">${item.caption || ''}</div>
-            `;
-            galleryCascade.appendChild(galleryItem);
-        }
-        container.appendChild(galleryCascade);
-
-        // Right arrow
-        rightBtn = document.createElement('button');
-        rightBtn.type = 'button';
-        rightBtn.className = 'gallery-arrow right';
-        rightBtn.innerHTML = '&#8594;';
-        rightBtn.onclick = () => {
-            currentIndex = (currentIndex + 1) % galleryData.length;
-            showCascade(currentIndex);
-        };
-        container.appendChild(rightBtn);
-    };
-    showCascade(0);
+    // Netflix-style: all items in a single horizontal row
+    galleryData.forEach(item => {
+        const galleryItem = document.createElement('div');
+        galleryItem.className = 'gallery-item';
+        galleryItem.innerHTML = `
+            <img src="${item.imageUrl}" alt="${item.caption || 'Gallery Image'}" loading="lazy" onerror="this.onerror=null;this.src='https://placehold.co/400x300/cccccc/000000?text=No+Image';">
+            <div class="caption">${item.caption || ''}</div>
+        `;
+        container.appendChild(galleryItem);
+    });
 }
 
 // --- Gallery Horizontal Scrolling with Arrow Controls ---
@@ -360,8 +327,6 @@ function setupGallerySlider() {
             left: scrollAmount, 
             behavior: 'smooth' 
         });
-        
-        // Add click animation
         rightBtn.style.transform = 'translateY(-50%) scale(0.95)';
         setTimeout(() => {
             rightBtn.style.transform = 'translateY(-50%) scale(1)';
@@ -375,8 +340,6 @@ function setupGallerySlider() {
             left: -scrollAmount, 
             behavior: 'smooth' 
         });
-        
-        // Add click animation
         leftBtn.style.transform = 'translateY(-50%) scale(0.95)';
         setTimeout(() => {
             leftBtn.style.transform = 'translateY(-50%) scale(1)';
@@ -386,11 +349,9 @@ function setupGallerySlider() {
     // Update buttons on scroll and resize
     container.addEventListener('scroll', checkScroll);
     window.addEventListener('resize', checkScroll);
-
-    // Initial check
     setTimeout(checkScroll, 100);
-    
-    // Add keyboard navigation
+
+    // Keyboard navigation
     document.addEventListener('keydown', (e) => {
         if (e.key === 'ArrowLeft' && !leftBtn.disabled) {
             leftBtn.click();
@@ -399,7 +360,6 @@ function setupGallerySlider() {
         }
     });
 }
-
 
 function renderQuickLinks() {
     const container = document.getElementById('quick-links-grid');
@@ -498,7 +458,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     
     // Setup interactive elements
     setupSmoothScrolling();
-    setupGallerySlider(); // Setup the gallery slider controls
     setupStudentLifeAnimations(); // Setup enhanced student life animations
 
     const showMoreFacultyBtn = document.getElementById('showMoreFacultyBtn');
