@@ -48,32 +48,62 @@ function animateSlider(currentTime) {
 
 // --- Data Loading from Backend API ---
 
-// --- Downloads Section Rendering (for homepage, styled) ---
+// --- Horizontal Downloads Scroll Rendering with Animation ---
 async function renderDownloadsPreview() {
-    const container = document.getElementById('downloads-preview');
+    const container = document.getElementById('downloads-scroll-container');
+    const leftBtn = document.getElementById('downloads-scroll-left');
+    const rightBtn = document.getElementById('downloads-scroll-right');
     if (!container) return;
     try {
         const res = await fetch('/api/downloads');
         if (!res.ok) throw new Error('Failed to fetch downloads');
         const data = (await res.json()).data || [];
-        let html = `<h2 class="downloads-title">Downloads</h2>`;
         if (data.length === 0) {
-            html += `<div class="download-card no-data-card"><h3>No Downloads Yet</h3><p>Important documents and resources will appear here soon.</p></div>`;
-        } else {
-            // Show up to 4 latest downloads
-            const preview = data.slice(0, 4);
-            html += `<div class="downloads-cards">` + preview.map(dl => `
-                <div class="download-card">
-                    <h3>${dl.title}</h3>
-                    <a href="${dl.url}" download class="download-link">${dl.linkText||'Download'}</a>
-                </div>
-            `).join('') + `</div>`;
+            container.innerHTML = `<div class="downloads-card no-data-card"><h3>No Downloads Yet</h3><p>Important documents and resources will appear here soon.</p></div>`;
+            if (leftBtn) leftBtn.style.display = 'none';
+            if (rightBtn) rightBtn.style.display = 'none';
+            return;
         }
-        // Add View All Downloads button
-        html += `<div class="downloads-view-more"><a href="downloads.html" class="view-more-btn">View All Downloads</a></div>`;
-        container.innerHTML = html;
+        container.innerHTML = data.slice(0, 8).map(dl => `
+            <div class="downloads-card downloads-card-animate">
+                ${dl.iconUrl ? `<img src="${dl.iconUrl}" class="downloads-card-img" alt="icon" loading="lazy" />` : `<img src="/Images/Logo.svg" class="downloads-card-img" alt="icon" loading="lazy" />`}
+                <div class="downloads-card-title">${dl.title || 'Download'}</div>
+                <div class="downloads-card-desc">${dl.description || ''}</div>
+                <a href="${dl.url}" target="_blank" rel="noopener" class="downloads-card-btn">${dl.linkText || 'Download'}</a>
+            </div>
+        `).join('');
+        // Arrow navigation
+        if (leftBtn && rightBtn) {
+            leftBtn.onclick = () => {
+                container.scrollBy({ left: -container.offsetWidth * 0.8, behavior: 'smooth' });
+            };
+            rightBtn.onclick = () => {
+                container.scrollBy({ left: container.offsetWidth * 0.8, behavior: 'smooth' });
+            };
+            // Show/hide arrows based on scroll position
+            const checkScroll = () => {
+                leftBtn.disabled = container.scrollLeft <= 0;
+                rightBtn.disabled = container.scrollLeft >= container.scrollWidth - container.clientWidth - 2;
+            };
+            container.addEventListener('scroll', checkScroll);
+            window.addEventListener('resize', checkScroll);
+            setTimeout(checkScroll, 200);
+        }
+        // Animate cards in as they enter viewport horizontally
+        const cards = container.querySelectorAll('.downloads-card-animate');
+        const observer = new IntersectionObserver(entries => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('in-view');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.18, root: container });
+        cards.forEach(card => observer.observe(card));
     } catch (e) {
-        container.innerHTML = `<div class="download-card no-data-card"><h3>Downloads Loading Error</h3><p>Unable to load downloads at the moment. Please try again later.</p></div>`;
+        container.innerHTML = `<div class="downloads-card no-data-card"><h3>Downloads Loading Error</h3><p>Unable to load downloads at the moment. Please try again later.</p></div>`;
+        if (leftBtn) leftBtn.style.display = 'none';
+        if (rightBtn) rightBtn.style.display = 'none';
     }
 }
 
