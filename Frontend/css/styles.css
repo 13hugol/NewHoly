@@ -4091,7 +4091,7 @@ header {
 .hero-flex-group article:before {
   content: '';
   position: absolute;
-  inset-x: 0;
+  inset-block: 0;
   bottom: 0;
   height: 33%;
   background: linear-gradient(to top, rgba(0,0,0,0.5) 80%, transparent 100%);

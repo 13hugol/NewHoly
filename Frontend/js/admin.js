@@ -278,7 +278,7 @@ function showConfirmationModal(message) {
 
 
 // --- DOM Content Loaded ---
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
     console.log('[DOMContentLoaded] Initializing admin panel...');
 
     // Assign DOM elements AFTER the DOM is fully loaded
@@ -287,6 +287,10 @@ document.addEventListener('DOMContentLoaded', () => {
     loginForm = document.getElementById('login-form');
     loginError = document.getElementById('login-error');
     logoutBtn = document.getElementById('logout-btn');
+
+    // Hide admin panel by default for security
+    if (adminPanel) adminPanel.style.display = 'none';
+    if (loginSection) loginSection.style.display = 'flex';
 
     sections = {
         dashboard: document.getElementById('dashboard-section-content'),
@@ -1742,14 +1746,38 @@ document.addEventListener('DOMContentLoaded', () => {
     // });
 
 
-    // Initial check for authentication token
-    if (localStorage.getItem('adminToken')) {
-        console.log('[DOMContentLoaded] Admin token found, showing admin panel.');
-        showAdminPanel();
-    } else {
-        console.log('[DOMContentLoaded] No admin token found, showing login page.');
-        showLogin();
+    // Initial check for authentication token and validity
+    async function checkTokenAndShowPanel() {
+        const token = localStorage.getItem('adminToken');
+        if (!token) {
+            // No token, show login only
+            if (adminPanel) adminPanel.style.display = 'none';
+            if (loginSection) loginSection.style.display = 'flex';
+            return;
+        }
+        // Try a lightweight authenticated API call
+        try {
+            const res = await fetch('/api/programs', {
+                headers: { 'Authorization': 'Bearer ' + token }
+            });
+            if (res.status === 401 || res.status === 403) {
+                // Invalid/expired token
+                localStorage.removeItem('adminToken');
+                if (adminPanel) adminPanel.style.display = 'none';
+                if (loginSection) loginSection.style.display = 'flex';
+                return;
+            }
+            // Token is valid, show admin panel
+            if (adminPanel) adminPanel.style.display = 'flex';
+            if (loginSection) loginSection.style.display = 'none';
+            showAdminPanel();
+        } catch (e) {
+            // Network or other error, show login
+            if (adminPanel) adminPanel.style.display = 'none';
+            if (loginSection) loginSection.style.display = 'flex';
+        }
     }
+    await checkTokenAndShowPanel();
 
     // Add fade-in to all admin sections
     document.querySelectorAll('.admin-section').forEach(section => section.classList.add('fade-in'));
