@@ -1,18 +1,16 @@
 const express = require('express');
 const path = require('path');
 const { MongoClient, ObjectId } = require('mongodb');
-const multer = require('multer'); // For handling multipart/form-data (file uploads)
-const jwt = require('jsonwebtoken'); // For JSON Web Tokens
-const fs = require('fs'); // For file system operations (checking/creating upload directory)
+const multer = require('multer'); 
+const jwt = require('jsonwebtoken'); 
+const fs = require('fs'); 
 
-// Assuming these are correctly set up in your project
-const { dbconnect } = require('./dbconnect'); // This file is crucial for DB connection
+const { dbconnect } = require('./dbconnect'); 
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// --- Configuration ---
-const JWT_SECRET = process.env.JWT_SECRET || 'your_jwt_secret_key'; // **IMPORTANT: Use a strong, environment-variable-based secret in production**
+const JWT_SECRET = process.env.JWT_SECRET || 'super_secret_dev_key_for_holy_cross_school_2025!';
 const UPLOADS_DIR = path.join(__dirname, '../Frontend/Images'); // Directory to store uploaded images
 
 // Ensure the uploads directory exists
@@ -30,7 +28,19 @@ const storage = multer.diskStorage({
         cb(null, Date.now() + '-' + file.originalname);
     }
 });
-const upload = multer({ storage: storage });
+
+const upload = multer({
+    storage: storage,
+    limits: { fileSize: 5 * 1024 * 1024 }, // Limit file size to 5MB (5 * 1024 * 1024 bytes)
+    fileFilter: (req, file, cb) => {
+        // Accept only image files
+        if (file.mimetype.startsWith('image/')) {
+            cb(null, true);
+        } else {
+            cb(new Error('Only image files are allowed!'), false);
+        }
+    }
+});
 
 // Middleware
 app.use(express.json()); // Parses JSON bodies
@@ -50,88 +60,16 @@ app.use((req, res, next) => {
 
 
 // DB Collections (initialized after connection)
-let db, studentsCollection, programsCollection, contactsCollection, newsEventsCollection, testimonialsCollection, facultyCollection, quickLinksCollection, galleryCollection;
-
-// Reusable CRUD function generator
-const generateCRUD = (collection, route) => {
-    // GET all items (PUBLICLY ACCESSIBLE)
-    app.get(`/api/${route}`, async (req, res) => { // <-- REMOVED authenticateToken HERE
-        try {
-            const data = await collection.find().toArray();
-            res.json({ data: data }); // Consistent response format
-        } catch (err) {
-            console.error(`Failed to fetch ${route}:`, err);
-            res.status(500).json({ message: `Failed to fetch ${route}` });
-        }
-    });
-
-    // GET single item by ID (PUBLICLY ACCESSIBLE)
-    app.get(`/api/${route}/:id`, async (req, res) => { // <-- REMOVED authenticateToken HERE
-        try {
-            const item = await collection.findOne({ _id: new ObjectId(req.params.id) });
-            if (!item) {
-                return res.status(404).json({ message: `${route.slice(0, -1)} not found.` });
-            }
-            res.json({ data: item }); // Consistent response format for single item
-        } catch (err) {
-            console.error(`Failed to fetch single ${route.slice(0, -1)}:`, err);
-            res.status(500).json({ message: `Failed to fetch ${route.slice(0, -1)}` });
-        }
-    });
-
-    // POST new item (PROTECTED - requires authentication)
-    app.post(`/api/${route}`, authenticateToken, async (req, res) => {
-        try {
-            const result = await collection.insertOne(req.body);
-            res.status(201).json({ success: true, insertedId: result.insertedId, message: `${route.slice(0, -1)} added successfully!` });
-        } catch (err) {
-            console.error(`Failed to add ${route}:`, err);
-            res.status(500).json({ message: `Failed to add ${route}` });
-        }
-    });
-
-    // PUT update item by ID (PROTECTED - requires authentication)
-    app.put(`/api/${route}/:id`, authenticateToken, async (req, res) => {
-        try {
-            const result = await collection.updateOne(
-                { _id: new ObjectId(req.params.id) },
-                { $set: req.body }
-            );
-            if (result.modifiedCount === 0 && result.matchedCount === 0) {
-                return res.status(404).json({ message: `${route.slice(0, -1)} not found or no changes made.` });
-            }
-            res.json({ success: true, message: `${route.slice(0, -1)} updated successfully!` });
-        } catch (err) {
-            console.error(`Failed to update ${route}:`, err);
-            res.status(500).json({ message: `Failed to update ${route}` });
-        }
-    });
-
-    // DELETE item by ID (PROTECTED - requires authentication)
-    app.delete(`/api/${route}/:id`, authenticateToken, async (req, res) => {
-        try {
-            const result = await collection.deleteOne({ _id: new ObjectId(req.params.id) });
-            if (result.deletedCount === 0) {
-                return res.status(404).json({ message: `${route.slice(0, -1)} not found.` });
-            }
-            res.json({ success: true, message: `${route.slice(0, -1)} deleted successfully!` });
-        } catch (err) {
-            console.error(`Failed to delete ${route}:`, err);
-            res.status(500).json({ message: `Failed to delete ${route}` });
-        }
-    });
-};
+let db, studentsCollection, programsCollection, contactsCollection, newsEventsCollection, testimonialsCollection, facultyCollection, quickLinksCollection, galleryCollection, facilitiesCollection, clientsCollection;
 
 // --- Custom Authentication Middleware for Admin Panel ---
 const authenticateToken = (req, res, next) => {
-    // Note: CORS preflight (OPTIONS method) is already handled by the global CORS middleware above.
-    // This check is primarily for actual authenticated requests.
     if (req.method === 'OPTIONS') {
-        return next(); // Allow OPTIONS requests to pass through without token verification
+        return next();
     }
 
     const authHeader = req.headers['authorization'];
-    const token = authHeader && authHeader.split(' ')[1]; // Bearer TOKEN
+    const token = authHeader && authHeader.split(' ')[1];
 
     if (token == null) {
         return res.status(401).json({ message: 'Authentication token required.' });
@@ -142,24 +80,113 @@ const authenticateToken = (req, res, next) => {
             console.error('JWT verification failed:', err);
             return res.status(403).json({ message: 'Invalid or expired token.' });
         }
-        req.user = user; // Attach user payload to request
+        req.user = user;
         next();
     });
 };
 
+// No longer needed: clientId extraction
+
+// Reusable CRUD function generator
+// This function now expects collectionName (the actual DB collection name) and apiRoutePrefix (the URL part)
+const generateCRUD = (collectionName, apiRoutePrefix) => {
+    // Middleware to check if DB is connected
+    const checkDbReady = (req, res, next) => {
+        if (!db) {
+            console.error('Database not connected for route:', req.path);
+            return res.status(503).json({ message: 'Database service unavailable. Please try again later.' });
+        }
+        next();
+    };
+
+    // GET all items (no clientId filter)
+    app.get(`/api/${apiRoutePrefix}`, checkDbReady, async (req, res) => {
+        try {
+            const collection = db.collection(collectionName);
+            const data = await collection.find({}).toArray();
+            res.json({ data: data });
+        } catch (err) {
+            console.error(`Failed to fetch ${apiRoutePrefix}:`, err);
+            res.status(500).json({ message: `Failed to fetch ${apiRoutePrefix}` });
+        }
+    });
+
+    // GET single item by ID (no clientId filter)
+    app.get(`/api/${apiRoutePrefix}/:id`, checkDbReady, async (req, res) => {
+        try {
+            const collection = db.collection(collectionName);
+            const item = await collection.findOne({ _id: new ObjectId(req.params.id) });
+            if (!item) {
+                return res.status(404).json({ message: `${apiRoutePrefix.slice(0, -1)} not found.` });
+            }
+            res.json({ data: item });
+        } catch (err) {
+            console.error(`Failed to fetch single ${apiRoutePrefix.slice(0, -1)}:`, err);
+            res.status(500).json({ message: `Failed to fetch ${apiRoutePrefix.slice(0, -1)}` });
+        }
+    });
+
+    // POST new item (no clientId)
+    app.post(`/api/${apiRoutePrefix}`, authenticateToken, checkDbReady, async (req, res) => {
+        try {
+            const collection = db.collection(collectionName);
+            const dataToInsert = { ...req.body };
+            delete dataToInsert._id;
+            const result = await collection.insertOne(dataToInsert);
+            res.status(201).json({ success: true, insertedId: result.insertedId, message: `${apiRoutePrefix.slice(0, -1)} added successfully!` });
+        } catch (err) {
+            console.error(`Failed to add ${apiRoutePrefix}:`, err);
+            res.status(500).json({ message: `Failed to add ${apiRoutePrefix}` });
+        }
+    });
+
+    // PUT update item by ID (no clientId filter)
+    app.put(`/api/${apiRoutePrefix}/:id`, authenticateToken, checkDbReady, async (req, res) => {
+        try {
+            const collection = db.collection(collectionName);
+            const dataToUpdate = { ...req.body };
+            delete dataToUpdate._id;
+            const result = await collection.updateOne(
+                { _id: new ObjectId(req.params.id) },
+                { $set: dataToUpdate }
+            );
+            if (result.modifiedCount === 0 && result.matchedCount === 0) {
+                return res.status(404).json({ message: `${apiRoutePrefix.slice(0, -1)} not found or no changes made.` });
+            }
+            res.json({ success: true, message: `${apiRoutePrefix.slice(0, -1)} updated successfully!` });
+        } catch (err) {
+            console.error(`Failed to update ${apiRoutePrefix}:`, err);
+            res.status(500).json({ message: `Failed to update ${apiRoutePrefix}` });
+        }
+    });
+
+    // DELETE item by ID (no clientId filter)
+    app.delete(`/api/${apiRoutePrefix}/:id`, authenticateToken, checkDbReady, async (req, res) => {
+        try {
+            const collection = db.collection(collectionName);
+            const result = await collection.deleteOne({ _id: new ObjectId(req.params.id) });
+            if (result.deletedCount === 0) {
+                return res.status(404).json({ message: `${apiRoutePrefix.slice(0, -1)} not found.` });
+            }
+            res.json({ success: true, message: `${apiRoutePrefix.slice(0, -1)} deleted successfully!` });
+        } catch (err) {
+            console.error(`Failed to delete ${apiRoutePrefix}:`, err);
+            res.status(500).json({ message: `Failed to delete ${apiRoutePrefix}` });
+        }
+    });
+};
+
+
 // ---------- ROUTES ---------- //
+// Define all API routes upfront, before static file serving.
 
 // Admin Login Route
 app.post('/api/login', async (req, res) => {
     const { username, password } = req.body;
-
-    // --- Hardcoded Admin Credentials (for demo purposes) ---
-    // In a real application, you would fetch user from DB and hash/compare passwords
-    const ADMIN_USERNAME = 'admin';
-    const ADMIN_PASSWORD = 'password123'; // Matches frontend's hardcoded password
+    const ADMIN_USERNAME = process.env.user;
+    const ADMIN_PASSWORD = process.env.pass; // In a real app, hash this password!
 
     if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
-        // Generate JWT
         const user = { username: ADMIN_USERNAME, role: 'admin' };
         const accessToken = jwt.sign(user, JWT_SECRET, { expiresIn: '1h' }); // Token expires in 1 hour
         res.json({ token: accessToken, message: 'Login successful!' });
@@ -169,36 +196,56 @@ app.post('/api/login', async (req, res) => {
 });
 
 // Image Upload Route (Protected)
-app.post('/api/upload', authenticateToken, upload.single('image'), (req, res) => {
-    if (!req.file) {
-        return res.status(400).json({ message: 'No image file uploaded.' });
-    }
-    // Return the URL where the image can be accessed
-    // Assuming your server is running on PORT and serving static files from /uploads
-    const imageUrl = `/uploads/${req.file.filename}`;
-    res.json({ imageUrl: imageUrl, message: 'Image uploaded successfully!' });
+app.post('/api/upload', authenticateToken, (req, res) => {
+    upload.single('image')(req, res, function (err) {
+        if (err instanceof multer.MulterError) {
+            if (err.code === 'LIMIT_FILE_SIZE') {
+                return res.status(400).json({ message: 'File too large. Maximum 5MB allowed.' });
+            }
+            return res.status(400).json({ message: err.message });
+        } else if (err) {
+            return res.status(400).json({ message: err.message });
+        }
+        if (!req.file) {
+            return res.status(400).json({ message: 'No image file uploaded or file type not allowed.' });
+        }
+        // Construct the URL for the uploaded image
+        const imageUrl = `/uploads/${req.file.filename}`;
+        res.json({ imageUrl: imageUrl, message: 'Image uploaded successfully!' });
+    });
 });
 
-// Admission Form
-app.post('/submit-admission', (req, res) => {
+// Admission Form (No authentication needed for public form)
+app.post('/submit-admission', async (req, res) => {
+    if (!studentsCollection) return res.status(503).json({ error: 'Database not ready.' });
     try {
-        studentsCollection.insertOne(req.body);
+        const { studentName, contact } = req.body;
+        // Check for existing student with same name and contact (no clientId)
+        const existingStudent = await studentsCollection.findOne({
+            studentName: studentName,
+            contact: contact
+        });
+        if (existingStudent) {
+            // Duplicate found - redirect with error status
+            return res.redirect('/index.html?status=duplicate&message=Student with this name and contact number already exists');
+        }
+        // No duplicate found - insert the new admission (no clientId)
+        await studentsCollection.insertOne({ ...req.body });
         console.log('Admission submitted:', req.body);
-        res.redirect('/index.html?status=success');
+        res.redirect('/index.html?status=success&message=Admission submitted successfully');
     } catch (err) {
         console.error('Admission error:', err);
-        res.redirect('/index.html?status=error');
+        res.redirect('/index.html?status=error&message=Failed to submit admission. Please try again.');
     }
 });
 
-// Contact Form
+// Contact Form (No authentication needed for public form)
 app.post('/submit-contact', async (req, res) => {
+    if (!contactsCollection) return res.status(503).json({ error: 'Database not ready.' });
     const { name, email, message } = req.body;
-
     if (!name || !email || !message) {
         return res.status(400).json({ error: 'All fields are required.' });
     }
-
     try {
         await contactsCollection.insertOne({
             name,
@@ -213,19 +260,20 @@ app.post('/submit-contact', async (req, res) => {
     }
 });
 
-// GET contacts (protected, as contact messages might be sensitive)
+// Specific Contact API routes (Protected, for admin panel)
 app.get('/api/contacts', authenticateToken, async (req, res) => {
+    if (!contactsCollection) return res.status(503).json({ message: 'Database not ready.' });
     try {
-        const contacts = await contactsCollection.find().toArray();
-        res.json({ data: contacts }); // Consistent response format
+        const contacts = await contactsCollection.find({}).toArray();
+        res.json({ data: contacts });
     } catch (err) {
         console.error('Failed to fetch contacts:', err);
         res.status(500).json({ message: 'Failed to fetch contacts' });
     }
 });
 
-// DELETE contact (protected)
 app.delete('/api/contacts/:id', authenticateToken, async (req, res) => {
+    if (!contactsCollection) return res.status(503).json({ message: 'Database not ready.' });
     try {
         const result = await contactsCollection.deleteOne({ _id: new ObjectId(req.params.id) });
         if (result.deletedCount === 0) {
@@ -238,31 +286,13 @@ app.delete('/api/contacts/:id', authenticateToken, async (req, res) => {
     }
 });
 
+// (Removed /api/client-config route as clientId is no longer used)
 
-// Serve static files from the 'Frontend' directory
-// This should be placed AFTER your API routes to prevent it from catching API requests
-app.use(express.static(path.join(__dirname, '../Frontend')));
-// Serve uploaded images directly
-app.use('/uploads', express.static(UPLOADS_DIR));
-
-// --- Admin Panel Route (Single Page App) ---
-
-// Serve admin.html for /admin and any /admin/* route (SPA support, avoids path-to-regexp error)
-app.get(/^\/admin(\/.*)?$/, (req, res) => {
-    res.sendFile(path.join(__dirname, '../Frontend/admin.html'));
-});
-
-// Start Server
-app.listen(PORT, () => {
-    console.log(`Server running on http://localhost:${PORT}`);
-    console.log(`Admin panel available at http://localhost:${PORT}/admin`);
-});
-
-
-// Database connection and API generation
+// Database connection and server start
 (async () => {
     try {
-        db = await dbconnect();
+        // Connect to DB and assign collections
+        db = await dbconnect(); // dbconnect should return the db instance
         studentsCollection = db.collection('students');
         programsCollection = db.collection('programs');
         contactsCollection = db.collection('contacts');
@@ -270,16 +300,46 @@ app.listen(PORT, () => {
         testimonialsCollection = db.collection('testimonials');
         facultyCollection = db.collection('faculty');
         quickLinksCollection = db.collection('quick_links');
-        galleryCollection = db.collection('gallery'); // Initialize gallery collection
+        galleryCollection = db.collection('gallery');
+        facilitiesCollection = db.collection('facilities');
+        clientsCollection = db.collection('clients');
         console.log('Connected to MongoDB');
 
-        // Generate APIs for all collections *after* they are initialized
-        generateCRUD(programsCollection, 'programs');
-        generateCRUD(newsEventsCollection, 'newsEvents');
-        generateCRUD(testimonialsCollection, 'testimonials');
-        generateCRUD(facultyCollection, 'faculty');
-        generateCRUD(galleryCollection, 'gallery');
-        generateCRUD(quickLinksCollection, 'quickLinks');
+        // Generate CRUD routes for all collections after DB is connected
+        // This ensures the collections are assigned before generateCRUD tries to use them
+        generateCRUD('programs', 'programs');
+        generateCRUD('news_events', 'newsEvents');
+        generateCRUD('testimonials', 'testimonials');
+        generateCRUD('faculty', 'facultys');
+        generateCRUD('gallery', 'gallerys');
+        generateCRUD('quick_links', 'quickLinks');
+        generateCRUD('facilities', 'facilities');
+        // New: Student Columns, Downloads, FAQ, Team, Contact Info
+        generateCRUD('student_columns', 'studentColumns');
+        generateCRUD('downloads', 'downloads');
+        generateCRUD('faq', 'faq');
+        generateCRUD('team', 'team');
+        generateCRUD('contact_info', 'contactInfo');
+        // 'contacts' collection is handled by specific routes above, but can also use generateCRUD if desired for consistency
+        // generateCRUD('contacts'); // Uncomment if you want to use generic CRUD for contacts too
+
+        // Serve static files from the 'Frontend' directory
+        // These MUST be placed AFTER all API routes have been defined
+        app.use(express.static(path.join(__dirname, '../Frontend')));
+        // Serve uploaded images directly
+        app.use('/uploads', express.static(UPLOADS_DIR));
+
+        // Admin Panel Route (Single Page App)
+        // Serve admin.html for /admin and any /admin/* route (SPA support)
+        app.get(/^\/admin(\/.*)?$/, (req, res) => {
+            res.sendFile(path.join(__dirname, '../Frontend/admin.html'));
+        });
+
+        // Start Server - Only start server AFTER DB connection and all routes are set up
+        app.listen(PORT, () => {
+            console.log(`Server running on http://localhost:${PORT}`);
+            console.log(`Admin panel available at http://localhost:${PORT}/admin`);
+        });
 
     } catch (err) {
         console.error('Database connection failed:', err);

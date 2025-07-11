@@ -5,19 +5,25 @@
   "type": "commonjs",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon server.js"
+    "dev":"node --watch server.js",
+    "start": "node server.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "cloudinary": "^1.41.3",
     "cors": "^2.8.5",
     "dotenv": "^17.0.1",
     "express": "^5.1.0",
+    "fs": "^0.0.1-security",
     "jsonwebtoken": "^9.0.2",
     "mongodb": "^6.17.0",
-    "multer": "^2.0.1"
+    "multer": "^2.0.1",
+    "multer-storage-cloudinary": "^4.0.0",
+    "nodemon": "^3.1.10",
+    "path": "^0.12.7"
   },
   "devDependencies": {
     "@types/node": "^24.0.10"

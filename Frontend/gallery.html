@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gallery - New Holy Cross School, Kathmandu</title>
+    <!-- Google Font: Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Link to external CSS file -->
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="shortcut icon" href="Images/Logo.svg" type="image/x-icon">
+    <style>
+        /* Gallery page specific styles */
+        .gallery-page {
+            padding: 2rem 0 6rem 0;
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+        }
+
+        .gallery-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .gallery-header h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 1rem;
+        }
+
+        .gallery-header p {
+            font-size: 1.2rem;
+            color: #64748b;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .gallery-grid {
+            columns: 4;
+            column-gap: 1.5rem;
+            margin-top: 3rem;
+        }
+
+        .gallery-grid-item {
+            break-inside: avoid;
+            margin-bottom: 1.5rem;
+            border-radius: 1rem;
+            overflow: hidden;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        .gallery-grid-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+        }
+
+        .gallery-grid-item img {
+            width: 100%;
+            height: auto;
+            display: block;
+            transition: transform 0.3s ease;
+        }
+
+        .gallery-grid-item:hover img {
+            transform: scale(1.02);
+        }
+
+        .gallery-grid-item .caption {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 1rem;
+            transform: translateY(100%);
+            transition: transform 0.3s ease;
+        }
+
+        .gallery-grid-item:hover .caption {
+            transform: translateY(0);
+        }
+
+        .gallery-grid-item .caption h3 {
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin: 0;
+            line-height: 1.3;
+        }
+
+        .back-to-home {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #1e3a8a;
+            text-decoration: none;
+            font-weight: 600;
+            margin-bottom: 2rem;
+            transition: color 0.3s ease;
+        }
+
+        .back-to-home:hover {
+            color: #3b82f6;
+        }
+
+        .loading-spinner {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 3rem;
+        }
+
+        .spinner {
+            border: 4px solid #e2e8f0;
+            border-top: 4px solid #1e3a8a;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .no-images {
+            text-align: center;
+            padding: 3rem;
+            color: #64748b;
+        }
+
+        .no-images i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: #cbd5e1;
+        }
+
+        @media (max-width: 1200px) {
+            .gallery-grid {
+                columns: 3;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .gallery-header h1 {
+                font-size: 2.5rem;
+            }
+            
+            .gallery-grid {
+                columns: 2;
+                column-gap: 1rem;
+            }
+            
+            .gallery-grid-item {
+                margin-bottom: 1rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .gallery-grid {
+                columns: 1;
+            }
+            
+            .gallery-grid-item .caption {
+                transform: translateY(0);
+                background: rgba(0, 0, 0, 0.8);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <nav>
+            <div class="nav-container">
+                <div class="hamburger" onclick="toggleMenu()">
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                </div>
+
+                <div class="menu" id="menu">
+                    <div class="dropdown"><a href="index.html"><img src="Images/Logo.svg" class="logo"></a></div>
+                    <div class="dropdown">
+                        <a href="index.html#about-us-section" class="lnk">About Us ▾</a>
+                        <div class="dropdown-content">
+                            <a class="dptext" href="index.html#about-us-section">Our History</a>
+                            <a class="dptext" href="index.html#about-us-section">Mission & Vision</a>
+                            <a class="dptext" href="index.html#dashboard-section">Principal's Message</a>
+                        </div>
+                    </div>
+                    <div class="dropdown">
+                        <a href="index.html#programs" class="lnk">Academics ▾</a>
+                        <div class="dropdown-content">
+                            <a class="dptext" href="index.html#programs">Curriculum</a>
+                            <a class="dptext" href="index.html#programs">Subjects</a>
+                            <a class="dptext" href="index.html#programs">Timetable</a>
+                        </div>
+                    </div>
+                    <div class="dropdown"><a href="admission.html">Admissions</a></div>
+                    <div class="dropdown">
+                        <a href="index.html#student-life-section" class="sym">Student Life ▾</a>
+                        <div class="dropdown-content">
+                            <a class="dptext" href="index.html#student-life-section">Activities</a>
+                            <a class="dptext" href="index.html#student-life-section">Leadership</a>
+                            <a class="dptext" href="index.html#student-life-section">Field Trips</a>
+                        </div>
+                    </div>
+                    <div class="dropdown"><a href="gallery.html" class="active">Gallery</a></div>
+                    <div class="dropdown"><a href="index.html#news-events">Notices</a></div>
+                    <div class="dropdown"><a href="index.html#school-contact-section">Contact</a></div>
+                </div>
+                <div class="login-btn">
+                    <a href="admin.html" title="Admin Login">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-user"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                    </a>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Gallery Page Content -->
+    <main class="gallery-page">
+        <div class="school-container">
+            <a href="index.html" class="back-to-home">
+                <i class="fas fa-arrow-left"></i>
+                Back to Home
+            </a>
+            
+            <div class="gallery-header">
+                <h1>School Gallery</h1>
+                <p>Explore moments from our school life, events, and activities that showcase the vibrant community at New Holy Cross School.</p>
+            </div>
+
+            <div id="gallery-grid" class="gallery-grid">
+                <div class="loading-spinner">
+                    <div class="spinner"></div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="school-footer">
+        <div class="school-container">
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <img src="/Images/Logo.svg" alt="New Holy Cross School Logo">
+                    <h4>New Holy Cross School</h4>
+                    <p>Kageshwori Manohara-09, Kathmandu</p>
+                </div>
+                <div class="footer-social-links">
+                    <a href="https://www.facebook.com/nhcschool" class="social-icon-link" aria-label="Facebook" target="_blank" rel="noopener noreferrer"><i class="fab fa-facebook-f"></i></a>
+                    <a href="https://www.instagram.com/nhcschool" class="social-icon-link" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                    <a href="https://www.youtube.com/@nhcschool" class="social-icon-link" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>© <span id="currentYear">2024</span> New Holy Cross School. All Rights Reserved.</p>
+                <div class="footer-links">
+                    <a href="#" class="footer-link">Privacy Policy</a>
+                    <a href="#" class="footer-link">Terms of Service</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        function toggleMenu() {
+            const menu = document.getElementById('menu');
+            if (menu) {
+                menu.classList.toggle('active');
+            }
+        }
+
+        // Helper function to fetch data from API (same as script.js)
+        async function fetchData(endpoint) {
+            try {
+                const response = await fetch(endpoint);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const data = await response.json();
+                return data.data || []; // Assuming API returns { data: [...] }
+            } catch (error) {
+                console.error(`Error fetching data from ${endpoint}:`, error);
+                return []; // Return empty array on error
+            }
+        }
+
+        // Load gallery data from backend
+        async function loadGalleryData() {
+            const galleryGrid = document.getElementById('gallery-grid');
+            
+            try {
+                const galleryItems = await fetchData('/api/gallerys');
+
+                if (galleryItems.length === 0) {
+                    galleryGrid.innerHTML = `
+                        <div class="no-images">
+                            <i class="fas fa-images"></i>
+                            <h3>No Gallery Images</h3>
+                            <p>No gallery images have been added yet. Check back later for updates!</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                galleryGrid.innerHTML = '';
+                galleryItems.forEach(item => {
+                    const galleryItem = document.createElement('div');
+                    galleryItem.classList.add('gallery-grid-item');
+                    galleryItem.innerHTML = `
+                        <img src="${item.imageUrl}" alt="${item.caption}" onerror="this.onerror=null;this.src='https://placehold.co/400x300/cccccc/000000?text=No+Image';" />
+                        <div class="caption">
+                            <h3>${item.caption}</h3>
+                        </div>
+                    `;
+                    galleryGrid.appendChild(galleryItem);
+                });
+
+            } catch (error) {
+                console.error('Error loading gallery data:', error);
+                galleryGrid.innerHTML = `
+                    <div class="no-images">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <h3>Error Loading Gallery</h3>
+                        <p>Unable to load gallery images at the moment. Please try again later.</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', () => {
+            loadGalleryData();
+            
+            // Set current year in footer
+            const currentYearSpan = document.getElementById('currentYear');
+            if (currentYearSpan) {
+                currentYearSpan.textContent = new Date().getFullYear();
+            }
+        });
+    </script>
+</body>
+</html> 

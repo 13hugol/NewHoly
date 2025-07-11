@@ -1,0 +1,8 @@
+title: New Holy Cross
+description: Official website
+theme: jekyll-theme-primer
+
+exclude:
+  - node_modules
+  - Backend/node_modules
+  - vendor
