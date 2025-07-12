@@ -4349,3 +4349,9 @@ header {
   outline: 3px solid #0ea5e9;
   outline-offset: 2px;
 }
+
+.logob{
+    background-color: #c7c7c9;
+    padding: 5px;
+    border-radius:  12px;
+}
