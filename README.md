@@ -2,7 +2,7 @@
 
 > **Educating Young Minds for 25 Years** - A comprehensive digital platform for New Holy Cross School, Kathmandu, Nepal.
 
-[![Node.js CI](https://github.com/yourusername/NewHoly/actions/workflows/node.js.yml/badge.svg)](https://github.com/yourusername/NewHoly/actions/workflows/node.js.yml)
+[![Node.js CI](https://github.com/13hugol/NewHoly/actions/workflows/node.js.yml/badge.svg)](https://github.com/yourusername/NewHoly/actions/workflows/node.js.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com)
 
